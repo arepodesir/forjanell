@@ -1,0 +1,9 @@
+---
+import Application from '../layouts/Application.astro'
+import FrutigerScenes from '../components/FrutigerScenes'
+import { APP_CONFIG } from '../configs/config'
+---
+
+<Application title="For Janell" subTitle=" | eCard">
+<FrutigerScenes client:load {...APP_CONFIG} />
+</Application>

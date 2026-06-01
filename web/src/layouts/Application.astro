@@ -1,0 +1,14 @@
+---
+import '../styles/global.css';
+import Head from "../includes/Head.astro"
+
+let head = Astro.props
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<Head title={head.title} subTitle={head.subTitle}/>
+  <body>
+    <slot/>
+  </body>
+</html>
