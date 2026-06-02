@@ -1,0 +1,30 @@
+---
+import Application from '../../layouts/Application.astro'
+import BubbleWishes from '../../components/BubbleWishes'
+---
+
+<Application title="For Janell" subTitle=" | Wishes">
+  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-6"
+       style="background-image: url('/resources/img/stars.png');">
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-indigo-950/60 to-purple-950/80"></div>
+
+    {/* Floating Back to Home button */}
+    <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+      🏠 Back Home
+    </a>
+
+    <div class="relative z-10 w-full max-w-4xl text-center mt-12 mb-4">
+      <h1 class="text-4xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Outfit', sans-serif;">
+        Birthday Wishes 🌟🫧
+      </h1>
+      <p class="text-blue-200/80 text-sm tracking-wider uppercase font-semibold">
+        Interactive Blessings For You
+      </p>
+    </div>
+
+    {/* Bubble Popping Interface */}
+    <div class="relative z-10 w-full max-w-4xl">
+      <BubbleWishes client:load />
+    </div>
+  </div>
+</Application>

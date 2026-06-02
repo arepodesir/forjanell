@@ -1,0 +1,15 @@
+---
+import Application from '../../layouts/Application.astro'
+import FrutigerScenes from '../../components/FrutigerScenes'
+import { APP_CONFIG } from '../../config/config'
+---
+
+<Application title="For Janell" subTitle=" | Gift">
+  <div class="relative w-full h-full">
+    {/* Floating Back to Home button */}
+    <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+      🏠 Back Home
+    </a>
+    <FrutigerScenes client:load {...APP_CONFIG} />
+  </div>
+</Application>

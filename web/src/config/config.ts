@@ -2,7 +2,7 @@ export const APP_CONFIG = {
   // ─── Recipient Details ───────────────────────────────
   name: "For Janell",
   nickname: "Janell",
-  picUrl: "https://telegra.ph/file/cab24ce49882fbae39a13.png",
+  picUrl: "/resources/img/janell.png",
 
   // ─── Birthday Message (HBD text on the card) ────────
   hbdMessage: "Happy Belated Birthday!",
