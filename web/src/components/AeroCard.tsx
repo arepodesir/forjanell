@@ -16,6 +16,13 @@ type AeroCardProps = {
   scrollMsg: string;
   hbdMessage: string;
   cardMeta: CardMeta;
+  egift?: {
+    title: string;
+    value: string;
+    merchant: string;
+    code: string;
+    instructions: string;
+  };
 };
 
 /** Splits text into an array of {char, delay} for the letter-block animation */
@@ -33,6 +40,8 @@ export default function AeroCard(props: AeroCardProps) {
   const [showScroll, setShowScroll] = createSignal(!!props.scrollMsg);
   const [showCard, setShowCard] = createSignal(!props.scrollMsg);
   const [readTimeSecs, setReadTimeSecs] = createSignal(12);
+  const [showVoucher, setShowVoucher] = createSignal(false);
+  const [isFlipped, setIsFlipped] = createSignal(false);
 
   // Holographic interaction state
   const [pointerX, setPointerX] = createSignal(50);
@@ -248,12 +257,117 @@ export default function AeroCard(props: AeroCardProps) {
             </div>
           </div>
 
-          {/* Enjoy button below the card */}
-          <button class="aero-btn mt-5 text-sm tracking-wider" onClick={() => alert("🎉 The Party Never Ends! 🎉")}>
-            Enjoy your Day! 🎉
+          {/* Action buttons below the card */}
+          <div class="flex gap-4">
+            <button class="aero-btn mt-5 text-sm tracking-wider select-none cursor-pointer" onClick={() => alert("🎉 The Party Never Ends! 🎉")}>
+              Enjoy your Day! 🎉
+            </button>
+            <Show when={props.egift}>
+              <button class="aero-btn mt-5 text-sm tracking-wider select-none cursor-pointer" onClick={() => setShowVoucher(true)}>
+                🎁 Claim e-Gift!
+              </button>
+            </Show>
+          </div>
+        </div>
+      </Show>
+
+      {/* ─── e-Gift Voucher Modal Overlay ─── */}
+      <Show when={showVoucher()}>
+        <div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          
+          {/* Front/Back flipping ticket Container */}
+          <div class="relative w-full max-w-[380px] aspect-[1.6/1] cursor-pointer perspective-1000 mb-8 select-none" onClick={() => setIsFlipped(!isFlipped())}>
+            <div class={`w-full h-full relative transition-transform duration-700 transform-style-3d ${isFlipped() ? 'rotate-y-180' : ''}`}>
+              
+              {/* FRONT Side */}
+              <div class="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between backface-hidden bg-gradient-to-br from-yellow-300 via-amber-400 to-amber-600 border-2 border-yellow-200/50 shadow-[0_0_30px_rgba(245,158,11,0.4)] text-amber-950">
+                {/* Gloss overlay */}
+                <div class="absolute top-[8%] left-[10%] w-[80%] h-[35%] rounded-full bg-gradient-to-b from-white/60 to-transparent -rotate-12 pointer-events-none"></div>
+                
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="text-2xl font-black tracking-wider uppercase leading-none font-sans">GOLDEN TICKET</h3>
+                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-70">Janell's Bday Pass</span>
+                  </div>
+                  <span class="text-4xl">🎟️</span>
+                </div>
+
+                <div class="my-auto">
+                  <span class="text-xs font-bold block uppercase opacity-80">CLAIMABLE VALUE</span>
+                  <span class="text-4xl font-extrabold tracking-tight">{props.egift?.value || "$100"}</span>
+                </div>
+
+                <div class="flex justify-between items-end border-t border-amber-950/20 pt-2 text-[10px] font-mono">
+                  <div>
+                    <span class="block opacity-65">MERCHANT</span>
+                    <span class="font-bold">{props.egift?.merchant || "Spa Day & Coffee"}</span>
+                  </div>
+                  <div class="text-right font-bold italic animate-pulse">
+                    Tap to Flip 🔄
+                  </div>
+                </div>
+              </div>
+
+              {/* BACK Side */}
+              <div class="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between backface-hidden rotate-y-180 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 border-2 border-pink-400/50 shadow-[0_0_30px_rgba(244,63,94,0.4)] text-white">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="text-lg font-bold tracking-wide leading-none text-aero-cyan">VOUCHER CODE</h3>
+                    <span class="text-[8px] font-mono text-pink-300">SCANNABLE OR ONLINE REDEMPTION</span>
+                  </div>
+                  <span class="text-3xl text-pink-300">✨</span>
+                </div>
+
+                {/* Claim Code with neon glow */}
+                <div class="my-auto text-center py-2 px-4 bg-black/40 rounded-lg border border-white/10">
+                  <span class="text-xl font-mono font-extrabold tracking-wider text-aero-cyan" style={{ "text-shadow": "0 0 10px rgba(0,243,255,0.6)" }}>
+                    {props.egift?.code || "CLAIM-CODE-ERROR"}
+                  </span>
+                </div>
+
+                {/* Instructions */}
+                <p class="text-[9px] text-blue-100/90 leading-tight my-1 text-center">
+                  {props.egift?.instructions || "Show code to merchant."}
+                </p>
+
+                {/* Mock Barcode */}
+                <div class="flex flex-col items-center gap-1 border-t border-white/10 pt-2">
+                  <div class="h-6 w-full max-w-[200px] bg-white rounded-sm p-1 flex justify-between gap-[2px]">
+                    <For each={[1,3,1,2,4,1,3,2,1,4,2,3,1,1,2,4,2,1,3]}>
+                      {(width) => (
+                        <div class="h-full bg-black" style={{ width: `${width}px` }}></div>
+                      )}
+                    </For>
+                  </div>
+                  <span class="text-[8px] font-mono text-white/50">🔄 Tap to Flip Back</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Close button */}
+          <button class="aero-btn text-xs px-8 py-2 bg-gradient-to-r from-aero-pink to-aero-cyan hover:scale-105 select-none cursor-pointer" onClick={() => setShowVoucher(false)}>
+            Close Voucher
           </button>
         </div>
       </Show>
+
+      <style>{`
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        .transform-style-3d {
+          transform-style: preserve-3d;
+        }
+        .backface-hidden {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+      `}</style>
 
       {/* Balloons — only show with final card */}
       <Show when={showCard()}>

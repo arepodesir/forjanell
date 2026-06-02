@@ -14,18 +14,22 @@ We leveraged this design language by using:
 
 ---
 
-## 🖼️ AI Portrait Prompt Used
-For generating the flattering recipient portrait, the following prompt was executed:
-```text
-A highly flattering portrait of a beautiful smiling young woman with warm eyes, glowing skin, and lovely hair, set against a soft-focus vibrant green nature background, sunny lighting, perfect for a high-quality birthday card profile photo.
-```
-This image was saved as `/web/public/resources/img/janell.png`.
+## 🎟️ eGift Card & 3D Flipping Design
+To make the e-gift experience memorable and premium, we created a digital "Golden Ticket":
+- **Front Side:** Uses warm golden radial gradients (`from-yellow-300 via-amber-400 to-amber-600`), card gloss reflections, and large clean labels to look like a physical luxury voucher.
+- **Back Side:** Mimics a high-tech holographic boarding pass (`from-indigo-900 via-purple-900 to-pink-900`) showing the voucher code, custom claim instructions, and a rendered vector barcode.
+- **3D Flip Effect:** Programmed via CSS 3D transforms:
+  ```css
+  .perspective-1000 { perspective: 1000px; }
+  .transform-style-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+  .rotate-y-180 { transform: rotateY(180deg); }
+  ```
 
 ---
 
-## 🎧 Audio Assets Triggering
-- **Switch SFX:** Triggers when turning lights on in Scene 1.
-- **Door Creak SFX:** Triggers when going outside in Scene 2 and transitioning inside in Scene 3.
-- **Mystic Haunted SFX:** Loops inside the dark hallway in Scene 3.
-- **Blast SFX:** Triggers when opening the gift in Scene 4 and popping floating bubbles on `/wishes`.
-- **HBD BGM:** Loops on the final card reveal in `/gifts`.
+## ⚙️ TOML Config Separation Architecture
+To enable easy annual updates, we separated static parameters and code:
+- **`config.toml`**: Houses all yearly messages, card identifiers, claim codes, and the list of gifts.
+- **`parser.ts`**: Interprets the configuration.
+- **`config.ts`**: Aggregates properties and exposes helper methods (like calculating current age or checking birth dates).

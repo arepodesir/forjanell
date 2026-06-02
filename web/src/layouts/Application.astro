@@ -8,7 +8,96 @@ let head = Astro.props
 <!DOCTYPE html>
 <html lang="en">
 <Head title={head.title} subTitle={head.subTitle}/>
-  <body>
+  <body class="relative min-h-screen">
     <slot/>
+
+    {/* Global floating music player controller (except on card page) */}
+    <button id="global-music-toggle" class="fixed top-4 right-4 z-[9999] w-10 h-10 rounded-full aero-glass flex items-center justify-center text-white text-lg transition-transform hover:scale-105 active:scale-95 shadow-md border border-white/20 select-none hidden">
+      🎵
+    </button>
+
+    <script is:inline>
+      (function() {
+        const isCardPage = window.location.pathname.startsWith('/gifts/card');
+        const toggleBtn = document.getElementById('global-music-toggle');
+        
+        if (isCardPage) {
+          if (toggleBtn) toggleBtn.classList.add('hidden');
+          // Immediately pause global player on visual novel card pages
+          if (window.globalBgmAudio) {
+            window.globalBgmAudio.pause();
+          }
+          return;
+        }
+
+        if (toggleBtn) {
+          toggleBtn.classList.remove('hidden');
+        }
+
+        // Create or retrieve single audio instance attached to window
+        let audio = window.globalBgmAudio;
+        if (!audio) {
+          audio = new Audio('/resources/sfx/hbd.mp3');
+          audio.loop = true;
+          audio.volume = 0.3;
+          window.globalBgmAudio = audio;
+
+          // Restore playback position
+          const savedTime = sessionStorage.getItem('bgm_currentTime');
+          if (savedTime) {
+            audio.currentTime = parseFloat(savedTime);
+          }
+        }
+
+        // Update stored position periodically
+        setInterval(() => {
+          if (audio && !audio.paused) {
+            sessionStorage.setItem('bgm_currentTime', audio.currentTime.toString());
+          }
+        }, 500);
+
+        // Handle mute/unmute state
+        const isMuted = sessionStorage.getItem('bgm_muted') === 'true';
+        audio.muted = isMuted;
+        if (toggleBtn) {
+          toggleBtn.innerHTML = isMuted ? '🔇' : '🎵';
+        }
+
+        // Play BGM on first user interaction if not muted
+        function startAudio() {
+          const isCurrentlyMuted = sessionStorage.getItem('bgm_muted') === 'true';
+          if (!isCurrentlyMuted && audio.paused) {
+            audio.play().catch(e => console.log('Autoplay deferred:', e));
+          }
+          document.removeEventListener('click', startAudio);
+          document.removeEventListener('keydown', startAudio);
+          document.removeEventListener('touchstart', startAudio);
+        }
+
+        if (!isMuted) {
+          document.addEventListener('click', startAudio);
+          document.addEventListener('keydown', startAudio);
+          document.addEventListener('touchstart', startAudio);
+        }
+
+        // Toggle logic
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const currentMute = sessionStorage.getItem('bgm_muted') === 'true';
+            const newMute = !currentMute;
+            audio.muted = newMute;
+            sessionStorage.setItem('bgm_muted', newMute.toString());
+            toggleBtn.innerHTML = newMute ? '🔇' : '🎵';
+            
+            if (!newMute) {
+              audio.play().catch(e => console.log(e));
+            } else {
+              audio.pause();
+            }
+          });
+        }
+      })();
+    </script>
   </body>
 </html>

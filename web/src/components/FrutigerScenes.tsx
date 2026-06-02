@@ -23,6 +23,13 @@ type EnvProps = {
   sceneMessages: Record<number, string[]>;
   sceneActions: Record<number, { emoji: string; label: string }>;
   audio: Record<string, string>;
+  egift?: {
+    title: string;
+    value: string;
+    merchant: string;
+    code: string;
+    instructions: string;
+  };
 };
 
 export default function FrutigerScenes(props: EnvProps) {
@@ -40,6 +47,7 @@ export default function FrutigerScenes(props: EnvProps) {
   let sfxMystic: HTMLAudioElement;
   let sfxBlast: HTMLAudioElement;
   let sfxHbd: HTMLAudioElement;
+  let sfxAmbient: HTMLAudioElement;
 
   onMount(() => {
     // Time Gate Check
@@ -59,6 +67,10 @@ export default function FrutigerScenes(props: EnvProps) {
     sfxBlast = new Audio(props.audio.blast);
     sfxHbd = new Audio(props.audio.hbd);
     sfxHbd.loop = true;
+    sfxAmbient = new Audio(props.audio.ambient);
+    sfxAmbient.loop = true;
+    sfxAmbient.volume = 0.3;
+    sfxAmbient.play().catch(() => {});
 
     // Preload background images for smooth transitions
     Object.values(props.sceneBackgrounds).forEach((src) => {
@@ -73,6 +85,9 @@ export default function FrutigerScenes(props: EnvProps) {
 
   onCleanup(() => {
     clearAllTimers();
+    if (sfxAmbient) sfxAmbient.pause();
+    if (sfxMystic) sfxMystic.pause();
+    if (sfxHbd) sfxHbd.pause();
   });
 
   const clearAllTimers = () => {
@@ -111,21 +126,23 @@ export default function FrutigerScenes(props: EnvProps) {
     } else if (current === 2) {
       sfxDoor.play().catch(() => {});
       setScene(3);
+      if (sfxAmbient) sfxAmbient.pause();
       sfxMystic.play().catch(() => {});
       runMessages(3);
     } else if (current === 3) {
       sfxDoor.play().catch(() => {});
       sfxMystic.pause();
+      if (sfxAmbient) sfxAmbient.play().catch(() => {});
       setScene(4);
       runMessages(4);
     } else if (current === 4) {
       sfxBlast.play().catch(() => {});
+      if (sfxAmbient) sfxAmbient.pause();
       setShowAction(false);
       setScene(5); // Flash / Bubble burst
 
       const t = window.setTimeout(() => {
         setScene(6); // Final Card
-        // Piano music plays ONLY here at final reveal
         sfxHbd.play().catch(() => {});
       }, 1500);
       activeTimers.push(t);
@@ -229,6 +246,7 @@ export default function FrutigerScenes(props: EnvProps) {
           scrollMsg={props.scrollMsg}
           hbdMessage={props.hbdMessage}
           cardMeta={props.cardMeta}
+          egift={props.egift}
         />
       </Show>
     </div>

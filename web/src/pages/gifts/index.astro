@@ -1,15 +1,131 @@
 ---
 import Application from '../../layouts/Application.astro'
-import FrutigerScenes from '../../components/FrutigerScenes'
 import { APP_CONFIG } from '../../config/config'
+
+const gifts = APP_CONFIG.giftShelf || [];
 ---
 
-<Application title="For Janell" subTitle=" | Gift">
-  <div class="relative w-full h-full">
+<Application title="For Janell" subTitle=" | Gift Vault">
+  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-6"
+       style="background-image: url('/resources/img/stars.png');">
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-indigo-950/60 to-purple-950/80"></div>
+
     {/* Floating Back to Home button */}
     <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
       🏠 Back Home
     </a>
-    <FrutigerScenes client:load {...APP_CONFIG} />
+
+    <div class="relative z-10 w-full max-w-4xl text-center mt-12 mb-8 select-none">
+      <h1 class="text-4xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Outfit', sans-serif;">
+        Janell's Gift Vault 🎁💎🎮
+      </h1>
+      <p class="text-aero-cyan text-sm tracking-wider uppercase font-semibold">
+        A timeline of yearly birthday surprises
+      </p>
+    </div>
+
+    {/* Gift History Shelf */}
+    <div class="relative z-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 animate-reveal-up">
+      {gifts.map((gift) => (
+        <div class={`relative rounded-3xl p-6 border-2 flex flex-col justify-between transition-all duration-500 overflow-hidden ${
+          gift.active 
+            ? 'bg-white/15 border-aero-pink shadow-[0_0_30px_rgba(255,102,196,0.3)] scale-103 hover:scale-105 active:scale-98 animate-pulse-border' 
+            : 'bg-white/5 border-white/10 opacity-70 filter grayscale-50 hover:opacity-90 hover:grayscale-0'
+        }`}>
+          {/* Active Ribbon */}
+          {gift.active && (
+            <span class="absolute top-3 right-3 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+              Target Bday 🎂
+            </span>
+          )}
+
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl font-mono font-extrabold text-white/50">{gift.year}</span>
+              <span class="text-4xl">{gift.emoji}</span>
+            </div>
+            
+            <h3 class="text-xl font-bold text-white mb-2 leading-tight" style="font-family: 'Outfit', sans-serif;">
+              {gift.title}
+            </h3>
+            
+            <p class="text-sm text-blue-100/80 leading-relaxed mb-6">
+              {gift.description}
+            </p>
+          </div>
+
+          <div class="mt-auto">
+            {gift.active ? (
+              <a href="/gifts/card" class="gift-btn w-full block text-center py-3 rounded-full font-bold text-white uppercase text-xs tracking-wider transition-all select-none cursor-pointer">
+                🎁 Unwrap Gift 2026
+              </a>
+            ) : (
+              <button class="w-full bg-white/5 border border-white/10 text-white/40 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider cursor-not-allowed">
+                🔐 Archived Gift
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* Fullscreen Zoom Transition Overlay */}
+    <div id="zoom-overlay" class="fixed inset-0 z-50 pointer-events-none opacity-0 scale-0 origin-center"></div>
+
+    <style is:inline>
+      .animate-pulse-border {
+        animation: borderGlow 3s infinite alternate;
+      }
+      @keyframes borderGlow {
+        0% { border-color: rgba(255, 102, 196, 0.4); box-shadow: 0 0 20px rgba(255, 102, 196, 0.2); }
+        100% { border-color: rgba(0, 243, 255, 0.8); box-shadow: 0 0 35px rgba(0, 243, 255, 0.4); }
+      }
+      .gift-btn {
+        background: linear-gradient(135deg, var(--color-aero-pink) 0%, var(--color-aero-cyan) 100%);
+        box-shadow: 0 4px 15px rgba(255, 102, 196, 0.5);
+      }
+      .gift-btn:hover {
+        box-shadow: 0 6px 20px rgba(0, 243, 255, 0.7);
+        transform: translateY(-1px);
+      }
+      /* Transition styling */
+      #zoom-overlay {
+        transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.55s ease;
+      }
+    </style>
+
+    <script is:inline>
+      const btn = document.querySelector('.gift-btn');
+      const overlay = document.getElementById('zoom-overlay');
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = btn.getAttribute('href');
+          const rect = btn.getBoundingClientRect();
+          
+          const audioPop = new Audio('/resources/sfx/blast.mp3');
+          audioPop.volume = 0.4;
+          audioPop.play().catch(() => {});
+
+          overlay.style.background = 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.95) 0%, rgba(255,102,196,0.7) 40%, rgba(255,215,0,0.5) 75%, rgba(150,0,100,0.8) 100%)';
+          overlay.style.left = `${rect.left + rect.width / 2}px`;
+          overlay.style.top = `${rect.top + rect.height / 2}px`;
+          overlay.style.width = '10px';
+          overlay.style.height = '10px';
+          overlay.style.marginLeft = '-5px';
+          overlay.style.marginTop = '-5px';
+          overlay.style.borderRadius = '50%';
+          overlay.style.transform = 'scale(0)';
+          overlay.style.opacity = '1';
+          
+          void overlay.offsetWidth;
+          overlay.style.transform = 'scale(300)';
+          
+          setTimeout(() => {
+            window.location.href = href;
+          }, 500);
+        });
+      }
+    </script>
   </div>
 </Application>
