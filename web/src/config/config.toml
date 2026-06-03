@@ -3,82 +3,52 @@ name = "For Janell"
 nickname = "Janell"
 picUrl = "/resources/img/janell.png"
 hbdMessage = "Happy Belated Birthday!"
-scrollMsg = "Hey Jell! Today is YOUR day. The stars aligned, the crystals collapsed, and this card extracted itself from the quantum field just for you. May every moment sparkle with joy, every dream glow with possibility, and every heartbeat pulse with love. You are absolutely amazing. Never forget that. Happy Birthday, beautiful soul!"
+scrollMsg = "Hey JANELL! Today is YOUR day. The stars aligned, the crystals collapsed, and this card extracted itself from the quantum field just for you. May every moment sparkle with joy, every dream glow with possibility, and every heartbeat pulse with love. You are absolutely amazing. Never forget that. Happy Birthday, beautiful soul!"
 openDate = ""
 birthDate = "1993-05-02"
 
 # ─── Card Metadata ──────────────────────────────────
 [cardMeta]
-edition = "Quantum Extract · First Edition"
-series = "Hadacard™ Crystalline Series"
+edition = "Birthday Edition"
+series = "Digital Card"
 id = "HC-001"
 rarity = "✦ Ultra Rare Holo"
 year = "2026"
-artist = "The Universe"
+artist = "AREPO"
 
 # ─── Scene Background Images ─────────────────────────
 [sceneBackgrounds]
-1 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG9wMWJndTViMHpsbHkycXp3c2sxbDBrd3I5ZGFidmRncXZ0MmtxNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/p20x9S3f3sBoc/giphy.gif"
-2 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzY5bmFhdjkyZ3ZqdjM5OTBtOHB5NmY1bXZ0dzVjNTV2c3JzbDkyYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlIDlDcCst1E5tC/giphy.gif"
-3 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzJvNjBucTZ2ZzhobXpzaWFpeG5xbmpyNHUxbDR3MG8xOTQ5ZTZ0MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hh1v8dO989B8A/giphy.gif"
-4 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjA2cmE0a2M0Znp4OTAwMHM2Z3I4M3kyNTR4OHp2cnA2OHV0aGNxbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT8qAY7e9If38SskrK/giphy.gif"
+1 = "/resources/img/stars.png"
+2 = "/resources/img/nature.jpg"
 
 # ─── Scene Messages ──────────────────────────────────
 [sceneMessages]
-1 = ["Good morning, Janell! ☀️", "It's a bright, beautiful day, but the room is still a bit dim...", "Why don't we switch on the light and start this special day?"]
-2 = ["Ah, that's much better! 🌸🌱", "The flowers are blooming, and the warm breeze is humming a tune.", "Let's step outside into the garden and see what is waiting for you..."]
-3 = ["Wait... what is this glowing corridor? 🔮✨", "It feels like a portal of crystals, shimmering with cosmic energy.", "Let's step inside and see where this magical path leads..."]
-4 = ["You've arrived at the edge of the universe! 🌟🛰️", "Here, the stardust of the Taurus constellation has gathered.", "And it has condensed into a special, glowing gift box just for you..."]
+1 = ["Welcome to your magical birthday bubble, Janell! 🫧✨", "Within this floating sphere lies a crystalline birthday extract.", "Pop the bubble to unlock your holographic greeting and main melody!"]
 
 # ─── Scene Action Labels ─────────────────────────────
 [sceneActions]
-1 = { emoji = "💡", label = "Turn on Light" }
-2 = { emoji = "🌌", label = "Enter Corridor" }
-3 = { emoji = "🚀", label = "Travel to Stars" }
-4 = { emoji = "🎁", label = "Open Gift" }
+1 = { emoji = "🫧", label = "Pop Bubble & Play Song" }
 
 # ─── Audio Files ─────────────────────────────────────
 [audio]
-switch = "https://www.soundjay.com/nature/sounds/twig-snap-01.mp3"
-door = "https://www.soundjay.com/nature/sounds/wind-breeze-01.mp3"
-mystic = "https://www.soundjay.com/nature/sounds/river-1.mp3"
-blast = "https://www.soundjay.com/nature/sounds/water-splash-1.mp3"
+bubble = "https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav"
+pop = "https://assets.mixkit.co/active_storage/sfx/2006/2006-84.wav"
 hbd = "/assets/audio/main.wav"
-ambient = "https://www.soundjay.com/nature/sounds/birds-chirping-05.mp3"
 
 # ─── eGift Voucher Details ───────────────────────────
 [egift]
-title = "Crystalline Golden Ticket"
+title = "Relaxing Spa Treatment & Treats"
 value = "$100"
-merchant = "Spa Wellness & Starbucks Treat"
-code = "JELL-BDAY-2026-SPARKLE"
+merchant = "Nirvana Wellness"
+code = "JELL-BDAY-2026-SPADAY"
 instructions = "Show this golden ticket to redeem your special birthday spa day & double-shot coffee pastry combo! 💆‍♀️☕🧁"
 
 # ─── Gift History Shelf ──────────────────────────────
-# We list gifts across years; 2026 is the active target.
-[[giftShelf]]
-year = "2024"
-title = "Retro Pixel Gamebox"
-emoji = "🎮"
-status = "Archived"
-description = "A customized retro mini-console preloaded with classic gaming favorites."
-link = "#"
-active = false
-
-[[giftShelf]]
-year = "2025"
-title = "The Crystal Aurora Lamp"
-emoji = "💎"
-status = "Archived"
-description = "A glowing ambient projection lamp mimicking the northern lights."
-link = "#"
-active = false
-
 [[giftShelf]]
 year = "2026"
 title = "Holographic eCard & Spa Day Treat"
 emoji = "🎁"
 status = "Active Now"
 description = "An interactive visual novel card unlocking a claimable relaxation package."
-link = "/gifts/card"
+link = "/gifts/circa-1993"
 active = true

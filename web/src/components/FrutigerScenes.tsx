@@ -1,5 +1,5 @@
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
-import AeroCard from './AeroCard';
+import ThreeCard from './ThreeCard';
 import PretextShift from './PretextShift';
 import { haptic } from '../utils/haptics';
 
@@ -24,7 +24,11 @@ type EnvProps = {
   sceneBackgrounds: Record<number, string>;
   sceneMessages: Record<number, string[]>;
   sceneActions: Record<number, { emoji: string; label: string }>;
-  audio: Record<string, string>;
+  audio: {
+    bubble: string;
+    pop: string;
+    hbd: string;
+  };
   egift?: {
     title: string;
     value: string;
@@ -39,17 +43,14 @@ export default function FrutigerScenes(props: EnvProps) {
   const [scene, setScene] = createSignal<number>(1);
   const [msgIndex, setMsgIndex] = createSignal<number>(0);
   const [showAction, setShowAction] = createSignal<boolean>(false);
+  const [isTransitioning, setIsTransitioning] = createSignal<boolean>(false);
 
-  // Track all timers for cleanup
   let activeTimers: number[] = [];
 
-  // Audio instances
-  let sfxSwitch: HTMLAudioElement;
-  let sfxDoor: HTMLAudioElement;
-  let sfxMystic: HTMLAudioElement;
-  let sfxBlast: HTMLAudioElement;
-  let sfxHbd: HTMLAudioElement;
-  let sfxAmbient: HTMLAudioElement;
+  // Audio references
+  let sfxBubble: HTMLAudioElement | undefined;
+  let sfxPop: HTMLAudioElement | undefined;
+  let sfxHbd: HTMLAudioElement | undefined;
 
   onMount(() => {
     // Time Gate Check
@@ -61,35 +62,35 @@ export default function FrutigerScenes(props: EnvProps) {
       else if (now > endTime) setTimeStatus('LATE');
     }
 
-    // Init Audio from config
-    sfxSwitch = new Audio(props.audio.switch);
-    sfxDoor = new Audio(props.audio.door);
-    sfxMystic = new Audio(props.audio.mystic);
-    sfxMystic.loop = true;
-    sfxBlast = new Audio(props.audio.blast);
+    // Initialize Audio
+    sfxBubble = new Audio(props.audio.bubble);
+    sfxBubble.loop = true;
+    sfxBubble.volume = 0.45;
+
+    sfxPop = new Audio(props.audio.pop);
+    sfxPop.volume = 0.6;
+
     sfxHbd = new Audio(props.audio.hbd);
     sfxHbd.loop = true;
-    sfxAmbient = new Audio(props.audio.ambient);
-    sfxAmbient.loop = true;
-    sfxAmbient.volume = 0.3;
-    sfxAmbient.play().catch(() => {});
+    sfxHbd.volume = 0.5;
 
-    // Preload background images for smooth transitions
-    Object.values(props.sceneBackgrounds).forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
+    // Start soft bubble ambient sound
+    sfxBubble.play().catch(e => console.log("Ambient audio deferred:", e));
 
     if (timeStatus() === 'ON_TIME') {
-      runMessages(1);
+      runMessages();
     }
   });
 
   onCleanup(() => {
     clearAllTimers();
-    if (sfxAmbient) sfxAmbient.pause();
-    if (sfxMystic) sfxMystic.pause();
+    if (sfxBubble) sfxBubble.pause();
+    if (sfxPop) sfxPop.pause();
     if (sfxHbd) sfxHbd.pause();
+    // Re-enable global bgm if available
+    if (typeof window !== 'undefined' && (window as any).globalBgmAudio && sessionStorage.getItem('bgm_muted') !== 'true') {
+      (window as any).globalBgmAudio.play().catch(() => {});
+    }
   });
 
   const clearAllTimers = () => {
@@ -97,59 +98,52 @@ export default function FrutigerScenes(props: EnvProps) {
     activeTimers = [];
   };
 
-  /** Run the message sequence for a specific scene number (avoids stale closure) */
-  const runMessages = (sceneNum: number) => {
+  // Run the single scene's dialogue flow
+  const runMessages = () => {
     clearAllTimers();
     setMsgIndex(0);
     setShowAction(false);
 
-    const msgs = props.sceneMessages[sceneNum];
-    if (!msgs) return;
-
+    const msgs = props.sceneMessages[1] || [];
     msgs.forEach((_, i) => {
       const t = window.setTimeout(() => {
         setMsgIndex(i);
         if (i === msgs.length - 1) {
-          const t2 = window.setTimeout(() => setShowAction(true), 1500);
+          const t2 = window.setTimeout(() => setShowAction(true), 1200);
           activeTimers.push(t2);
         }
-      }, i * 3500);
+      }, i * 3200);
       activeTimers.push(t);
     });
   };
 
   const handleAction = () => {
-    const current = scene();
-    haptic.trigger('success');
+    haptic.trigger('heavy');
+    
+    // Play pop SFX
+    if (sfxPop) sfxPop.play().catch(() => {});
 
-    if (current === 1) {
-      sfxSwitch.play().catch(() => {});
+    // Disable ambient sound
+    if (sfxBubble) sfxBubble.pause();
+
+    // Trigger flash transition
+    setIsTransitioning(true);
+
+    const t = window.setTimeout(() => {
+      // Transition to final card stage
       setScene(2);
-      runMessages(2);
-    } else if (current === 2) {
-      sfxDoor.play().catch(() => {});
-      setScene(3);
-      if (sfxAmbient) sfxAmbient.pause();
-      sfxMystic.play().catch(() => {});
-      runMessages(3);
-    } else if (current === 3) {
-      sfxBlast.play().catch(() => {});
-      sfxMystic.pause();
-      if (sfxAmbient) sfxAmbient.play().catch(() => {});
-      setScene(4);
-      runMessages(4);
-    } else if (current === 4) {
-      sfxBlast.play().catch(() => {});
-      if (sfxAmbient) sfxAmbient.pause();
-      setShowAction(false);
-      setScene(5); // Flash / Bubble burst
+      setIsTransitioning(false);
 
-      const t = window.setTimeout(() => {
-        setScene(6); // Final Card
-        sfxHbd.play().catch(() => {});
-      }, 1500);
-      activeTimers.push(t);
-    }
+      // Play main birthday song
+      if (sfxHbd) {
+        // Pause global bgm to prevent double music
+        if ((window as any).globalBgmAudio) {
+          (window as any).globalBgmAudio.pause();
+        }
+        sfxHbd.play().catch(e => console.log("Main music deferred:", e));
+      }
+    }, 900);
+    activeTimers.push(t);
   };
 
   // ─── Early/Late Guard Pages ──────────────────
@@ -159,7 +153,7 @@ export default function FrutigerScenes(props: EnvProps) {
            style={{ "background-image": `url(${props.sceneBackgrounds[1]})`, "font-family": "'Patrick Hand', cursive" }}>
         <div class="absolute inset-0 bg-blue-900/70"></div>
         <div class="relative z-10">
-          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg" style={{ "font-family": "'Caveat', cursive" }}>Come Back Later...</h1>
+          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg" style={{ "font-family": "'Great Vibes', cursive" }}>Come Back Later...</h1>
           <div class="aero-glass p-6 rounded-2xl max-w-md">
             <p class="text-xl">I know you're excited for your special day, but you need to be patient! ✨</p>
           </div>
@@ -171,10 +165,10 @@ export default function FrutigerScenes(props: EnvProps) {
   if (timeStatus() === 'LATE') {
     return (
       <div class="relative flex flex-col items-center justify-center h-full text-center text-white p-6 bg-cover bg-center"
-           style={{ "background-image": `url(${props.sceneBackgrounds[4]})`, "font-family": "'Patrick Hand', cursive" }}>
+           style={{ "background-image": `url(${props.sceneBackgrounds[2]})`, "font-family": "'Patrick Hand', cursive" }}>
         <div class="absolute inset-0 bg-pink-900/60"></div>
         <div class="relative z-10">
-          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg text-pink-300" style={{ "font-family": "'Caveat', cursive" }}>The Party is Over</h1>
+          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg text-pink-300" style={{ "font-family": "'Great Vibes', cursive" }}>The Party is Over</h1>
           <div class="aero-glass p-6 rounded-2xl max-w-md">
             <p class="text-xl">You missed it! But the gift was meant for you. Happy Belated Birthday! 💖</p>
           </div>
@@ -183,77 +177,79 @@ export default function FrutigerScenes(props: EnvProps) {
     );
   }
 
-  // ─── Main Scene Renderer ─────────────────────
   return (
     <div class="relative w-full h-full flex flex-col items-center justify-center overflow-hidden">
+      
+      {/* ─── Background Gifs ─── */}
+      <div
+        class={`absolute inset-0 transition-opacity duration-1000 bg-cover bg-center ${
+          scene() === 1 ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ "background-image": `url(${props.sceneBackgrounds[1]})` }}
+      ></div>
 
-      {/* ─── Background Images (Visual Novel themed) ─── */}
-      {[1, 2, 3, 4].map((s) => (
-        <div
-          class={`absolute inset-0 transition-opacity duration-1000 bg-cover bg-center ${
-            scene() === s || (scene() >= 5 && s === 4) ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ "background-image": `url(${props.sceneBackgrounds[s]})` }}
-        ></div>
-      ))}
+      <div
+        class={`absolute inset-0 transition-opacity duration-1000 bg-cover bg-center ${
+          scene() === 2 ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ "background-image": `url(${props.sceneBackgrounds[2]})` }}
+      ></div>
 
-      {/* ─── Gradient Overlays (tinting the backgrounds) ─── */}
-      <div class={`absolute inset-0 transition-opacity duration-1000 ${scene() === 1 ? 'opacity-100' : 'opacity-0'}`}
-           style={{ background: "linear-gradient(135deg, rgba(10,11,24,0.65) 0%, rgba(30,10,50,0.55) 100%)" }}></div>
-      <div class={`absolute inset-0 transition-opacity duration-1000 ${scene() === 2 ? 'opacity-100' : 'opacity-0'}`}
-           style={{ background: "linear-gradient(180deg, rgba(0,200,255,0.15) 0%, rgba(100,200,255,0.1) 100%)" }}></div>
-      <div class={`absolute inset-0 transition-opacity duration-1000 ${scene() === 3 ? 'opacity-100' : 'opacity-0'}`}
-           style={{ background: "linear-gradient(135deg, rgba(80,0,120,0.4) 0%, rgba(200,50,100,0.25) 50%, rgba(255,120,50,0.2) 100%)" }}></div>
-      <div class={`absolute inset-0 transition-opacity duration-1000 ${scene() >= 4 && scene() !== 5 ? 'opacity-100' : 'opacity-0'}`}
-           style={{ background: "linear-gradient(135deg, rgba(0,200,255,0.15) 0%, rgba(255,102,196,0.15) 100%)" }}></div>
+      {/* Glass gradient tint overlays */}
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-cyan-950/20 to-indigo-950/60 pointer-events-none"></div>
 
-      {/* ─── Flash / Blast Layer ─── */}
-      <div class={`absolute inset-0 bg-white z-40 ${
-        scene() === 5 ? 'opacity-100 animate-bubble-burst' : 'opacity-0 pointer-events-none'
+      {/* Bubble pop flash layer */}
+      <div class={`absolute inset-0 bg-white z-40 transition-opacity duration-700 pointer-events-none ${
+        isTransitioning() ? 'opacity-100' : 'opacity-0'
       }`}></div>
 
-      {/* ─── Interactive Scene Stage ─── */}
-      <Show when={scene() >= 1 && scene() <= 4}>
-        <div class="z-10 flex flex-col items-center text-center px-6 w-full max-w-md">
-          {/* Message bubble with glass background for better readability */}
-          <div class="aero-glass rounded-3xl px-6 py-5 mb-8 w-full border-white/20 min-h-[90px] flex items-center justify-center shadow-lg">
+      {/* ─── Stage 1: Intro Scene (Magical Bubble) ─── */}
+      <Show when={scene() === 1}>
+        <div class="z-10 flex flex-col items-center text-center px-4 w-full max-w-md gap-6 select-none">
+          {/* Glass text bubble container */}
+          <div class="aero-glass rounded-3xl px-6 py-5 w-full border-white/20 min-h-[110px] flex items-center justify-center shadow-xl">
             <PretextShift 
-              text={props.sceneMessages[scene() as 1|2|3|4]?.[msgIndex()] || ""} 
+              text={props.sceneMessages[1]?.[msgIndex()] || ""} 
               font="20px 'Comfortaa'" 
               lineHeight={28}
-              class="text-xl font-bold text-white text-center leading-relaxed"
+              class="text-lg font-bold text-white text-center leading-relaxed"
             />
           </div>
 
+          {/* Glowing Bubble pop action trigger */}
           <Show when={showAction()}>
-            <button
-              onPointerDown={handleAction}
-              class="w-20 h-20 rounded-full aero-glass flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-110 active:scale-95 animate-pulse-gloss border-white/30"
-              style={{ "touch-action": "none" }}
-            >
-              <span class="text-3xl drop-shadow-md">
-                {props.sceneActions[scene() as 1|2|3|4]?.emoji}
-              </span>
-            </button>
-            <p class="mt-4 text-white/95 font-bold text-sm tracking-wider uppercase"
-               style={{ "font-family": "'Comfortaa', sans-serif", "text-shadow": "0 1px 4px rgba(0,0,0,0.8)" }}>
-              {props.sceneActions[scene() as 1|2|3|4]?.label}
-            </p>
+            <div class="flex flex-col items-center gap-3 animate-reveal-up">
+              <button
+                onPointerDown={handleAction}
+                class="w-24 h-24 rounded-full gc-cyan flex items-center justify-center cursor-pointer shadow-[0_8px_32px_rgba(0,243,255,0.4)] transition-all duration-300 hover:scale-110 active:scale-90 border-2 border-white/40 hover:shadow-[0_12px_48px_rgba(0,243,255,0.7)]"
+                style={{ "touch-action": "none" }}
+              >
+                <span class="text-4xl drop-shadow-md animate-pulse">🫧</span>
+              </button>
+              <p class="text-white font-black text-xs tracking-wider uppercase drop-shadow-lg"
+                 style={{ "font-family": "'Comfortaa', sans-serif", "text-shadow": "0 2px 8px rgba(0,0,0,0.8)" }}>
+                POP BUBBLE
+              </p>
+            </div>
           </Show>
         </div>
       </Show>
 
-      {/* ─── Final Card Stage ─── */}
-      <Show when={scene() === 6}>
-        <AeroCard
-          name={props.name}
-          nickname={props.nickname}
-          picUrl={props.picUrl}
-          scrollMsg={props.scrollMsg}
-          hbdMessage={props.hbdMessage}
-          cardMeta={props.cardMeta}
-          egift={props.egift}
-        />
+      {/* ─── Stage 2: Final Card Stage (3D Holographic Card) ─── */}
+      <Show when={scene() === 2}>
+        <div class="z-10 w-full min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-start p-4 py-8">
+          <ThreeCard 
+            client:load
+            name={props.name}
+            nickname={props.nickname}
+            picUrl={props.picUrl}
+            hbdMessage={props.hbdMessage}
+            scrollMsg={props.scrollMsg}
+            cardMeta={props.cardMeta}
+            egift={props.egift}
+            isFinalCard={true}
+          />
+        </div>
       </Show>
     </div>
   );

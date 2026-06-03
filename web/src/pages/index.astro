@@ -59,7 +59,7 @@ const pageProps: PageProps = {
 
 <Application title={pageProps.title} subTitle={pageProps.subTitle}>
   <div
-    class="relative w-full h-[100dvh] overflow-hidden flex flex-col items-center justify-between p-4 bg-cover bg-center select-none pb-safe pt-safe"
+    class="relative w-full min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-between p-4 bg-cover bg-center select-none pb-safe pt-safe"
     style="background-image: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHJ2eHY3aTZ2eDFwdnV4amN1ZTZ1Z3R4bnlmdWxlb2p4dmN3dDRuZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VxbvpfaTTo3le/giphy.gif');"
   >
     {/* Dark glass tint overlay for readability */}
@@ -80,8 +80,8 @@ const pageProps: PageProps = {
       {/* Glowing glass welcome header */}
       <div class="aero-glass rounded-3xl p-3 md:p-5 text-white w-full border-white/20 animate-reveal-up text-center shadow-[0_8px_32px_rgba(255,102,196,0.15)] shrink-0">
         <h1
-          class="text-2xl md:text-4xl font-extrabold mb-1 tracking-tight drop-shadow-md text-glow"
-          style="font-family: 'Caveat', cursive;"
+          class="text-3xl md:text-5xl font-normal mb-1 tracking-tight drop-shadow-md text-glow"
+          style="font-family: 'Great Vibes', cursive;"
         >
           {pageProps.welcomeTitle}
         </h1>
@@ -98,7 +98,14 @@ const pageProps: PageProps = {
 
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}
       <div class="w-full h-[270px] xs:h-[310px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
-        <ThreeCard client:load />
+        <ThreeCard 
+          client:load 
+          name="For Janell"
+          nickname="Janell"
+          picUrl="/resources/img/janell.png"
+          hbdMessage="Happy Belated Birthday!"
+          isFinalCard={false}
+        />
       </div>
 
       {/* Globular menu options (Refactored to 3 columns) */}
