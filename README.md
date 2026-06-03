@@ -1,4 +1,4 @@
-# 🌸 For Janell 🌸 — The Ultimate Interactive Birthday eCard! 🎂✨💖
+# 🌸 For Janell 
 
 <p align="center">
   <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXZqMXdwNjhpdHZ6Z2o4cXA4YnVzcnlydHlzcDR4amQxZzZpZ3dzbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MC1Mh2YnUfGDa/giphy.gif" alt="Super Cute Looping Birthday Cake" width="300" />
@@ -8,37 +8,9 @@
 
 Welcome to **For Janell**, a fully custom, interactive visual-novel style birthday card e-card app! 💌 Built with love and updated yearly, this app takes Janell on a mini-story adventure through different atmospheric scenes, culminating in a beautiful, interactive **holographic birthday card**! 💿✨
 
----
 
-## 🎬 How the eCard Works (The Quest for the Gift 🎁)
-The card starts with a playful visual novel sequence:
-1. **Scene 1: The Dark Bedroom 💡** — It's pitch black! Click the lightbulb button (sfx switch) to see what's happening.
-2. **Scene 2: The Clear Nature Skies 🚪** — A beautiful open field, but it's empty! Time to head outside (sfx door).
-3. **Scene 3: The Hallway at Twilight 🚪** — It's mysterious and atmospheric (mystic background music). Better head back inside!
-4. **Scene 4: The Stars & Magic Room 🎁** — A surprise box appears! Click to open it!
-5. **The Blast 💥** — Confetti and balloon pop!
-6. **Scene 6: The Holographic Card 🎴✨** — A beautiful custom birthday card is revealed:
-   - Dynamic **Confetti** & floating **Balloons** 🎈
-   - Letter-by-letter **3D fly-in animations** for the birthday wishes! ✍️
-   - A **Holographic shimmer overlay** that reacts dynamically to mouse hover and touch movement! 🖱️📱
-   - Custom birthday music (piano theme) looping in the background! 🎹🎶
 
----
 
-## 🚀 Tech Stack & Design Inspirations 🛠️🎨
-
-This project is built using a modern, lightweight, high-performance web stack:
-- **Astro v6** 🚀 — The framework of choice for super-fast content delivery.
-- **SolidJS** ⚛️ — Used to drive the interactive visual novel state and reactive holographic rendering with zero-overhead reactivity.
-- **Vite & TailwindCSS v4** ⚡ — For cutting-edge CSS utilities and blazingly fast development builds.
-- **HTML5 Web Audio API** 🎵 — To handle seamless scene transitions and custom immersive sound effects (switch clicks, creaking doors, magical chimes, and birthday tunes).
-
-### 🔮 Design Inspiration:
-- **Frutiger Aero** 🫧🐳 — The aesthetic combines vibrant colors (cyans, pinks, magentas, golds), glossy buttons, transparent glassmorphism (`aero-glass`), bubble burst animations, and organic-digital elements.
-- **PokeCards Holo Effect** 🎴 — The holographic card glare, glitter, and shine layers use custom blend modes (`color-dodge`, `exclusion`, `hard-light`) to dynamically track the cursor or float in a subtle automatic shimmer loop.
-- **Pretext-Style Letter Animations** 📖 — The letter-block animations flip and fade in sequentially to make the text feel physical and alive.
-
----
 
 ## 📅 Updating the eCard Yearly (For the Developer 🛠️)
 
@@ -103,4 +75,4 @@ To run the card locally:
 
 ---
 
-<p align="center">Made with 💖, 🫧, and 🛸 for Janell!</p>
+<p align="center">Made with 💖, for Janell!</p>

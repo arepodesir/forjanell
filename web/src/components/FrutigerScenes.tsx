@@ -1,5 +1,7 @@
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import AeroCard from './AeroCard';
+import PretextShift from './PretextShift';
+import { haptic } from '../utils/haptics';
 
 type CardMeta = {
   edition: string;
@@ -118,6 +120,7 @@ export default function FrutigerScenes(props: EnvProps) {
 
   const handleAction = () => {
     const current = scene();
+    haptic.trigger('success');
 
     if (current === 1) {
       sfxSwitch.play().catch(() => {});
@@ -130,7 +133,7 @@ export default function FrutigerScenes(props: EnvProps) {
       sfxMystic.play().catch(() => {});
       runMessages(3);
     } else if (current === 3) {
-      sfxDoor.play().catch(() => {});
+      sfxBlast.play().catch(() => {});
       sfxMystic.pause();
       if (sfxAmbient) sfxAmbient.play().catch(() => {});
       setScene(4);
@@ -153,10 +156,10 @@ export default function FrutigerScenes(props: EnvProps) {
   if (timeStatus() === 'EARLY') {
     return (
       <div class="relative flex flex-col items-center justify-center h-full text-center text-white p-6 bg-cover bg-center"
-           style={{ "background-image": `url(${props.sceneBackgrounds[1]})` }}>
+           style={{ "background-image": `url(${props.sceneBackgrounds[1]})`, "font-family": "'Patrick Hand', cursive" }}>
         <div class="absolute inset-0 bg-blue-900/70"></div>
         <div class="relative z-10">
-          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg" style={{ "font-family": "'Outfit', sans-serif" }}>Come Back Later...</h1>
+          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg" style={{ "font-family": "'Caveat', cursive" }}>Come Back Later...</h1>
           <div class="aero-glass p-6 rounded-2xl max-w-md">
             <p class="text-xl">I know you're excited for your special day, but you need to be patient! ✨</p>
           </div>
@@ -168,10 +171,10 @@ export default function FrutigerScenes(props: EnvProps) {
   if (timeStatus() === 'LATE') {
     return (
       <div class="relative flex flex-col items-center justify-center h-full text-center text-white p-6 bg-cover bg-center"
-           style={{ "background-image": `url(${props.sceneBackgrounds[4]})` }}>
+           style={{ "background-image": `url(${props.sceneBackgrounds[4]})`, "font-family": "'Patrick Hand', cursive" }}>
         <div class="absolute inset-0 bg-pink-900/60"></div>
         <div class="relative z-10">
-          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg text-pink-300" style={{ "font-family": "'Outfit', sans-serif" }}>The Party is Over</h1>
+          <h1 class="text-4xl font-extrabold mb-6 drop-shadow-lg text-pink-300" style={{ "font-family": "'Caveat', cursive" }}>The Party is Over</h1>
           <div class="aero-glass p-6 rounded-2xl max-w-md">
             <p class="text-xl">You missed it! But the gift was meant for you. Happy Belated Birthday! 💖</p>
           </div>
@@ -211,26 +214,29 @@ export default function FrutigerScenes(props: EnvProps) {
 
       {/* ─── Interactive Scene Stage ─── */}
       <Show when={scene() >= 1 && scene() <= 4}>
-        <div class="z-10 flex flex-col items-center text-center px-6 max-w-lg">
+        <div class="z-10 flex flex-col items-center text-center px-6 w-full max-w-md">
           {/* Message bubble with glass background for better readability */}
-          <div class="aero-glass rounded-2xl px-8 py-5 mb-10">
-            <p class="text-2xl font-extrabold text-white"
-               style={{ "font-family": "'Outfit', sans-serif", "text-shadow": "0 2px 8px rgba(0,0,0,0.6)" }}>
-              {props.sceneMessages[scene() as 1|2|3|4]?.[msgIndex()]}
-            </p>
+          <div class="aero-glass rounded-3xl px-6 py-5 mb-8 w-full border-white/20 min-h-[90px] flex items-center justify-center shadow-lg">
+            <PretextShift 
+              text={props.sceneMessages[scene() as 1|2|3|4]?.[msgIndex()] || ""} 
+              font="20px 'Comfortaa'" 
+              lineHeight={28}
+              class="text-xl font-bold text-white text-center leading-relaxed"
+            />
           </div>
 
           <Show when={showAction()}>
             <button
-              onClick={handleAction}
-              class="w-24 h-24 rounded-full aero-glass flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-110 active:scale-95 animate-pulse-gloss"
+              onPointerDown={handleAction}
+              class="w-20 h-20 rounded-full aero-glass flex items-center justify-center cursor-pointer shadow-lg transition-transform hover:scale-110 active:scale-95 animate-pulse-gloss border-white/30"
+              style={{ "touch-action": "none" }}
             >
-              <span class="text-4xl drop-shadow-md">
+              <span class="text-3xl drop-shadow-md">
                 {props.sceneActions[scene() as 1|2|3|4]?.emoji}
               </span>
             </button>
-            <p class="mt-4 text-white/90 font-bold text-sm tracking-wider uppercase"
-               style={{ "font-family": "'Outfit', sans-serif", "text-shadow": "0 1px 4px rgba(0,0,0,0.8)" }}>
+            <p class="mt-4 text-white/95 font-bold text-sm tracking-wider uppercase"
+               style={{ "font-family": "'Comfortaa', sans-serif", "text-shadow": "0 1px 4px rgba(0,0,0,0.8)" }}>
               {props.sceneActions[scene() as 1|2|3|4]?.label}
             </p>
           </Show>

@@ -64,6 +64,19 @@
     75% { --pointer-x: 0%; --pointer-y: 100%; }
     100% { --pointer-x: 0%; --pointer-y: 0%; }
   }
+
+  @keyframes textShiftIn {
+    0% {
+      opacity: 0;
+      transform: translateY(100%) rotateX(-15deg);
+      filter: blur(4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg);
+      filter: blur(0);
+    }
+  }
 }
 
 @layer base {
@@ -80,7 +93,7 @@
     height: 100dvh;
     overflow: hidden;
     background-color: var(--color-aero-dark);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Patrick Hand', 'Comfortaa', 'Caveat', cursive, sans-serif;
     overscroll-behavior-y: none;
     user-select: none;
     -webkit-tap-highlight-color: transparent;

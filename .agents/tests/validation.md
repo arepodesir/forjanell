@@ -33,12 +33,10 @@ To verify that the application is running and performing as expected, perform th
 ## 🎴 5. Gifts VN & Card Verification
 - [ ] On `/gifts/card`, verify that the global persistent player pauses.
 - [ ] Go through the 4 scenes:
-  - [ ] **Scene 1 (Dark Bedroom):** Switch on light (switch SFX, ambient music box BGM starts).
-  - [ ] **Scene 2 (Nature):** Go outside (door SFX, music box BGM continues).
-  - [ ] **Scene 3 (Hallway):** Walk the hallway (door SFX, music box BGM pauses, loops haunted BGM).
-  - [ ] **Scene 4 (Stars):** Open gift box (haunted BGM pauses, door SFX plays, music box BGM resumes).
-  - [ ] **Scene 5 (Flash):** Opens the card (ambient BGM pauses, blast SFX plays).
-  - [ ] **Scene 6 (Final Card):** (Blast SFX finishes, main song gift `main.wav` starts playing).
+  - [ ] **Scene 1 (Dark Bedroom):** Switch on light (plays `switch.mp3` click, ambient BGM starts).
+  - [ ] **Scene 2 (Meadow/Garden):** Enter Corridor (plays `door.mp3` door opening, ambient BGM continues).
+  - [ ] **Scene 3 (Hallway Portal):** Travel to Stars (plays `blast.mp3` warp sound, ambient BGM pauses, loops `haunted-bgm.mp3`).
+  - [ ] **Scene 4 (Stars Galaxy):** Open gift box (haunted BGM pauses, plays `blast.mp3` explosion, starts looping final song gift `main.wav`).
 - [ ] Verify card reveal:
   - [ ] Confirm Janell's portrait renders in the round profile photo bubble with the birthday cap and animated candles.
   - [ ] Verify the scrolling text rolls up.

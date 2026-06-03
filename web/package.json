@@ -2,7 +2,6 @@
   "name": "forjanell--app",
   "type": "module",
   "version": "0.0.1",
-
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -11,9 +10,15 @@
   },
   "dependencies": {
     "@astrojs/solid-js": "^6.0.1",
+    "@chenglou/pretext": "^0.0.7",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^6.2.1",
+    "smol-toml": "^1.6.1",
     "solid-js": "^1.9.12",
-    "tailwindcss": "^4.2.4"
+    "tailwindcss": "^4.2.4",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.1"
   }
 }

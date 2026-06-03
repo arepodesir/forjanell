@@ -1,0 +1,1 @@
+import{h as e}from"./haptics.CX2_4n8b.js";const t=document.getElementById("back-home-btn"),n=document.getElementById("avatar-frame"),r=document.getElementById("sparkle-bar");t&&t.addEventListener("pointerdown",()=>e.trigger("light"));n&&n.addEventListener("pointerdown",()=>e.trigger("success"));r&&r.addEventListener("pointerdown",()=>e.trigger("medium"));

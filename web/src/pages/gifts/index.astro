@@ -6,61 +6,61 @@ const gifts = APP_CONFIG.giftShelf || [];
 ---
 
 <Application title="For Janell" subTitle=" | Gift Vault">
-  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-6"
+  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-4 pb-safe pt-safe"
        style="background-image: url('/resources/img/stars.png');">
-    <div class="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-indigo-950/60 to-purple-950/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-950/70 via-indigo-950/60 to-purple-950/80 pointer-events-none"></div>
 
     {/* Floating Back to Home button */}
-    <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+    <a href="/" id="back-home-btn" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
       🏠 Back Home
     </a>
 
-    <div class="relative z-10 w-full max-w-4xl text-center mt-12 mb-8 select-none">
-      <h1 class="text-4xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Outfit', sans-serif;">
+    <div class="relative z-10 w-full max-w-lg text-center mt-16 mb-6 select-none">
+      <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Caveat', cursive;">
         Janell's Gift Vault 🎁💎🎮
       </h1>
-      <p class="text-aero-cyan text-sm tracking-wider uppercase font-semibold">
+      <p class="text-aero-cyan text-xs tracking-wider uppercase font-extrabold" style="font-family: 'Comfortaa', sans-serif;">
         A timeline of yearly birthday surprises
       </p>
     </div>
 
     {/* Gift History Shelf */}
-    <div class="relative z-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8 pb-12 animate-reveal-up">
+    <div class="relative z-10 w-full max-w-lg flex flex-col gap-6 pb-12 animate-reveal-up" style="font-family: 'Patrick Hand', cursive;">
       {gifts.map((gift) => (
-        <div class={`relative rounded-3xl p-6 border-2 flex flex-col justify-between transition-all duration-500 overflow-hidden ${
+        <div class={`relative rounded-3xl p-5 border-2 flex flex-col justify-between transition-all duration-300 overflow-hidden ${
           gift.active 
-            ? 'bg-white/15 border-aero-pink shadow-[0_0_30px_rgba(255,102,196,0.3)] scale-103 hover:scale-105 active:scale-98 animate-pulse-border' 
-            : 'bg-white/5 border-white/10 opacity-70 filter grayscale-50 hover:opacity-90 hover:grayscale-0'
+            ? 'bg-white/15 border-aero-pink shadow-[0_0_30px_rgba(255,102,196,0.3)] scale-100 hover:scale-[1.02] active:scale-98 animate-pulse-border' 
+            : 'bg-white/5 border-white/10 opacity-70 filter grayscale-50'
         }`}>
           {/* Active Ribbon */}
           {gift.active && (
-            <span class="absolute top-3 right-3 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+            <span class="absolute top-3 right-3 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-[9px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-md" style="font-family: 'Comfortaa', sans-serif;">
               Target Bday 🎂
             </span>
           )}
 
           <div>
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-3xl font-mono font-extrabold text-white/50">{gift.year}</span>
-              <span class="text-4xl">{gift.emoji}</span>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-2xl font-mono font-extrabold text-white/50">{gift.year}</span>
+              <span class="text-3xl">{gift.emoji}</span>
             </div>
             
-            <h3 class="text-xl font-bold text-white mb-2 leading-tight" style="font-family: 'Outfit', sans-serif;">
+            <h3 class="text-lg font-bold text-white mb-1 leading-tight" style="font-family: 'Comfortaa', sans-serif;">
               {gift.title}
             </h3>
             
-            <p class="text-sm text-blue-100/80 leading-relaxed mb-6">
+            <p class="text-sm text-blue-100/90 leading-relaxed mb-4">
               {gift.description}
             </p>
           </div>
 
           <div class="mt-auto">
             {gift.active ? (
-              <a href="/gifts/card" class="gift-btn w-full block text-center py-3 rounded-full font-bold text-white uppercase text-xs tracking-wider transition-all select-none cursor-pointer">
+              <a href="/gifts/card" class="gift-btn w-full block text-center py-2.5 rounded-full font-bold text-white uppercase text-xs tracking-wider transition-all select-none cursor-pointer" style="font-family: 'Comfortaa', sans-serif;">
                 🎁 Unwrap Gift 2026
               </a>
             ) : (
-              <button class="w-full bg-white/5 border border-white/10 text-white/40 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider cursor-not-allowed">
+              <button class="w-full bg-white/5 border border-white/10 text-white/40 py-2 rounded-full font-bold text-xs uppercase tracking-wider cursor-not-allowed" style="font-family: 'Comfortaa', sans-serif;">
                 🔐 Archived Gift
               </button>
             )}
@@ -84,24 +84,36 @@ const gifts = APP_CONFIG.giftShelf || [];
         background: linear-gradient(135deg, var(--color-aero-pink) 0%, var(--color-aero-cyan) 100%);
         box-shadow: 0 4px 15px rgba(255, 102, 196, 0.5);
       }
-      .gift-btn:hover {
-        box-shadow: 0 6px 20px rgba(0, 243, 255, 0.7);
-        transform: translateY(-1px);
+      .gift-btn:active {
+        box-shadow: 0 2px 10px rgba(0, 243, 255, 0.7);
+        transform: scale(0.97);
       }
-      /* Transition styling */
       #zoom-overlay {
         transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.55s ease;
       }
     </style>
 
-    <script is:inline>
-      const btn = document.querySelector('.gift-btn');
-      const overlay = document.getElementById('zoom-overlay');
-      if (btn) {
-        btn.addEventListener('click', (e) => {
+    <script>
+      import { haptic } from '../../utils/haptics';
+
+      const backBtn = document.getElementById('back-home-btn');
+      const giftBtn = document.querySelector('.gift-btn') as HTMLAnchorElement;
+      const overlay = document.getElementById('zoom-overlay') as HTMLDivElement;
+
+      if (backBtn) {
+        backBtn.addEventListener('pointerdown', () => haptic.trigger('light'));
+      }
+
+      if (giftBtn) {
+        giftBtn.addEventListener('pointerdown', () => {
+          haptic.trigger('success');
+        });
+
+        giftBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          const href = btn.getAttribute('href');
-          const rect = btn.getBoundingClientRect();
+          const href = giftBtn.getAttribute('href');
+          if (!href) return;
+          const rect = giftBtn.getBoundingClientRect();
           
           const audioPop = new Audio('/resources/sfx/blast.mp3');
           audioPop.volume = 0.4;

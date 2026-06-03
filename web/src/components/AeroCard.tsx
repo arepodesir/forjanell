@@ -1,4 +1,5 @@
 import { createSignal, onMount, onCleanup, Show, For } from 'solid-js';
+import { haptic } from '../utils/haptics';
 
 type CardMeta = {
   edition: string;
@@ -123,16 +124,16 @@ export default function AeroCard(props: AeroCardProps) {
   `;
 
   return (
-    <div class="absolute inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="absolute inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" style={{ "font-family": "'Patrick Hand', cursive" }}>
       {/* Scroll Message Phase */}
       <Show when={showScroll()}>
-        <div class="relative w-full max-w-lg h-[70vh] overflow-hidden aero-glass rounded-3xl p-8">
+        <div class="relative w-full max-w-lg h-[65vh] overflow-hidden aero-glass rounded-3xl p-6">
           <div
             class="absolute bottom-0 w-full animate-move-up pr-12"
             style={{ "animation-duration": `${readTimeSecs()}s` }}
           >
             <p class="text-xl font-bold text-white drop-shadow-md text-center leading-relaxed"
-               style={{ "font-family": "'Outfit', sans-serif" }}>
+               style={{ "font-family": "'Patrick Hand', cursive" }}>
               {props.scrollMsg}
             </p>
           </div>
@@ -141,13 +142,13 @@ export default function AeroCard(props: AeroCardProps) {
 
       {/* Final Holographic Birthday Card */}
       <Show when={showCard()}>
-        <div class="w-full max-w-[460px] flex flex-col items-center animate-reveal-up">
+        <div class="w-full max-w-[420px] flex flex-col items-center animate-reveal-up">
           <div
-            class="holo-card"
+            class="holo-card cursor-grab active:cursor-grabbing"
             ref={cardRef}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
-            style={cardStyles()}
+            style={`${cardStyles()}; touch-action: none;`}
           >
             <div class="holo-card__inner">
               {/* ─── Background Image ──────── */}
@@ -156,44 +157,44 @@ export default function AeroCard(props: AeroCardProps) {
               </div>
               <div class="absolute inset-0 bg-gradient-to-b from-purple-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl"></div>
 
-              {/* ─── Holographic Layers (from pokecards) ─── */}
+              {/* ─── Holographic Layers ─── */}
               <div class="holo-card__glitter"></div>
               <div class="holo-card__shine"></div>
               <div class="holo-card__glare"></div>
 
               {/* ─── Card Content ──────────── */}
-              <div class="relative z-10 flex flex-col items-center text-center p-5 h-full">
+              <div class="relative z-10 flex flex-col items-center text-center p-4 h-full">
                 {/* Top metadata bar */}
-                <div class="w-full flex justify-between items-start mb-3 text-[11px] text-pink-200/70 font-mono">
+                <div class="w-full flex justify-between items-start mb-2 text-[10px] text-pink-200/70 font-mono">
                   <span>{props.cardMeta.id}</span>
                   <span>{props.cardMeta.rarity}</span>
                 </div>
 
                 {/* Profile picture with cap */}
-                <div class="relative w-28 h-28 mb-3 animate-float z-10 shrink-0">
+                <div class="relative w-24 h-24 mb-3 animate-float z-10 shrink-0">
                   <img src="/resources/img/bday-cap.svg"
-                       class="absolute -top-5 -right-3 w-11 h-11 z-20 rotate-12 drop-shadow-lg" alt="" />
+                       class="absolute -top-4 -right-2 w-9 h-9 z-20 rotate-12 drop-shadow-lg" alt="" />
                   <div class="w-full h-full rounded-full border-[3px] border-pink-300/60 overflow-hidden"
-                       style={{ "box-shadow": "0 0 20px rgba(255,102,196,0.5), 0 0 40px rgba(188,19,254,0.2), inset 0 0 10px rgba(0,0,0,0.3)" }}>
+                       style={{ "box-shadow": "0 0 15px rgba(255,102,196,0.5), 0 0 30px rgba(188,19,254,0.2), inset 0 0 8px rgba(0,0,0,0.3)" }}>
                     <img src={props.picUrl} alt={props.name} class="w-full h-full object-cover" />
                   </div>
 
                   {/* Candles */}
-                  <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                  <div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1 z-20">
                     <For each={[1,2,3,4,5]}>
                       {() => (
-                        <div class="w-1.5 h-5 bg-gradient-to-b from-white to-pink-300 rounded-sm relative shadow-md">
-                          <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-2.5 h-3 bg-orange-400 rounded-full blur-[1px] animate-pulse"></div>
-                          <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-1 h-1.5 bg-yellow-200 rounded-full"></div>
+                        <div class="w-1 h-4 bg-gradient-to-b from-white to-pink-300 rounded-sm relative shadow-md">
+                          <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-2 h-2.5 bg-orange-400 rounded-full blur-[1px] animate-pulse"></div>
+                          <div class="absolute -top-1 left-1/2 -translate-x-1/2 w-0.5 h-1 bg-yellow-200 rounded-full"></div>
                         </div>
                       )}
                     </For>
                   </div>
                 </div>
 
-                {/* HBD Text — letter-block animated (Pretext-inspired) */}
-                <h1 class="text-3xl font-extrabold mb-1 leading-tight text-white"
-                    style={{ "font-family": "'Outfit', sans-serif", "text-shadow": "0 0 20px rgba(255,102,196,0.5)" }}>
+                {/* HBD Text — letter-block animated */}
+                <h1 class="text-2xl font-extrabold mb-1 leading-tight text-white"
+                    style={{ "font-family": "'Caveat', cursive", "text-shadow": "0 0 15px rgba(255,102,196,0.5)" }}>
                   <For each={hbdLetters()}>
                     {(letter) => (
                       <span
@@ -207,8 +208,8 @@ export default function AeroCard(props: AeroCardProps) {
                 </h1>
 
                 {/* Name — letter-block animated with inline gradient */}
-                <h2 class="text-2xl font-bold mb-1"
-                    style={{ "font-family": "'Outfit', sans-serif" }}>
+                <h2 class="text-xl font-bold mb-0.5"
+                    style={{ "font-family": "'Caveat', cursive" }}>
                   <For each={nameLetters()}>
                     {(letter) => (
                       <span
@@ -222,27 +223,27 @@ export default function AeroCard(props: AeroCardProps) {
                 </h2>
 
                 {props.nickname && (
-                  <p class="text-pink-200/80 text-xs font-semibold italic mb-3">
+                  <p class="text-pink-200/80 text-[10px] font-semibold italic mb-2">
                     aka "{props.nickname}"
                   </p>
                 )}
 
                 {/* Confetti overlay */}
                 <img src="/resources/img/confetti.svg"
-                     class="absolute inset-0 w-full h-full object-cover opacity-15 pointer-events-none z-0 rounded-2xl"
+                     class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 rounded-2xl"
                      alt="" />
 
                 {/* Message body */}
                 <div class="flex-1 flex items-center overflow-y-auto px-2">
                   <p class="text-blue-100/90 leading-relaxed text-sm"
-                     style={{ "font-family": "'Inter', sans-serif" }}>
+                     style={{ "font-family": "'Patrick Hand', cursive" }}>
                     Wishing you a day filled with joy, sparkles, and infinite beauty! ✨🎂
                   </p>
                 </div>
 
                 {/* Bottom metadata bar (envelope style) */}
-                <div class="w-full mt-3 pt-2 border-t border-white/10">
-                  <div class="flex justify-between items-end text-[9px] text-pink-200/50 font-mono">
+                <div class="w-full mt-2 pt-2 border-t border-white/10">
+                  <div class="flex justify-between items-end text-[8px] text-pink-200/50 font-mono">
                     <div class="text-left leading-tight">
                       <div>{props.cardMeta.series}</div>
                       <div>{props.cardMeta.edition}</div>
@@ -258,12 +259,20 @@ export default function AeroCard(props: AeroCardProps) {
           </div>
 
           {/* Action buttons below the card */}
-          <div class="flex gap-4">
-            <button class="aero-btn mt-5 text-sm tracking-wider select-none cursor-pointer" onClick={() => alert("🎉 The Party Never Ends! 🎉")}>
-              Enjoy your Day! 🎉
+          <div class="flex gap-4 w-full justify-center px-4" style={{ "font-family": "'Comfortaa', sans-serif" }}>
+            <button 
+              onPointerDown={() => haptic.trigger('success')}
+              class="aero-btn mt-4 text-xs tracking-wider select-none cursor-pointer px-4 py-2.5" 
+              onClick={() => alert("🎉 The Party Never Ends! 🎉")}
+            >
+              Enjoy Day! 🎉
             </button>
             <Show when={props.egift}>
-              <button class="aero-btn mt-5 text-sm tracking-wider select-none cursor-pointer" onClick={() => setShowVoucher(true)}>
+              <button 
+                onPointerDown={() => haptic.trigger('heavy')}
+                class="aero-btn mt-4 text-xs tracking-wider select-none cursor-pointer px-4 py-2.5" 
+                onClick={() => setShowVoucher(true)}
+              >
                 🎁 Claim e-Gift!
               </button>
             </Show>
@@ -273,31 +282,37 @@ export default function AeroCard(props: AeroCardProps) {
 
       {/* ─── e-Gift Voucher Modal Overlay ─── */}
       <Show when={showVoucher()}>
-        <div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-4">
+        <div class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center p-4">
           
           {/* Front/Back flipping ticket Container */}
-          <div class="relative w-full max-w-[380px] aspect-[1.6/1] cursor-pointer perspective-1000 mb-8 select-none" onClick={() => setIsFlipped(!isFlipped())}>
+          <div 
+            class="relative w-full max-w-[340px] aspect-[1.6/1] cursor-pointer perspective-1000 mb-6 select-none" 
+            onPointerDown={() => {
+              haptic.trigger('medium');
+              setIsFlipped(!isFlipped());
+            }}
+          >
             <div class={`w-full h-full relative transition-transform duration-700 transform-style-3d ${isFlipped() ? 'rotate-y-180' : ''}`}>
               
               {/* FRONT Side */}
-              <div class="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between backface-hidden bg-gradient-to-br from-yellow-300 via-amber-400 to-amber-600 border-2 border-yellow-200/50 shadow-[0_0_30px_rgba(245,158,11,0.4)] text-amber-950">
+              <div class="absolute inset-0 w-full h-full rounded-2xl p-5 flex flex-col justify-between backface-hidden bg-gradient-to-br from-yellow-300 via-amber-400 to-amber-600 border-2 border-yellow-200/50 shadow-[0_0_20px_rgba(245,158,11,0.4)] text-amber-950">
                 {/* Gloss overlay */}
                 <div class="absolute top-[8%] left-[10%] w-[80%] h-[35%] rounded-full bg-gradient-to-b from-white/60 to-transparent -rotate-12 pointer-events-none"></div>
                 
                 <div class="flex justify-between items-start">
                   <div>
-                    <h3 class="text-2xl font-black tracking-wider uppercase leading-none font-sans">GOLDEN TICKET</h3>
-                    <span class="text-[10px] font-bold tracking-widest uppercase opacity-70">Janell's Bday Pass</span>
+                    <h3 class="text-xl font-black tracking-wider uppercase leading-none font-sans" style={{ "font-family": "'Comfortaa', sans-serif" }}>GOLDEN TICKET</h3>
+                    <span class="text-[9px] font-bold tracking-widest uppercase opacity-70">Janell's Bday Pass</span>
                   </div>
-                  <span class="text-4xl">🎟️</span>
+                  <span class="text-3xl">🎟️</span>
                 </div>
 
                 <div class="my-auto">
-                  <span class="text-xs font-bold block uppercase opacity-80">CLAIMABLE VALUE</span>
-                  <span class="text-4xl font-extrabold tracking-tight">{props.egift?.value || "$100"}</span>
+                  <span class="text-[9px] font-bold block uppercase opacity-80">CLAIMABLE VALUE</span>
+                  <span class="text-3xl font-extrabold tracking-tight">{props.egift?.value || "$100"}</span>
                 </div>
 
-                <div class="flex justify-between items-end border-t border-amber-950/20 pt-2 text-[10px] font-mono">
+                <div class="flex justify-between items-end border-t border-amber-950/20 pt-2 text-[9px] font-mono">
                   <div>
                     <span class="block opacity-65">MERCHANT</span>
                     <span class="font-bold">{props.egift?.merchant || "Spa Day & Coffee"}</span>
@@ -309,37 +324,37 @@ export default function AeroCard(props: AeroCardProps) {
               </div>
 
               {/* BACK Side */}
-              <div class="absolute inset-0 w-full h-full rounded-2xl p-6 flex flex-col justify-between backface-hidden rotate-y-180 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 border-2 border-pink-400/50 shadow-[0_0_30px_rgba(244,63,94,0.4)] text-white">
+              <div class="absolute inset-0 w-full h-full rounded-2xl p-5 flex flex-col justify-between backface-hidden rotate-y-180 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 border-2 border-pink-400/50 shadow-[0_0_20px_rgba(244,63,94,0.4)] text-white">
                 <div class="flex justify-between items-start">
                   <div>
-                    <h3 class="text-lg font-bold tracking-wide leading-none text-aero-cyan">VOUCHER CODE</h3>
-                    <span class="text-[8px] font-mono text-pink-300">SCANNABLE OR ONLINE REDEMPTION</span>
+                    <h3 class="text-base font-bold tracking-wide leading-none text-aero-cyan" style={{ "font-family": "'Comfortaa', sans-serif" }}>VOUCHER CODE</h3>
+                    <span class="text-[7px] font-mono text-pink-300">SCANNABLE OR ONLINE REDEMPTION</span>
                   </div>
-                  <span class="text-3xl text-pink-300">✨</span>
+                  <span class="text-2xl text-pink-300">✨</span>
                 </div>
 
                 {/* Claim Code with neon glow */}
-                <div class="my-auto text-center py-2 px-4 bg-black/40 rounded-lg border border-white/10">
-                  <span class="text-xl font-mono font-extrabold tracking-wider text-aero-cyan" style={{ "text-shadow": "0 0 10px rgba(0,243,255,0.6)" }}>
+                <div class="my-auto text-center py-1.5 px-3 bg-black/40 rounded-lg border border-white/10">
+                  <span class="text-lg font-mono font-extrabold tracking-wider text-aero-cyan" style={{ "text-shadow": "0 0 10px rgba(0,243,255,0.6)" }}>
                     {props.egift?.code || "CLAIM-CODE-ERROR"}
                   </span>
                 </div>
 
                 {/* Instructions */}
-                <p class="text-[9px] text-blue-100/90 leading-tight my-1 text-center">
+                <p class="text-[8px] text-blue-100/90 leading-tight my-1 text-center">
                   {props.egift?.instructions || "Show code to merchant."}
                 </p>
 
                 {/* Mock Barcode */}
                 <div class="flex flex-col items-center gap-1 border-t border-white/10 pt-2">
-                  <div class="h-6 w-full max-w-[200px] bg-white rounded-sm p-1 flex justify-between gap-[2px]">
+                  <div class="h-5 w-full max-w-[180px] bg-white rounded-sm p-0.5 flex justify-between gap-[1px]">
                     <For each={[1,3,1,2,4,1,3,2,1,4,2,3,1,1,2,4,2,1,3]}>
                       {(width) => (
                         <div class="h-full bg-black" style={{ width: `${width}px` }}></div>
                       )}
                     </For>
                   </div>
-                  <span class="text-[8px] font-mono text-white/50">🔄 Tap to Flip Back</span>
+                  <span class="text-[7px] font-mono text-white/50">🔄 Tap to Flip Back</span>
                 </div>
               </div>
 
@@ -347,7 +362,12 @@ export default function AeroCard(props: AeroCardProps) {
           </div>
 
           {/* Close button */}
-          <button class="aero-btn text-xs px-8 py-2 bg-gradient-to-r from-aero-pink to-aero-cyan hover:scale-105 select-none cursor-pointer" onClick={() => setShowVoucher(false)}>
+          <button 
+            onPointerDown={() => haptic.trigger('light')}
+            class="aero-btn text-[10px] px-6 py-2 bg-gradient-to-r from-aero-pink to-aero-cyan hover:scale-105 select-none cursor-pointer" 
+            style={{ "font-family": "'Comfortaa', sans-serif" }}
+            onClick={() => setShowVoucher(false)}
+          >
             Close Voucher
           </button>
         </div>
@@ -372,16 +392,16 @@ export default function AeroCard(props: AeroCardProps) {
       {/* Balloons — only show with final card */}
       <Show when={showCard()}>
         <img src="/resources/img/balloon-left.png"
-             class="absolute bottom-0 left-0 w-20 h-auto animate-float opacity-70 pointer-events-none"
+             class="absolute bottom-0 left-0 w-16 h-auto animate-float opacity-70 pointer-events-none"
              style={{ "animation-delay": "0.5s" }} alt="" />
         <img src="/resources/img/balloon-right.png"
-             class="absolute bottom-10 right-0 w-20 h-auto animate-float opacity-70 pointer-events-none"
+             class="absolute bottom-10 right-0 w-16 h-auto animate-float opacity-70 pointer-events-none"
              style={{ "animation-delay": "1.5s" }} alt="" />
         {/* Flags — only show with final card */}
         <img src="/resources/img/flag-left.png"
-             class="absolute top-0 left-0 w-28 h-auto opacity-50 pointer-events-none" alt="" />
+             class="absolute top-0 left-0 w-24 h-auto opacity-50 pointer-events-none" alt="" />
         <img src="/resources/img/flag-right.png"
-             class="absolute top-0 right-0 w-28 h-auto opacity-50 pointer-events-none" alt="" />
+             class="absolute top-0 right-0 w-24 h-auto opacity-50 pointer-events-none" alt="" />
       </Show>
     </div>
   );

@@ -1,5 +1,6 @@
 ---
 import Application from '../../layouts/Application.astro'
+import MessageList from '../../components/MessageList'
 
 const MESSAGES = [
   {
@@ -34,40 +35,33 @@ const MESSAGES = [
 ---
 
 <Application title="For Janell" subTitle=" | Messages">
-  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-6"
+  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-4 pb-safe pt-safe"
        style="background-image: url('/resources/img/Hallway.png');">
-    <div class="absolute inset-0 bg-gradient-to-b from-indigo-950/70 via-purple-950/60 to-black/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-indigo-950/70 via-purple-950/60 to-black/80 pointer-events-none"></div>
 
     {/* Floating Back to Home button */}
-    <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+    <a href="/" id="back-home-btn" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
       🏠 Back Home
     </a>
 
-    <div class="relative z-10 w-full max-w-4xl text-center mt-12 mb-8">
-      <h1 class="text-4xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Outfit', sans-serif;">
+    <div class="relative z-10 w-full max-w-lg text-center mt-16 mb-6">
+      <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Caveat', cursive;">
         Messages for Janell 💌
       </h1>
-      <p class="text-pink-200/80 text-sm tracking-wider uppercase font-semibold">
+      <p class="text-pink-200/80 text-xs tracking-wider uppercase font-extrabold animate-pulse" style="font-family: 'Comfortaa', sans-serif;">
         Words of Love & Celebration
       </p>
     </div>
 
-    {/* Messages Grid */}
-    <div class="relative z-10 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 pb-12 animate-reveal-up">
-      {MESSAGES.map((msg, idx) => (
-        <div class={`aero-glass rounded-2xl p-6 border-2 ${msg.color} shadow-lg transition-transform hover:scale-102 hover:-translate-y-1 duration-300 flex flex-col justify-between`}
-             style={`background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); animation-delay: ${idx * 0.15}s;`}>
-          <p class="text-white text-base leading-relaxed mb-6 italic" style="font-family: 'Inter', sans-serif;">
-            "{msg.text}"
-          </p>
-          <div class="flex justify-between items-center border-t border-white/10 pt-4 mt-auto">
-            <span class="font-extrabold text-white text-lg">{msg.sender}</span>
-            <span class="text-xs font-mono px-3 py-1 rounded-full bg-white/10 text-white/70 uppercase">
-              {msg.relation}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
+    {/* Message list component (Client-side with Pretext line measurement and tactile/haptic features) */}
+    <MessageList client:load messages={MESSAGES} />
   </div>
+
+  <script>
+    import { haptic } from '../../utils/haptics';
+    const backBtn = document.getElementById('back-home-btn');
+    if (backBtn) {
+      backBtn.addEventListener('pointerdown', () => haptic.trigger('light'));
+    }
+  </script>
 </Application>

@@ -3,83 +3,101 @@ import Application from '../../layouts/Application.astro'
 ---
 
 <Application title="For Janell" subTitle=" | About">
-  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center justify-center p-6"
+  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center justify-start p-4 pb-safe pt-safe"
        style="background-image: url('/resources/img/stars.png');">
-    <div class="absolute inset-0 bg-gradient-to-b from-blue-900/60 via-purple-900/40 to-indigo-900/70"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-blue-900/60 via-purple-900/40 to-indigo-900/70 pointer-events-none"></div>
 
     {/* Floating Back to Home button */}
-    <a href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+    <a href="/" id="back-home-btn" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
       🏠 Back Home
     </a>
 
-    <div class="relative z-10 w-full max-w-2xl aero-glass rounded-3xl p-8 text-white mt-12 animate-reveal-up">
-      <div class="flex flex-col md:flex-row items-center gap-8">
+    <div class="relative z-10 w-full max-w-lg aero-glass rounded-3xl p-6 text-white mt-16 animate-reveal-up border-white/20 shadow-2xl">
+      <div class="flex flex-col items-center gap-6">
         
         {/* Profile Picture Frame */}
-        <div class="relative w-40 h-40 shrink-0 animate-float">
-          <div class="w-full h-full rounded-2xl border-4 border-aero-cyan overflow-hidden"
+        <div class="relative w-36 h-36 shrink-0 animate-float" id="avatar-frame">
+          <div class="w-full h-full rounded-full border-4 border-aero-cyan overflow-hidden"
                style="box-shadow: 0 0 20px rgba(0,243,255,0.6), 0 0 40px rgba(188,19,254,0.3);">
             <img src="/resources/img/janell.png" alt="Janell" class="w-full h-full object-cover" />
           </div>
-          <span class="absolute -bottom-2 -right-2 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-xs font-bold px-3 py-1 rounded-full border border-white/40">
+          <span class="absolute -bottom-1 -right-1 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-[10px] font-extrabold px-3 py-1 rounded-full border border-white/40 shadow-lg">
             ★ MVP
           </span>
         </div>
 
         {/* Profile Details */}
-        <div class="flex-1 text-center md:text-left">
-          <h1 class="text-4xl font-extrabold mb-1 tracking-wide" style="font-family: 'Outfit', sans-serif;">
+        <div class="w-full text-center">
+          <h1 class="text-3xl font-extrabold mb-1 tracking-wide" style="font-family: 'Caveat', cursive;">
             Janell Hill-Bridget
           </h1>
-          <p class="text-aero-cyan font-semibold text-sm mb-4 tracking-wider uppercase">
+          <p class="text-aero-cyan font-bold text-xs mb-4 tracking-wider uppercase" style="font-family: 'Comfortaa', sans-serif;">
             ✦ Quantum Birthday Recipient ✦
           </p>
-          <div class="grid grid-cols-2 gap-4 text-left text-sm font-mono bg-black/20 p-4 rounded-xl border border-white/10">
+          <div class="grid grid-cols-2 gap-3 text-left text-xs font-semibold bg-black/20 p-4 rounded-xl border border-white/10" style="font-family: 'Patrick Hand', cursive;">
             <div>
-              <span class="text-white/50 block">ZODIAC</span>
+              <span class="text-white/50 block text-[9px] font-mono">ZODIAC</span>
               <span class="text-white font-bold">Taurus ♉</span>
             </div>
             <div>
-              <span class="text-white/50 block">RARITY</span>
+              <span class="text-white/50 block text-[9px] font-mono">RARITY</span>
               <span class="text-aero-pink font-bold">✦ Ultra Rare Holo</span>
             </div>
             <div>
-              <span class="text-white/50 block">EDITION</span>
+              <span class="text-white/50 block text-[9px] font-mono">EDITION</span>
               <span class="text-white font-bold">2026 Edition</span>
             </div>
             <div>
-              <span class="text-white/50 block">CARD ID</span>
+              <span class="text-white/50 block text-[9px] font-mono">CARD ID</span>
               <span class="text-aero-cyan font-bold">HC-001</span>
             </div>
           </div>
         </div>
       </div>
 
-      <hr class="border-white/10 my-6" />
+      <hr class="border-white/10 my-5" />
 
-      {/* Description */}
-      <div class="space-y-4">
-        <h2 class="text-2xl font-bold text-aero-cyan" style="font-family: 'Outfit', sans-serif;">
+      {/* Bio & Attributes */}
+      <div class="space-y-4 text-sm leading-relaxed" style="font-family: 'Patrick Hand', cursive;">
+        <h2 class="text-xl font-bold text-aero-cyan" style="font-family: 'Comfortaa', sans-serif;">
           Bio & Attributes 💎
         </h2>
-        <p class="text-blue-100/90 leading-relaxed">
+        <p class="text-blue-100/90 font-medium">
           Janell is a legendary individual, known across multiple servers and quantum realms for her dazzling aura, stellar fashion sense, and crystal-clear energy. This card represents a yearly extraction from the friendship field, designed to celebrate another year of her amazing existence!
         </p>
-        <p class="text-blue-100/90 leading-relaxed">
+        <p class="text-blue-100/90 font-medium">
           She is certified 100% awesome, immune to bad vibes, and possesses a passive skill: <strong class="text-aero-pink">Instant Sparkle</strong>, which automatically brightens up any room she walks into. ✨
         </p>
       </div>
 
       {/* Attributes Bar */}
-      <div class="mt-8 space-y-3">
-        <div class="flex justify-between text-xs font-mono">
+      <div class="mt-6 space-y-2">
+        <div class="flex justify-between text-[10px] font-mono">
           <span>SPARKLE LEVEL</span>
           <span class="text-aero-cyan font-bold">OVER 9000</span>
         </div>
-        <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/10">
+        <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/10" id="sparkle-bar">
           <div class="h-full bg-gradient-to-r from-aero-cyan to-aero-pink rounded-full animate-shimmer" style="width: 100%; background-size: 200% 100%;"></div>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    import { haptic } from '../../utils/haptics';
+
+    const backBtn = document.getElementById('back-home-btn');
+    const avatar = document.getElementById('avatar-frame');
+    const sparkle = document.getElementById('sparkle-bar');
+
+    if (backBtn) {
+      backBtn.addEventListener('pointerdown', () => haptic.trigger('light'));
+    }
+    if (avatar) {
+      avatar.addEventListener('pointerdown', () => haptic.trigger('success'));
+    }
+    if (sparkle) {
+      sparkle.addEventListener('pointerdown', () => haptic.trigger('medium'));
+    }
+  </script>
 </Application>
