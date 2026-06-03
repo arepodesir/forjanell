@@ -18,10 +18,10 @@ artist = "The Universe"
 
 # ─── Scene Background Images ─────────────────────────
 [sceneBackgrounds]
-1 = "/resources/img/bedroom.png"
-2 = "/resources/img/nature.png"
-3 = "/resources/img/Hallway.png"
-4 = "/resources/img/stars.png"
+1 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaG9wMWJndTViMHpsbHkycXp3c2sxbDBrd3I5ZGFidmRncXZ0MmtxNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/p20x9S3f3sBoc/giphy.gif"
+2 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzY5bmFhdjkyZ3ZqdjM5OTBtOHB5NmY1bXZ0dzVjNTV2c3JzbDkyYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlIDlDcCst1E5tC/giphy.gif"
+3 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzJvNjBucTZ2ZzhobXpzaWFpeG5xbmpyNHUxbDR3MG8xOTQ5ZTZ0MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Hh1v8dO989B8A/giphy.gif"
+4 = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjA2cmE0a2M0Znp4OTAwMHM2Z3I4M3kyNTR4OHp2cnA2OHV0aGNxbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT8qAY7e9If38SskrK/giphy.gif"
 
 # ─── Scene Messages ──────────────────────────────────
 [sceneMessages]
@@ -39,12 +39,12 @@ artist = "The Universe"
 
 # ─── Audio Files ─────────────────────────────────────
 [audio]
-switch = "/resources/sfx/switch.mp3"
-door = "/resources/sfx/door.mp3"
-mystic = "/resources/sfx/haunted-bgm.mp3"
-blast = "/resources/sfx/blast.mp3"
+switch = "https://www.soundjay.com/nature/sounds/twig-snap-01.mp3"
+door = "https://www.soundjay.com/nature/sounds/wind-breeze-01.mp3"
+mystic = "https://www.soundjay.com/nature/sounds/river-1.mp3"
+blast = "https://www.soundjay.com/nature/sounds/water-splash-1.mp3"
 hbd = "/assets/audio/main.wav"
-ambient = "/resources/sfx/hbd.mp3"
+ambient = "https://www.soundjay.com/nature/sounds/birds-chirping-05.mp3"
 
 # ─── eGift Voucher Details ───────────────────────────
 [egift]
