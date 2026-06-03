@@ -7,20 +7,22 @@ export default function ThreeCard() {
   let renderer: THREE.WebGLRenderer | undefined;
   let scene: THREE.Scene | undefined;
   let camera: THREE.PerspectiveCamera | undefined;
-  let cardMesh: THREE.Mesh | undefined;
+  let cardGroup: THREE.Group | undefined;
   let bubbles: THREE.Mesh[] = [];
   let requestRef: number | undefined;
 
   const [motionActive, setMotionActive] = createSignal(false);
   const [loading, setLoading] = createSignal(true);
 
-  // Animation values (card starts flat facing the screen)
+  // Interaction & orientation values
   let targetRotateX = 0;
   let targetRotateY = 0;
+  let gyroRotateX = 0;
+  let gyroRotateY = 0;
   let currentRotateX = 0;
   let currentRotateY = 0;
+  let isPointerDown = false;
   
-  // Point light for moving reflections
   let pointLight: THREE.PointLight | undefined;
   let holoTexture: THREE.CanvasTexture | undefined;
 
@@ -32,8 +34,8 @@ export default function ThreeCard() {
     const pitch = (e.beta - 50) * (Math.PI / 180) * 0.45; // assume phone is tilted at ~50 deg
     const roll = e.gamma * (Math.PI / 180) * 0.45;
     
-    targetRotateX = Math.max(-0.45, Math.min(0.45, pitch));
-    targetRotateY = Math.max(-0.45, Math.min(0.45, roll));
+    gyroRotateX = Math.max(-0.45, Math.min(0.45, pitch));
+    gyroRotateY = Math.max(-0.45, Math.min(0.45, roll));
     setMotionActive(true);
   };
 
@@ -67,7 +69,7 @@ export default function ThreeCard() {
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0a0c1b, 0.04);
 
-    // Bring camera slightly closer for a larger, highly readable card
+    // Bring camera closer for a larger, legible card view
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.z = 11.2;
 
@@ -75,11 +77,10 @@ export default function ThreeCard() {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
-    renderer.shadowMap.enabled = true;
     canvasContainerRef.appendChild(renderer.domElement);
 
     // 3. Setup Lights (high specular highlights for holo sheen)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
     scene.add(ambientLight);
 
     const dirLight1 = new THREE.DirectionalLight(0x00f3ff, 1.8);
@@ -94,7 +95,7 @@ export default function ThreeCard() {
     pointLight.position.set(0, 0, 5);
     scene.add(pointLight);
 
-    // 4. Create Card Geometry (Rounded Rectangle shape)
+    // 4. Create Card Shape (Rounded Rectangle)
     const cardW = 5.2;
     const cardH = 8.0;
     const radius = 0.55;
@@ -110,31 +111,21 @@ export default function ThreeCard() {
     shape.lineTo(-cardW / 2 + radius, -cardH / 2);
     shape.quadraticCurveTo(-cardW / 2, -cardH / 2, -cardW / 2, -cardH / 2 + radius);
 
-    const extrudeSettings = {
-      depth: 0.18,
-      bevelEnabled: true,
-      bevelSegments: 8,
-      steps: 1,
-      bevelSize: 0.06,
-      bevelThickness: 0.06,
-    };
-    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-
     // 5. Canvas Textures
     // Create Holographic Foil overlay canvas texture (simulating Pokemon shine card)
     const holoCanvas = document.createElement('canvas');
-    holoCanvas.width = 512;
-    holoCanvas.height = 512;
+    holoCanvas.width = 256;
+    holoCanvas.height = 256;
     const hCtx = holoCanvas.getContext('2d')!;
-    const hGrad = hCtx.createLinearGradient(0, 0, 512, 512);
-    hGrad.addColorStop(0.0, 'rgba(255, 0, 0, 0.25)');
-    hGrad.addColorStop(0.2, 'rgba(255, 0, 255, 0.25)');
-    hGrad.addColorStop(0.4, 'rgba(0, 0, 255, 0.25)');
-    hGrad.addColorStop(0.6, 'rgba(0, 255, 255, 0.25)');
-    hGrad.addColorStop(0.8, 'rgba(0, 255, 0, 0.25)');
-    hGrad.addColorStop(1.0, 'rgba(255, 255, 0, 0.25)');
+    const hGrad = hCtx.createLinearGradient(0, 0, 256, 256);
+    hGrad.addColorStop(0.0, 'rgba(255, 0, 0, 0.2)');
+    hGrad.addColorStop(0.2, 'rgba(255, 0, 255, 0.2)');
+    hGrad.addColorStop(0.4, 'rgba(0, 0, 255, 0.2)');
+    hGrad.addColorStop(0.6, 'rgba(0, 255, 255, 0.2)');
+    hGrad.addColorStop(0.8, 'rgba(0, 255, 0, 0.2)');
+    hGrad.addColorStop(1.0, 'rgba(255, 255, 0, 0.2)');
     hCtx.fillStyle = hGrad;
-    hCtx.fillRect(0, 0, 512, 512);
+    hCtx.fillRect(0, 0, 256, 256);
     
     holoTexture = new THREE.CanvasTexture(holoCanvas);
     holoTexture.wrapS = THREE.RepeatWrapping;
@@ -155,18 +146,21 @@ export default function ThreeCard() {
 
     // Main Draw Function for Texture
     const drawCardTexture = () => {
+      // Clear canvas
+      ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+
       // Background Gradient for front of card
       const grad = ctx.createLinearGradient(0, 0, textCanvas.width, textCanvas.height);
-      grad.addColorStop(0, '#0a0927');
-      grad.addColorStop(0.4, '#240b36');
-      grad.addColorStop(1, '#0e082c');
+      grad.addColorStop(0, '#0f082e');
+      grad.addColorStop(0.4, '#260a3a');
+      grad.addColorStop(1, '#0b0722');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
 
-      // Shimmer background lines
-      ctx.strokeStyle = 'rgba(0, 243, 255, 0.16)';
+      // Shimmer background diagonal lines
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.14)';
       ctx.lineWidth = 4;
-      for (let i = -textCanvas.height; i < textCanvas.width; i += 60) {
+      for (let i = -textCanvas.height; i < textCanvas.width; i += 64) {
         ctx.beginPath();
         ctx.moveTo(i, 0);
         ctx.lineTo(i + textCanvas.height, textCanvas.height);
@@ -174,7 +168,7 @@ export default function ThreeCard() {
       }
 
       // Elegant inner border frame
-      ctx.strokeStyle = 'rgba(255, 102, 196, 0.6)';
+      ctx.strokeStyle = 'rgba(255, 102, 196, 0.55)';
       ctx.lineWidth = 14;
       ctx.strokeRect(30, 30, textCanvas.width - 60, textCanvas.height - 60);
 
@@ -305,14 +299,13 @@ export default function ThreeCard() {
     const faceTexture = new THREE.CanvasTexture(textCanvas);
 
     // 6. Materials
-    // Glass back and beveled border material
+    // Glass backplate and beveled border material
     const glassMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       roughness: 0.05,
       metalness: 0.1,
       transmission: 0.96,
       ior: 1.54,
-      thickness: 1.8,
       transparent: true,
       opacity: 0.95,
       clearcoat: 1.0,
@@ -322,27 +315,47 @@ export default function ThreeCard() {
       iridescenceThicknessRange: [100, 800]
     });
 
-    // Front material mapping the canvas texture + shifting foil overlay
+    // Front material mapping the canvas texture (applied to ShapeGeometry)
     const frontMaterial = new THREE.MeshPhysicalMaterial({
       map: faceTexture,
-      roughness: 0.14,
-      metalness: 0.15,
+      roughness: 0.12,
+      metalness: 0.1,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.06,
-      iridescence: 0.8,
+      clearcoatRoughness: 0.04,
+      iridescence: 0.7,
       iridescenceIOR: 1.5,
       iridescenceThicknessRange: [200, 700],
-      transmission: 0.2, // slightly transmissive glass front
       transparent: true,
-      // project the rainbow texture on top to make it sparkle like a pokecard
       emissiveMap: holoTexture,
-      emissive: new THREE.Color(0x333333),
+      emissive: new THREE.Color(0x383838),
       emissiveIntensity: 1.0
     });
 
-    // 7. Assemble Mesh (slot 0: face, slot 1: sides/bevel)
-    cardMesh = new THREE.Mesh(geometry, [frontMaterial, glassMaterial]);
-    scene.add(cardMesh);
+    // 7. Assemble Card Group
+    cardGroup = new THREE.Group();
+    scene.add(cardGroup);
+
+    // Extruded glass backplate geometry
+    const extrudeSettings = {
+      depth: 0.15,
+      bevelEnabled: true,
+      bevelSegments: 8,
+      steps: 1,
+      bevelSize: 0.05,
+      bevelThickness: 0.05,
+    };
+    const backGeom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    const backMesh = new THREE.Mesh(backGeom, glassMaterial);
+    // Offset slightly back to center the card
+    backMesh.position.z = -0.075;
+    cardGroup.add(backMesh);
+
+    // Front face geometry using ShapeGeometry (rounded corner mapping, perfect normalized UV coordinates!)
+    const frontGeom = new THREE.ShapeGeometry(shape);
+    const frontMesh = new THREE.Mesh(frontGeom, frontMaterial);
+    // Align flush with front face of the extruded backing (Z = depth + bevelThickness = 0.15 + 0.05)
+    frontMesh.position.z = 0.076;
+    cardGroup.add(frontMesh);
 
     // 8. 3D Drifting Bubbles
     const bubbleGeo = new THREE.SphereGeometry(0.38, 32, 32);
@@ -376,7 +389,15 @@ export default function ThreeCard() {
       bubbles.push(bubble);
     }
 
-    // 9. Pointer Coordinate tracking (moving lights and holo projection)
+    // 9. Pointer coordinate tracking & interactive drag tilt
+    const handlePointerDown = () => {
+      isPointerDown = true;
+    };
+    
+    const handlePointerUp = () => {
+      isPointerDown = false;
+    };
+
     const handlePointerMove = (e: PointerEvent) => {
       if (!canvasContainerRef) return;
       
@@ -384,13 +405,15 @@ export default function ThreeCard() {
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
       
-      // Tilt card slightly on hover (desktop)
-      if (!motionActive() && cardMesh) {
-        targetRotateY = x * 0.35;
-        targetRotateX = y * 0.35;
+      // Tilt card slightly on hover/drag (desktop)
+      if (!motionActive() && cardGroup) {
+        // Dragging increases tilt weight for interactive tactile response
+        const factor = isPointerDown ? 0.52 : 0.36;
+        targetRotateY = x * factor;
+        targetRotateX = y * factor;
       }
 
-      // Sweep lighting coordinate
+      // Sweep lighting coordinates
       if (pointLight) {
         pointLight.position.set(x * 6, y * 7, 4.5);
       }
@@ -404,6 +427,8 @@ export default function ThreeCard() {
       }
     };
 
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('pointermove', handlePointerMove);
     canvasContainerRef.addEventListener('pointerleave', handlePointerLeave);
     window.addEventListener('deviceorientation', handleOrientation);
@@ -411,22 +436,25 @@ export default function ThreeCard() {
     // 10. Animation Loop
     const tick = () => {
       // Smooth lerp towards targets (starts at 0, 0 so it's perfectly flat initially)
-      currentRotateX += (targetRotateX - currentRotateX) * 0.08;
-      currentRotateY += (targetRotateY - currentRotateY) * 0.08;
+      const destX = motionActive() ? gyroRotateX : targetRotateX;
+      const destY = motionActive() ? gyroRotateY : targetRotateY;
 
-      if (cardMesh) {
-        cardMesh.rotation.x = currentRotateX;
-        cardMesh.rotation.y = currentRotateY;
+      currentRotateX += (destX - currentRotateX) * 0.08;
+      currentRotateY += (destY - currentRotateY) * 0.08;
 
-        // Shift holographic foil emissive texture offsets in reaction to tilt angles (Pokecard effect)
+      if (cardGroup) {
+        cardGroup.rotation.x = currentRotateX;
+        cardGroup.rotation.y = currentRotateY;
+
+        // Shift holographic foil emissive texture offsets in reaction to tilt angles (Pokecard shimmer effect)
         if (holoTexture) {
-          holoTexture.offset.x = currentRotateY * 0.4;
-          holoTexture.offset.y = currentRotateX * 0.4;
+          holoTexture.offset.x = currentRotateY * 0.35;
+          holoTexture.offset.y = currentRotateX * 0.35;
         }
 
         // Float up and down gently (without tilting)
         const t = Date.now() * 0.0006;
-        cardMesh.position.y = Math.sin(t) * 0.12;
+        cardGroup.position.y = Math.sin(t) * 0.12;
       }
 
       // Drift 3D bubbles upward
@@ -470,6 +498,8 @@ export default function ThreeCard() {
 
     onCleanup(() => {
       resizeObserver.disconnect();
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('deviceorientation', handleOrientation);
       if (requestRef) cancelAnimationFrame(requestRef);
@@ -480,7 +510,7 @@ export default function ThreeCard() {
   return (
     <div 
       ref={canvasContainerRef}
-      class="w-full h-[400px] md:h-[450px] relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl flex items-center justify-center cursor-grab active:cursor-grabbing"
+      class="w-full h-full relative rounded-3xl overflow-hidden border border-white/20 shadow-2xl flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
         "backdrop-filter": "blur(12px)",
@@ -499,7 +529,7 @@ export default function ThreeCard() {
       {/* Touch Guide for Gyroscope */}
       <Show when={!motionActive() && !loading()}>
         <button 
-          class="absolute bottom-4 z-10 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/70 text-[10px] uppercase font-bold tracking-wider active:scale-95 transition-all select-none"
+          class="absolute bottom-4 z-10 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 text-white/70 text-[10px] uppercase font-bold tracking-wider active:scale-95 transition-all select-none"
           style={{ "font-family": "'Comfortaa', sans-serif" }}
           onClick={requestPermission}
         >
