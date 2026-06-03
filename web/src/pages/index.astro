@@ -222,7 +222,7 @@ const pageProps: PageProps = {
       const bg = window.getComputedStyle(bubble).background;
 
       // Sound pop feedback
-      const audioPop = new Audio("/resources/sfx/blast.mp3");
+      const audioPop = new Audio("/resources/sfx/bubble.wav");
       audioPop.volume = 0.4;
       audioPop.play().catch(() => {});
 

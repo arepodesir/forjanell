@@ -23,16 +23,16 @@ artist = "AREPO"
 
 # ─── Scene Messages ──────────────────────────────────
 [sceneMessages]
-1 = ["Welcome to your magical birthday bubble, Janell! 🫧✨", "Within this floating sphere lies a crystalline birthday extract.", "Pop the bubble to unlock your holographic greeting and main melody!"]
+1 = ["Welcome to your special birthday space, Janell! 🫧✨", "I built this little visual universe just for you to celebrate your warmth, kindness, and beauty.", "Let the music play, breathe in the good vibes, and pop this bubble to reveal your gift! 💖"]
 
 # ─── Scene Action Labels ─────────────────────────────
 [sceneActions]
-1 = { emoji = "🫧", label = "Pop Bubble & Play Song" }
+1 = { emoji = "🫧", label = "Pop Bubble & Reveal Card" }
 
 # ─── Audio Files ─────────────────────────────────────
 [audio]
-bubble = "https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav"
-pop = "https://assets.mixkit.co/active_storage/sfx/2006/2006-84.wav"
+bubble = "/assets/audio/main.wav"
+pop = ""
 hbd = "/assets/audio/main.wav"
 
 # ─── eGift Voucher Details ───────────────────────────

@@ -269,7 +269,7 @@ export default function ThreeCard(props: ThreeCardProps) {
             onPointerDown={() => haptic.trigger('success')}
             class="aero-btn text-xs tracking-wider select-none cursor-pointer px-5 py-2.5" 
             onClick={() => {
-              const audio = new Audio('/resources/sfx/blast.mp3');
+              const audio = new Audio('/resources/sfx/bubble.wav');
               audio.volume = 0.5;
               audio.play().catch(() => {});
               alert("🎉 The Party Never Ends! Wishing you the best day, Janell! 🎉");
@@ -282,7 +282,7 @@ export default function ThreeCard(props: ThreeCardProps) {
               onPointerDown={() => haptic.trigger('heavy')}
               class="aero-btn text-xs tracking-wider select-none cursor-pointer px-5 py-2.5" 
               onClick={() => {
-                const audio = new Audio('/resources/sfx/blast.mp3');
+                const audio = new Audio('/resources/sfx/bubble.wav');
                 audio.volume = 0.5;
                 audio.play().catch(() => {});
                 setShowVoucher(true);

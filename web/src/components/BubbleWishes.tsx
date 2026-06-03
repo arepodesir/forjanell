@@ -32,7 +32,7 @@ export default function BubbleWishes() {
 
     // Play sound
     if (!audioPop) {
-      audioPop = new Audio('/resources/sfx/blast.mp3');
+      audioPop = new Audio('/resources/sfx/bubble.wav');
       audioPop.volume = 0.5;
     }
     audioPop.currentTime = 0;
