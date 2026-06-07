@@ -1,5 +1,5 @@
 import tomlRaw from './config.toml?raw';
-import { parseTOML } from './parser';
+import { parseTOML } from '@/utils/parsers';
 
 // Parse raw TOML file at build-time or runtime
 const parsedConfig = parseTOML(tomlRaw);

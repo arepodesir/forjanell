@@ -32,12 +32,12 @@ const MESSAGES = [
     gradient: "from-green-500/20 to-teal-500/20"
   }
 ]
+
+import Container from '../../layouts/Container.astro'
 ---
 
 <Application title="For Janell" subTitle=" | Messages">
-  <div class="relative w-full h-full min-h-screen overflow-y-auto bg-cover bg-center flex flex-col items-center p-4 pb-safe pt-safe"
-       style="background-image: url('/resources/img/Hallway.png');">
-    <div class="absolute inset-0 bg-gradient-to-b from-indigo-950/70 via-purple-950/60 to-black/80 pointer-events-none"></div>
+<Container>
 
     {/* Floating Back to Home button */}
     <a href="/" id="back-home-btn" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
@@ -64,4 +64,5 @@ const MESSAGES = [
       backBtn.addEventListener('pointerdown', () => haptic.trigger('light'));
     }
   </script>
+  </Container>
 </Application>
