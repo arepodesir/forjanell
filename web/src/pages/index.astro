@@ -70,26 +70,12 @@ const pageProps: PageProps = {
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
       {/* Glowing glass welcome header */}
-      <div class="aero-glass rounded-3xl p-3 md:p-5 text-white w-full border-white/20 animate-reveal-up text-center shadow-[0_8px_32px_rgba(255,102,196,0.15)] shrink-0">
-        <h1
-          class="text-3xl md:text-5xl font-normal mb-1 tracking-tight drop-shadow-md text-glow"
-          style="font-family: 'Great Vibes', cursive;"
-        >
-          {pageProps.welcomeTitle}
-        </h1>
-        <div class="flex justify-center w-full">
-          <PretextShift 
-            client:load 
-            text={pageProps.welcomeDesc} 
-            font="14px 'Patrick Hand'" 
-            lineHeight={20} 
-            class="text-center text-blue-100/90 leading-relaxed font-medium justify-center items-center flex" 
-          />
-        </div>
+      <div class=" rounded-3xl p-3 md:p-5 text-white w-full border-white/20 animate-reveal-up text-center shadow-[0_8px_32px_rgba(255,102,196,0.15)] shrink-0">
+    
       </div>
 
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}
-      <div class="w-full h-[270px] xs:h-[310px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
+      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
         <ThreeCard 
           client:load 
           name="For Janell"
