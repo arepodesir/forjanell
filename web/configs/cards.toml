@@ -1,0 +1,27 @@
+# ─── Hadacard + Recipient + eGift Domain ────────────────────────────────────
+# IIPS: Clear nested tables for cardMeta/egift/recipient. No magic numeric keys.
+# This is the prescriptive source for holographic card data and voucher.
+
+[recipient]
+name = "For Janell"
+nickname = "Janell"
+picUrl = "/resources/img/janell.png"
+hbdMessage = "Happy Belated Birthday!"
+scrollMsg = "Hey JANELL! Today is YOUR day. The stars aligned, the crystals collapsed, and this card extracted itself from the quantum field just for you. May every moment sparkle with joy, every dream glow with possibility, and every heartbeat pulse with love. You are absolutely amazing. Never forget that. Happy Birthday, beautiful soul!"
+openDate = ""
+birthDate = "1993-05-02"
+
+[cardMeta]
+edition = "Birthday Edition"
+series = "Digital Card"
+id = "HC-001"
+rarity = "✦ Ultra Rare Holo"
+year = "2026"
+artist = "AREPO"
+
+[egift]
+title = "Relaxing Spa Treatment & Treats"
+value = "$100"
+merchant = "Nirvana Wellness"
+code = "JELL-BDAY-2026-SPADAY"
+instructions = "Show this golden ticket to redeem your special birthday spa day & double-shot coffee pastry combo! 💆‍♀️☕🧁"

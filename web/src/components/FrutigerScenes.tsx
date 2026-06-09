@@ -1,5 +1,5 @@
 import { createSignal, onMount, onCleanup, Show } from 'solid-js';
-import ThreeCard from './ThreeCard';
+import Hadacard from '@/components/Hadacard/Hadacard';
 import PretextShift from './PretextShift';
 import { haptic } from '../utils/haptics';
 
@@ -340,7 +340,7 @@ export default function FrutigerScenes(props: EnvProps) {
         {/* Stage 2: Final Card Stage (3D Holographic Card) */}
         <Show when={scene() === 2}>
           <div class="z-20 w-full min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-start p-4 py-8">
-            <ThreeCard 
+            <Hadacard 
               client:load
               name={props.name}
               nickname={props.nickname}

@@ -1,0 +1,13 @@
+# ─── Asset Manifest (config-declared audio + images) ────────────────────────
+# IIPS: Grouped under tables. Single place for paths consumed by useConfig + views.
+# (Broader resources live under public/resources; this is the declared subset.)
+
+[audio]
+bubble = "/assets/audio/main.wav"
+hbd = "/assets/audio/main.wav"
+pop = ""
+
+[images]
+janell = "/resources/img/janell.png"
+stars = "/resources/img/stars.png"
+nature = "/resources/img/nature.jpg"

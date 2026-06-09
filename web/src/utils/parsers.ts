@@ -1,5 +1,5 @@
 import { parse } from 'smol-toml';
 
-export function parseTOML(tomlStr: string): any {
-  return parse(tomlStr);
+export function toml(input: string) {
+  return  parse(input) 
 }

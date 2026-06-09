@@ -1,0 +1,18 @@
+# ─── Visual Novel / Gift Experience Scenes (circa-1993) ─────────────────────
+# IIPS: Ideal idiomatic principled Syntax — clean arrays of tables, explicit keys,
+# extensible for future scenes, elegant comments. Source of truth for FrutigerScenes.
+
+[[scenes]]
+id = 1
+background = "/resources/img/stars.png"
+messages = [
+  "Welcome to your special birthday space, Janell! 🫧✨",
+  "I built this little visual universe just for you to celebrate your warmth, kindness, and beauty.",
+  "Let the music play, breathe in the good vibes, and pop this bubble to reveal your gift! 💖"
+]
+action = { emoji = "🫧", label = "Pop Bubble & Reveal Card" }
+
+# Alternate / supporting backgrounds (system available)
+[[backgrounds]]
+id = 2
+path = "/resources/img/nature.jpg"

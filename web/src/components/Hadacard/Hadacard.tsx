@@ -1,6 +1,6 @@
-import { createSignal, onMount, onCleanup, Show, For } from 'solid-js';
-import { haptic } from '../utils/haptics';
-import PretextShift from './PretextShift';
+import { createSignal, onMount, onCleanup, Show, For } from '@/utils/ui';
+import { haptic } from '@/utils/haptics';
+import PretextShift from '@/components/PretextShift';
 
 interface CardMeta {
   edition: string;
@@ -39,7 +39,7 @@ function splitToLetterBlocks(text: string, baseDelay: number = 30) {
   return letters;
 }
 
-export default function ThreeCard(props: ThreeCardProps) {
+export default function Hadacard(props: ThreeCardProps) {
   const [showVoucher, setShowVoucher] = createSignal(false);
   const [isFlipped, setIsFlipped] = createSignal(false);
 
@@ -124,7 +124,7 @@ export default function ThreeCard(props: ThreeCardProps) {
   `;
 
   return (
-    <div class="w-full h-full flex flex-col items-center justify-center gap-3">
+    <div class="w-full h-full backdrop-blur-sm opacity-80 flex flex-col items-center justify-center gap-3">
       {/* 3D Holographic Card Viewport (No outer box container, perfectly centered) */}
       <div class="w-full flex items-center justify-center shrink-0">
         <div
@@ -137,9 +137,9 @@ export default function ThreeCard(props: ThreeCardProps) {
           <div class="holo-card__inner">
             {/* Background Texture */}
             <div class="absolute inset-0 bg-cover bg-center opacity-25 rounded-2xl"
-                 style={{ "background-image": "url(/resources/img/nature.jpg)" }}>
+                 style={{ "background-image": "url(/resources/img/jaja.png)" }}>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-b from-purple-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl"></div>
 
             {/* Holographic foil overlays */}
             <div class="holo-card__glitter"></div>
@@ -217,7 +217,7 @@ export default function ThreeCard(props: ThreeCardProps) {
 
               {/* Message body */}
               <div class="flex-1 flex items-center overflow-y-auto px-2">
-                <p class="text-blue-100/90 leading-relaxed text-[13px]"
+                <p class="text-blue-100/90 leading-relaxed text-[33px]"
                    style={{ "font-family": "'Patrick Hand', cursive" }}>
                   Wishing you a day filled with joy, sparkles, and infinite beauty! ✨🎂
                 </p>

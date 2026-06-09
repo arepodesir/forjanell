@@ -1,0 +1,11 @@
+# ─── Base / Recipient Core Config ───────────────────────────────────────────
+# IIPS note: Domain-specific data (scenes, cards, assets, gifts) now live in
+# sibling TOMLs. This file kept minimal for app-level + recipient identity.
+# The aggregator in src/config/config.ts is the single place that composes them.
+
+name = "For Janell"
+nickname = "Janell"
+picUrl = "/resources/img/janell.png"
+birthDate = "1993-05-02"
+
+# Any future global app flags or non-domain config can go here.

@@ -1,8 +1,9 @@
 ---
 import Application from "../layouts/Application.astro";
-import ThreeCard from "../components/ThreeCard";
+import Hadacard from "@/components/Hadacard/Hadacard";
 import PretextShift from "../components/PretextShift";
 import "../styles/index-page.css";
+import { config } from '@/config';
 
 interface MenuItem {
   name: string;
@@ -73,12 +74,12 @@ import Container from "../layouts/Container.astro";
 
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}
       <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
-        <ThreeCard 
+        <Hadacard 
           client:load 
-          name="For Janell"
-          nickname="Janell"
-          picUrl="/resources/img/janell.png"
-          hbdMessage="Happy Belated Birthday!"
+          name={config.name}
+          nickname={config.nickname}
+          picUrl={config.picUrl}
+          hbdMessage={config.hbdMessage}
           isFinalCard={false}
         />
       </div>
