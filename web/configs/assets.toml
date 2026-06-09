@@ -8,6 +8,6 @@ hbd = "/assets/audio/main.wav"
 pop = ""
 
 [images]
-janell = "/resources/img/janell.png"
-stars = "/resources/img/stars.png"
-nature = "/resources/img/nature.jpg"
+janell = "/assets/img/janell.png"
+stars = "/assets/img/stars.png"
+nature = "/assets/img/nature.jpg"
