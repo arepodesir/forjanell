@@ -44,12 +44,14 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   // Slightly closer initial distance in the gift reveal so the orchid feels more zoomed/filling the (larger) window.
   let controls = { yaw: 0.35, pitch: 0.18, distance: 1.75, auto: false, lastMove: 0 };
 
-  // Framing offsets: center the orchid vertically in the canvas + a slight downward bias ("move it down").
-  // Previously extreme negative to pin base at bottom edge; now closer to 0 for centering while keeping elegant low-ish composition.
-  const ORCHID_MODEL_Y = -0.12;
-  const ORCHID_LOOKAT_Y = -0.08;
-  const VIEW_BIAS = 0.55;  // was 0.65 -- less downward camera bias for better centering
-  const VIEW_BIAS_OFFSET = 0.08;
+  // Framing offsets for "center the orchid + move it down".
+  // MODEL_Y and LOOKAT_Y position the bloom/pot so the flower head is near vertical center of the canvas
+  // (not pinned to top or extreme bottom). VIEW_BIAS smaller + offset raises camera slightly so the
+  // subject sits lower in the rendered frame. Tune these + container mt/pt for the desired romantic placement.
+  const ORCHID_MODEL_Y = -0.25;
+  const ORCHID_LOOKAT_Y = -0.10;
+  const VIEW_BIAS = 0.42;
+  const VIEW_BIAS_OFFSET = 0.15;
 
   let pointerDown = false;
   let lastX = 0;
@@ -195,9 +197,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const center2 = box2.getCenter(new THREE.Vector3());
       model.position.sub(center2);
 
-      // === LOAD POSITION COORDINATES ===
-      // X/Z forced to 0 for horizontal center. Y offset centers the orchid (bloom + pot) in the view
-      // and moves it slightly down for the desired composition (no longer extreme base-pin at bottom).
+      // === LOAD POSITION COORDINATES (center + move down) ===
+      // X/Z = 0 for horizontal center. Y + lookAt + camera bias tuned so the bloom sits ~center vertically
+      // in the 3D canvas while the whole orchid composition is shifted lower ("move it down").
       model.position.x = 0;
       model.position.z = 0;
       model.position.y = ORCHID_MODEL_Y;

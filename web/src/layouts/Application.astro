@@ -14,7 +14,10 @@ let head = Astro.props
 
     <script is:inline>
       (function() {
-        const isCardPage = window.location.pathname.startsWith('/gifts/card');
+        const pathname = window.location.pathname;
+        // Gift pages (hadacard visual novel, circa-1993 end scenes, etc.) fully own their audio.
+        // Prevents the global BGM from restarting on interactions and overlapping scene music (sfxHbd + end song).
+        const isAudioOwnedPage = pathname.startsWith('/gifts/');
 
         // Create or retrieve single global BGM instance (still used by MusicTitlebar and scenes for coordination)
         let audio = window.globalBgmAudio;
@@ -38,8 +41,9 @@ let head = Astro.props
           }
         }, 500);
 
-        if (isCardPage) {
-          // Card/visual novel pages (e.g. circa-1993) take audio control
+        if (isAudioOwnedPage) {
+          // Gift / visual novel pages (circa-1993 etc.) take full audio control.
+          // Their local players (sfxHbd, end song via MusicTitlebar) manage playback.
           if (audio) {
             audio.pause();
           }

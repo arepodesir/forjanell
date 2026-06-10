@@ -44,15 +44,16 @@ export default function FrutigerScenes(props: EnvProps) {
 
   let activeTimers: number[] = [];
 
-  // Create the main wave song player (from config / public/assets) *synchronously*
-  // so that children like MusicTitlebar and OrchidViewer receive a stable externalAudio ref
-  // on their first mount. This fixes hooking/timing issues for auto-play and pause UI.
-  // The actual .play() attempt happens on mount (or on user gesture for the reveal).
+  // Scene-owned main BGM (the "wave" track). Guarded creation so we never get redundant Audio instances
+  // even if Solid re-executes the component body during state updates. The end-scene song is a separate instance.
   let sfxHbd: HTMLAudioElement | undefined;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && !(window as any).__frutigerSfxHbd) {
     sfxHbd = new Audio(props.audio.hbd);
     sfxHbd.loop = true;
     sfxHbd.volume = 0.5;
+    (window as any).__frutigerSfxHbd = sfxHbd;
+  } else if (typeof window !== 'undefined') {
+    sfxHbd = (window as any).__frutigerSfxHbd;
   }
 
   // Particle background references
@@ -331,8 +332,9 @@ export default function FrutigerScenes(props: EnvProps) {
       }
     }
 
-    // Re-enable global bgm if available (components that need silence pause it themselves)
-    if (typeof window !== 'undefined' && (window as any).globalBgmAudio) {
+    // Only re-enable global if we've truly left audio-owned gift pages (Application.astro now keeps global paused on /gifts/*).
+    const stillOnGiftPage = typeof window !== 'undefined' && window.location.pathname.startsWith('/gifts/');
+    if (!stillOnGiftPage && typeof window !== 'undefined' && (window as any).globalBgmAudio) {
       (window as any).globalBgmAudio.play().catch(() => {});
     }
   });
@@ -487,7 +489,9 @@ export default function FrutigerScenes(props: EnvProps) {
         {/* Stage 2: Orchid Reveal (end scene — 3D interactive orchid, mobile friendly, no egift/voucher).
             Positioned + sized to fill much more of the window with a nice zoom feel (larger canvas + less chrome around it). */}
         <Show when={scene() === 2}>
-          <div class="z-20 w-full flex flex-col items-center justify-center p-3 pt-4 pb-6 gap-2 min-h-[82vh]">
+          {/* Orchid stage: justify-start + extra top padding + mt on viewer to push the 3D orchid lower on the page ("move it down").
+              The 3D coords inside OrchidViewer handle centering the bloom/pot inside the canvas itself. */}
+          <div class="z-20 w-full flex flex-col items-center justify-start p-3 pt-8 pb-5 gap-2 min-h-[82vh]">
             {/* Soft message above the 3D bloom (kept small so the orchid can dominate) */}
             <div class="aero-glass rounded-3xl px-4 py-2.5 max-w-xs text-center border border-white/15 mb-1">
               <p class="text-aero-cyan text-[10px] tracking-wider uppercase mb-0.5" style={{ "font-family": "'Comfortaa', sans-serif" }}>Your gift has opened</p>
@@ -500,10 +504,10 @@ export default function FrutigerScenes(props: EnvProps) {
               </div>
             </div>
 
-            {/* The orchid "player" — centered + moved down in frame via 3D coords + slight extra mt for overall page position. */}
+            {/* The orchid "player" — 3D framing centers the bloom vertically inside the canvas; page mt + outer justify-start moves the whole block down. */}
             <OrchidViewer
               client:load
-              class="w-full max-w-[min(96vw,980px)] h-[64vh] md:h-[70vh] lg:h-[74vh] mt-1"
+              class="w-full max-w-[min(96vw,980px)] h-[62vh] md:h-[68vh] lg:h-[72vh] mt-3"
               externalAudio={endAudio()}
             />
 

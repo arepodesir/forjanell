@@ -58,10 +58,18 @@ import Container from "../layouts/Container.astro";
   <Container>
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
+      {/* Greeting text above the index card — glassy, animated, cursive. Mobile-first (small + tight on base, scales up). */}
+      <div
+        class="aero-glass rounded-3xl px-5 py-2 md:py-2.5 text-center w-full max-w-[260px] xs:max-w-[280px] md:max-w-xs animate-reveal-up shrink-0"
+        style={{ "font-family": "'Great Vibes', cursive", "animation-delay": "80ms" }}
+      >
+        <span class="text-[17px] xs:text-[19px] md:text-xl text-white/90 tracking-[0.5px]">Hi, Janell!</span>
+      </div>
+
       {/* Card stage: fixed responsive height band, flex-centered. Gutter element below adds all-side padding (top gutter included)
           so the card has breathing room and fits properly inside the band without edge-hugging. No h-full on gutter keeps
           the aspect-ratio card at its intended size; centering places the padded card nicely. */}
-      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] mt-3 md:mt-4 animate-reveal-up flex items-center justify-center" style="animation-delay: 0.1s;">
+      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] mt-1 md:mt-2 animate-reveal-up flex items-center justify-center" style="animation-delay: 0.18s;">
         {/* Gutter element: uniform padding provides top + side + bottom breathing room around the index card. */}
         <div class="w-full max-w-[460px] p-4 md:p-5 lg:p-6">
           <Hadacard 
