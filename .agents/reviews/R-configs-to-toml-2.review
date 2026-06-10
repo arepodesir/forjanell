@@ -1,0 +1,116 @@
+# Review: configs-to-toml-2 Job Execution (Full Scope)
+
+**Job**: .agents/jobs/configs-to-toml-2.md
+**Previous**: R-configs-to-toml.md (narrower config-only scope; this is retry+expansion)
+**Date**: 2026-06-09
+**Reviewer**: Grok (self-review per P-always-review-before-code)
+**Status**: Pre-edit review + execution plan. Authorizing artifact read. All relevant sources read. Baseline build inspected (fails cleanly on known css + data issues).
+**Flags honored**: --no-mistakes (this review + step-verify cycle), --log=.agents/logs/, --vfs=.agents/* (no untracked mutations; all plans/logs/reviews/state here).
+
+## Authorizing Scope (verbatim from job frontmatter + message)
+- Invariants: IIPS (Ideal idiomatic principled Syntax — correct + elegant idiomatic prescriptive formation), $ (In-project source module kind).
+- Target: $REPO.CODE.web.[config/**, configs]  (but message expands to full web experience coherence).
+- Kind: TRANSFORM, mach:2 (retry of prior partial).
+- Message directives (must all be addressed):
+  1. Refactor config system ... make the config.ts in /src/configs/ of the web module cohere with it [the toml pattern] in a type safe way and move all types to /src/types/ in the same ns.
+  2. analyze the component structure and page structure of the routes - their not good. we want to use solid whereever possible and astro only for static or static ish elements.
+  3. we need the hadacard well refactored and to look more like a 3D letter thats profile then a trading card.
+  4. enhance the particles for the gift scenes to be more girly interactive powerful.
+  5. remove the gift e voucher completely.
+  6. instead the end scene needs to be: a rendering of the orchid.glb asset in /public in the astro project using a solid compatible lib that is mobile friendly, interactive and well designed.
+  7. abstract out the back button into a solid components for navigating the routes in a type safe way.
+  8. scan the app content module types and seperate wheat from shaft, distil random llm code across all modules into isolated SOLID piecs to compose elegantly in the routes using hooks and higher order data acess and view constructs.
+  9. manage state in .agents/programmes with a programme of the prompt name .programme using a love-lang/toml like meta syntax.
+  10. update the readme with a kitten gif instead of whats there.
+
+## Current State Snapshot (from reads + build run)
+- **TOMLs (web/configs/)**: base.toml (flat recipient-ish), cards.toml (excellent [recipient][cardMeta][egift] + comments IIPS), scenes.toml ([[scene]] id+bg+messages scalar+action; not arrays), assets.toml ([[audio]][[image]]), gifts.toml ([[gift]] good). Prescriptive comments present.
+- **Config (web/src/config/config.ts)**: Parses with fallbacks to hardcodes. Imports wrong `config.toml` (should base). scenesParsed.scenes never matches [[scene]] key -> defaults win. Assets not mapped to Records. Still produces rich WebConfig + legacy flat/Records + APP_CONFIG + gift compat. useConfig.ts thin reexport exists (good pattern).
+- **Types**: All in config.ts (Recipient, CardMeta, Egift, Scene, Assets, Gift, WebConfig). src/types/ empty. Dupe types in FrutigerScenes.tsx, Hadacard.tsx, MessageList.tsx, pages etc.
+- **Routes/Pages**:
+  - index.astro (home): imports missing "../styles/index-page.css", uses config.* for Hadacard, heavy inline <script> for clock, mouse/touch bubbles, zoom nav, haptics. Hardcoded pageProps + menu (dupe of data/pages.ts).
+  - gifts/index.astro: config.gift, back button inline + script, gift cards from toml.
+  - gifts/circa-1993/index.astro: thin astro wrapper + <FrutigerScenes client:load {...APP_CONFIG} />, back button.
+  - about/, messages/: similar inline back + scripts, messages hardcoded in page.
+- **Components**:
+  - Hadacard/Hadacard.tsx: rich holographic CSS 3d (foil, glitter, shine via pointer), letter anim, finalCard mode shows extra text + egift claim buttons + full voucher flip modal. Internal types. "Trading card" aesthetic.
+  - FlipBook/FrutigerScenes.tsx: Solid visual novel. 2 scenes (1: pretext messages + pop bubble action; 2: Hadacard final). Canvas particles (65, connect lines, mouse repel, 4 glow colors). Careful audio (hbd loop, pause global). Uses legacy scene* Records[1], egift passed. Time gate. Lots of state/timers.
+  - SentientOrchid/Orchid.tsx: stub (empty).
+  - Others: PretextShift (solid, uses @chenglou/pretext for line layout + nice word hover effects), MessageList, ui.ts barrel for solid primitives, haptics (vib+web audio good).
+- **Layouts/Includes**: Application.astro (global music toggle + bgm logic, careful with card pages), Container.astro (background gif), Head ok. Includes dirs mostly empty or minimal.
+- **Astro/Vite/TS**: aliases @/ @@/ good (astro.config + tsconfig). three + @types/three present (no solid-three or fiber, will implement direct).
+- **Public**: Orchid.glb at /assets/models/Orchid.glb (note case). Many /resources/ and /assets/ refs (public layout serves at root).
+- **Build**: `bun run build` FAILS: "Could not resolve "../styles/index-page.css" from "src/pages/index.astro"". (Also runtime data would be default-heavy.)
+- **Other**: Dupe logic (back buttons x4, particles home vs gift, pageProps dupe, message strings scattered, hardcoded final text in Hadacard).
+
+## IIPS Application (Prescriptive Decisions)
+- **TOML**: Keep/improve existing tomls as single source (cards.toml already excellent). Fix parser in config.ts to:
+  - Import correct base.toml (or rename? keep base as core).
+  - Handle [[scene]] -> scenes array; coerce messages string|array -> string[].
+  - Map [[audio]]/[[image]] -> Records {name: path}.
+  - Build sceneBackgrounds etc from parsed, no silent default override.
+  - Preserve computed + dual rich/legacy for compat during transition (but drive legacy from parsed).
+  - Remove egift entirely from types/model/config (per directive 5) -> drop from cards.toml? or leave data but strip from WebConfig/exports (prefer strip code paths).
+- **Types**: All domain types (WebConfig, Recipient etc, plus new for nav, orchid viewer, particles?) -> src/types/index.ts (or Config.ts, Nav.ts, Scene.ts). Re-export from config for back-compat if needed. Delete dupe interfaces.
+- **Config module**: Keep /src/config/ as thin (index + the parser). Hook in /src/hooks/. "In-project source module kind".
+- **Solid vs Astro**: Astro pages/layouts for shell + static content (about bio, messages list static data?). Solid islands (client:load) for all interactive: Hadacard, scenes, nav back (as solid), future shared particles, Orchid viewer, menu bubbles if possible. Move inline scripts where feasible to solid components or effects.
+- **Back button**: New solid component e.g. src/components/Nav/BackButton.tsx or includes/Navigator/BackNav.tsx . Props: to: string (type safe via union of known routes?), label?: string, emoji?:. Uses solid Link? but since MPA astro, just <a> + haptic + (optional transition if shared overlay). Import in all 4 places. Remove inline duplication.
+- **Distillation / SOLID pieces**:
+  - Extract shared touch/mouse particle generator as <TouchParticles /> solid component (used by home + enhance for gift).
+  - Centralize route metadata (menu, backs) perhaps in types or small data module driven from config later.
+  - Pull final-scene text out of Hadacard.
+  - Higher-order: perhaps withSceneData or useScene() hook inside FrutigerScenes.
+  - Content: move scattered messages where sensible into scenes.toml (already intended) or dedicated content toml later.
+- **Hadacard refactor**: Shift aesthetic from "trading card / holo foil collectible" toward "3D letter / profile" — more personal, handwritten, envelope/letter open feel? Softer edges, profile focus (pic + name + long message as "letter"), less meta badges/rarity top, perhaps fold or page-flip letter motif, keep holographic interaction but tuned. Keep for home (non-final) + other uses. (Note: dedicated job exists; coordinate minimal here.)
+- **Particles (gift scenes)**: Current functional but "techy connect dots". Make girly: add pastel heart/sparkle/petal sprites or simple shapes, more of them or layered (bg slow + fg interactive), stronger mouse/tap attraction + on-tap burst + gentle float + color palette shift to pinks/blush/rose/gold + occasional twinkle. Mobile: pointer + touch. Powerful = performant (cap count, or use CSS for some?), fun (tap anywhere creates heart pop that floats + fades). Preserve the connect lines? or make optional delicate.
+- **End scene / Orchid**: Remove ALL egift/voucher/claim code (buttons, modal, props, Show when=egift, alerts). For final stage (scene 2 or new "reveal" stage): replace the Hadacard final with (or wrap) a dedicated <OrchidViewer client:load model="/assets/models/Orchid.glb" ... /> .
+  - Solid + three: <canvas>, new THREE.Scene + GLTFLoader (from 'three/examples/jsm/loaders/GLTFLoader'), OrbitControls or custom pointer-drag yaw/pitch + wheel/pinch zoom + auto gentle rotate + tap to bloom/sparkle. 
+  - Design: beautiful framing (glass panel? soft vignette, subtle lights, petal particles around model?), mobile-first (touch drag smooth, dbltap reset, pinch via touch events), responsive size, elegant UI hints ("drag to admire", "tap for magic").
+  - Keep some final message text above/below using Pretext or simple.
+  - Since "instead", the pop-bubble leads to Orchid 3D experience as the "gift reveal", perhaps still surface a refined Hadacard or profile letter as part of it or separate? Job says rendering of orchid as the end scene. Will make Orchid the centerpiece of final, Hadacard can stay for home and as "letter" motif elsewhere.
+- **State mgmt in .agents/programmes**: Per directive, create e.g. .agents/programmes/P-configs-to-toml-2.programme (or configs-to-toml-2.programme) using love-lang / toml-like meta syntax. Will contain [[phase]] or [status] sections tracking progress, decisions, open items. Update it during execution as "living programme".
+- **README**: Swap the current giphy for a kitten gif (cute, thematic? choose appropriate public giphy or describe). Keep structure.
+- **IIPS in code**: Clean imports (fix FrutigerScenes import path if needed), no random hardcodes, comments where complex (audio, timers, 3d math), elegant small fns.
+
+## Risks & Mitigations (High Care Areas)
+- **Audio discipline**: FrutigerScenes has precise BGM start/pause/resume + globalBgm. Touch only data/config; never alter play/pause logic.
+- **Particle perf + mobile**: 65 is safe; for "powerful girly" add 20-30 more or effects but cap total, use RAF, simple draw. Test mental model on touch.
+- **Scene sequencing + timers**: runMessages, handleAction, clearAllTimers critical. Preserve exactly; only change what renders at scene()==2 .
+- **Hadacard final removal impact**: home uses isFinalCard=false; circa final uses true + egift. Removing egift won't break home. For circa, final will be new viewer.
+- **GLTF + three in Solid**: Direct three is fine (no extra deps). Loader is async; handle loading state gracefully (elegant spinner or fade). Dispose on cleanup.
+- **Type moves + imports**: Many files import types indirectly via config. After move, ensure reexports or update imports. Build will catch.
+- **CSS import break + resources paths**: Fix the styles/ as part of route cleanup (probably move or create minimal, or remove if unused; check if rules in global.css cover). Paths /resources vs public/assets are existing; don't change asset layout unless necessary.
+- **Build only verification**: Since no dev server interactive easy here, primary gate = clean `cd web && bun run build`. Secondary: no TS complaints, grep for remaining egift after.
+- **"3D letter" vs current holo**: Preserve pointer-follow shine/glitter interaction (core magic); just restyle DOM + classes toward letter (more vertical? script fonts dominant, less foil saturation, profile pic emphasis, message as flowing letter body).
+- **Over-scope**: Job lists many; do in priority order (config+types first, then nav, distillation, then visual changes). Use separate jobs for deep hadacard/orchid if this overflows. But execute what's listed.
+- **No new package deps**: For GLTF use three's built-in examples loader (already in node_modules via three). For controls implement lightweight pointer-based (no OrbitControls import if it pulls more).
+
+## Alternatives Considered
+- Full rewrite of scenes to new data model: too risky for mach-2 retry; incremental parse fix + legacy bridge preferred.
+- Introduce solid-router or view transitions lib: overkill for MPA astro static; keep simple a + manual overlay zoom where exists.
+- Use <model-viewer> or other for glb: adds dep + less control; direct three + solid is more "in-project", craftful.
+- Keep egift data in toml but hide UI: job says "remove ... completely" -> excise from types, final UI, config shape.
+
+## Exact Verification Steps (MANDATORY, run after edits)
+1. `cd web && bun run build` — must exit 0, no "Could not resolve", clean output. Repeat after config, after nav extract, after major visual, at end.
+2. Post-build: ls dist/ shows updated pages; no obvious missing in grep for egift in dist if possible.
+3. Grep source for residual "egift|Egift|Claim e-Gift|voucher" (expect only in old reviews/logs or removed toml data).
+4. Type check: `cd web && npx tsc --noEmit` (or via build) — zero errors on moved types, new components.
+5. Mental runtime: home renders Hadacard from config; gifts vault from gifts toml; circa loads scenes (now from toml), pops to new Orchid end (no voucher); backs use shared component; particles enhanced on gift; about/messages clean.
+6. (If possible in flow) dev run + spot: but since CLI, rely on build + code review of flows.
+7. .agents/ updated: review present, programme state file with toml meta, log appended, history entry at close.
+8. No drift: only files touched are those implied by job message (config, types, components for nav/orchid/hadacard/particles, pages for structure, root README, toml if needed for removal).
+
+## Pre-Change Sign-off (per Programme)
+- Authorizing job read.
+- Relevant source + prior review + history read.
+- This review document now exists and is coherent.
+- Standing programme P-always-review-before-code followed: only after this will minimal precise search_replace / writes to real source occur.
+- Will update log + todo after each gate.
+- Will append to history/ on completion or major milestone.
+- Will produce/update the .programme toml-like state manager in programmes/.
+- Risk of "magic leak" acknowledged; every change judged against preserving the personal high-sensory love-letter character.
+
+**Next immediate**: Write the programme state file (love-lang/toml), update todo statuses, then begin with lowest-risk highest-value: config coherence + types move. Edits will be surgical.
+
+*This review authorizes the full execution under the job.*

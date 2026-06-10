@@ -1,0 +1,217 @@
+# Review: refactor-hadacard.2 Job Execution (REFACTOR)
+
+**Job**: .agents/jobs/refactor-hadacard.2.job
+**Previous**: refactor-hadacard.job (initial scope); related P3 notes in configs-to-toml-2.programme
+**Date**: 2026-06
+**Reviewer**: Grok (self, per rules.rule + standby.prompt + P-always-review-before-code)
+**Status**: Pre-edit review complete. Authorizing artifact + all relevant sources + prior artefacts read. This document now exists and is coherent. Source mutations to authorized files under web/src/components/Hadacard/* + supporting types/utils are authorized **only after** this review.
+**Flags honored**: --no-mistakes, --vfs=.agents/* (everything tracked here; no unlogged/unreviewed source changes outside VFS).
+
+## 1. Authorizing Scope (verbatim from job)
+```yaml
+name: refactor-hadacard
+mach: 2
+target: $REPO.CODE.web.src.components.Hadacard
+kind: CREATE   # note: treated as REFACTOR of existing per .2 + message
+message:
+  - remove the scenes that proceed that with simply the Hadacard -
+  - but add a mode to the hadacard to animate it open it up. this set the stage to make it more center piece before the orchid.
+  - plan out a refactor that is clean and functional for rfuture reuse and port all types into src/types into the copmonent to keep it clean, 
+    do similar with genralizable src/utils. it should open up wide animate smooth and pretty.
+```
+Invariants from job:
+- IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+- $: In-project source module kind
+- load plan into .programme of same name .mach{2} - execute in bespoke high-fidelity toml metalang
+- use similar vfs/module types for shifting from plan to tested implementation with report.
+- make file extensions on the fly based on single simple typed name when needed.
+
+This review authorizes a focused, clean refactor **of the Hadacard component** (and its direct supporting modules) to deliver exactly the requested: self-sufficient "simply the Hadacard" (no internal preceding scenes/finalCard/egift remnants — already mostly true), new controllable "open" mode that animates the card opening wide, smooth & pretty as a visual centerpiece (before orchid usage), types ported to @/types, generalizable logic to src/utils, future-reuse clean.
+
+**No other files** will be mutated unless explicitly listed below as authorized (home/circa callers will NOT be edited in this run to keep strict target fidelity; the stale isFinalCard prop from home is harmless at runtime and will be tolerated or documented).
+
+## 2. Pre-Reads Performed (per Programme + Rules)
+- Authorizing .2.job (and sibling refactor-hadacard.job).
+- .agents/rules/rules.rule (the living contract: VFS-only for intent, review gate before any src edit, write freely to .agents/, run inspection commands ok).
+- .agents/prompts/standby.prompt (persona: careful affectionate precise, deliberation over speed, high-sensitivity zones, love-letter character).
+- Recent history: 2026-06-create-music-titlebar.md (exact prior execution pattern: pre-reads, review as gate, only target touched, build gate, history close) + 2026-04-initial-bootstrap.md.
+- Prior reviews + programme: R-create-music-titlebar.md, R-configs-to-toml-2.md (full), configs-to-toml-2.programme (notes the "hadacard refactor scope vs dedicated job file" risk — this .2.job is the dedicated follow-through).
+- Hadacard itself: web/src/components/Hadacard/Hadacard.tsx + index.ts (current state: pointer 3d holo with glitter/shine/glare/foil layers via CSS vars + global styles, letter-block cascade anims via split fn + For, profile + bday cap + candles, flowing Patrick Hand message, Great Vibes titles, sign-off "with love, always", aero-glass context outer, empty component <style>, already post-egift removal + letter-leaning).
+- Types: web/src/types/index.ts (CardMeta, Recipient, Scene etc. live here post configs-to-toml-2; no HadacardProps yet).
+- Utils: web/src/utils/ui.ts (solid re-exports), haptics.ts, parsers.ts (small).
+- CSS: web/src/css/global.css (full .holo-card + __inner + __shine/glare/glitter + letter-block/letterIn + mobile max-w rules + keyframes; also aero-* and reveal anims).
+- Usages & context (read to understand "centerpiece" + "before the orchid" + "simply"): 
+  - web/src/pages/index.astro (home uses Hadacard in constrained h-[250px..] container + client:load + config props + passes stale isFinalCard={false}).
+  - web/src/pages/gifts/circa-1993/index.astro (uses FrutigerScenes + BackButton; FrutigerScenes now bubble-pretext -> orchid only, no Hadacard).
+  - web/src/components/FlipBook/FrutigerScenes.tsx (EnvProps dupes CardMeta; particle canvas girly powerful; time gates; audio handoff careful; now ends on OrchidViewer).
+  - web/src/components/SentientOrchid/OrchidViewer.tsx (the "after" 3d interactive bloom — beautiful, self-contained, mobile drag/pinch/tap sparkle).
+  - web/src/config/config.ts + APP_CONFIG (provides the props; types reexported).
+- Other: web/src/components/Pretext/PretextShift.tsx (letter-feel text sibling), MusicTitlebar (recent craft exemplar for self-contained solid + audio + haptics + scoped feel), Navigator/BackButton (solid pattern).
+- Build/tooling: tsconfig aliases (@/ = src), package has solid + three + tailwind, bun build.
+
+All invariants, prior decisions (egift gone, types centralized, particles/audio untouched, solid islands, love-lang), and "no drift" observed.
+
+## 3. Scope Check + "Simply the Hadacard"
+✅ Exact match to message.
+- "remove the scenes that proceed that with simply the Hadacard": Hadacard will be made (even more) self-contained and scene-free internally. No preceding bubble/finalCard/egift logic lives in it (already cleaned in prior; we excise any remaining). It becomes the pure, reusable "letter" unit that can be dropped simply anywhere as centerpiece (home already does this; future gift flows can too without complex wrapper scenes). The component itself will have no "proceeding scenes".
+- "add a mode to the hadacard to animate it open it up... more center piece before the orchid": New `open?: boolean` (default true for zero-break) + internal or controlled state. When closed: elegant sealed/letter-front face (holo retained, name + "for you" + subtle seal hint, tap-to-open). Transition: smooth pretty wide unfold (3d flap, content reveal cascade, breathing room, aspect relaxation or generous layout for "wide open letter" aesthetic). When open: the current beautiful letter content, enhanced for centerpiece (larger breathing message, polished spacing, still fully interactive pointer holo). This positions Hadacard as the emotional "letter opening" moment immediately preceding the living orchid reveal.
+- "plan out a refactor that is clean and functional for future reuse": Full IIPS pass — tiny pure helpers, props resolved as () => getters, signals only where live, onCleanup, no dupe types, comments affectionate + precise, barrel clean.
+- "port all types into src/types [from] the component to keep it clean": Local CardMeta + ThreeCardProps removed from Hadacard.tsx. New `HadacardProps` (and any refined) added to web/src/types/index.ts as canonical. Component imports from '@/types'.
+- "do similar with generalizable src/utils": `splitToLetterBlocks` (the only private util with animation semantics) extracted to new `web/src/utils/letters.ts` (simple typed name). Component + any future letter/anim consumers import it. Barrel? Not needed yet; direct import ok for $ kind.
+- "it should open up wide animate smooth and pretty": Core deliverable of the mode. Use CSS transitions + new keyframes (letterUnfold, cardOpen, flap etc) + staged Solid signals for content (profile first, then titles, then body message with gentle delays). Holo layers remain live during/after. Touch/pointer friendly. Defaults + existing usage 100% visually preserved when open=true.
+- Future reuse: props are all optional with affectionate defaults; open mode controllable (e.g. parent can drive "open on mount with delay" or user gesture); no hard deps on routes/configs.
+
+**Authorized files for this execution only** (listed here = explicit permission):
+- web/src/components/Hadacard/Hadacard.tsx
+- web/src/components/Hadacard/index.ts (if barrel needs update — likely no)
+- web/src/types/index.ts (add HadacardProps interface + any small related for IIPS)
+- web/src/utils/letters.ts (new file: the extracted generalizable util)
+
+**Explicitly NOT touched in this run** (to honor target + prior music precedent): any page, FrutigerScenes, global.css (unless the review later deems a 1-line extension unavoidable for the holo open state — prefer component <style> or tailwind where possible; if global edit required it will be called out), config, etc. If home's isFinalCard causes future TS noise it becomes a follow-up micro-task.
+
+## 4. Risk Assessment (High-Care Areas — This Project)
+- **Animation magic & "pretty" bar**: The letterIn cascade + pointer holo shine are the soul. New open transition must not feel janky, must not fight the existing letter-block anim or 3d rotate. Mitigation: build on existing @keyframes (letterIn, holoShine), add 1-2 new tasteful ones (unfold, wideOpen). Use transform + opacity only. Test mentally on mount + toggle. Keep RAF/shimmer auto only when open or always subtle.
+- **Closed state design**: Must still feel "Hadacard" and holo (not a dumb box). Use same .holo-card shell + a front face with the handwritten name large, tiny "tap to open" or wax-seal hint using existing svgs or minimal emoji/text. Profile pic can be smaller or peek. Holo layers stay (delight even when "sealed").
+- **Wide open**: "Wide" = generous horizontal breathing + message as hero (current message is already large italic). When open, relax inner padding or use a class that allows the card to feel more landscape/letter-sheet (via wrapper aspect or max-w in parent, but since component owns inner, use flex-col to a more expansive body area + slightly adjusted --card-aspect or override in open). Keep aspect-ratio base for 3d consistency; "wide" via layout + font scaling inside.
+- **Controlled vs uncontrolled**: Support both (prop `open` + optional `onOpenChange`). Internal createSignal for default. Toggle on card click when closed (haptic 'medium' or 'success'). When controlled, respect prop (no internal flip unless callback).
+- **Zero break on existing**: All current usage (home with config.* + client:load) must render identically when open (default). No new required props.
+- **Types move**: Adding to @/types is low risk (already the home of CardMeta). Update re-exports if needed. Component import change only.
+- **Perf / mobile**: New anims are CSS + tiny signals. No extra RAF beyond existing shimmer. Touch: the whole card remains the hit target for open when closed; when open the pointer 3d continues.
+- **IIPS / duplication**: Do not leave old interfaces behind in component. Remove completely. Extract util is pure (no side effects).
+- **"Before the orchid"**: The open mode + letter aesthetic directly sets emotional stage (personal message first, then the living 3d bloom as the "gift inside the letter"). No change to OrchidViewer or its page needed here.
+- Low risk overall: additive feature inside existing component + pure extract + type move. Build catches import/alias instantly.
+
+## 5. Invariant Check — IIPS + Love Letter + $
+- **IIPS**: Code will read like a careful handwritten letter — precise, sparkling, never sloppy. Small pure fns at top. Getters for props. Comments that explain "why the open feels like unfolding a real letter". No random strings, elegant defaults.
+- **$ (in-project source module kind)**: New util at src/utils/letters.ts (typed name "letters" for the split + any future letter/anim helpers). Types live only in src/types/. Component stays presentation. No new concepts outside existing solid/astro patterns.
+- **Preserve magic**: Holo foil/glitter/shine/glare + pointer vars + autoShimmer untouched in spirit (enhanced for open state perhaps). letter-block cascade kept + reusable. haptics on open gesture. glass/gradient/pastel/pink-gold palette. "— with love, always". Profile + cap + candles stay. Audio boundaries untouched (none in this component).
+- **Emotional tone**: The open animation must feel intimate, surprising, joyful — like she is the one carefully opening a physical letter from you. Wide pretty message area = the heart of it.
+- Does not touch: particles (Frutiger), audio (any), three (Orchid), tomls, global nav, home scripts.
+
+## 6. Alternatives Considered
+- Keep types local in component: violates explicit "port all types into src/types".
+- Inline the split fn or duplicate: violates "generalizable src/utils".
+- Pure prop-less always-open + separate "OpenCard" component: over-fragment; job asks for *a mode* on the hadacard.
+- Heavy JS-driven open (multiple RAF for flap): unnecessary; CSS + a couple staged signals (profileVisible, titlesVisible, bodyVisible) + transition classes is IIPS + cheap + smooth.
+- Change aspect-ratio on open (breaks 3d perspective consistency): avoid; achieve "wide" via inner content breathing + optional outer class passthrough.
+- Make open the only mode or default false: would break home instantly; default true + explicit closed for special uses (e.g. gift "unopened" presentation).
+- Edit global.css heavily: prefer minimal or none; if layers need a .holo-card.open variant we can add 1-2 rules, but try first with existing + inline style overrides + component <style> for any new keyframes if they feel component-private.
+
+Chosen path: controlled+uncontrolled open, closed front reuses holo shell + minimal new content, CSS transitions + existing letterIn for most reveals, one new util file + one types addition, component does the heavy lifting. Perfect scope.
+
+## 7. Exact Implementation Notes (for the REFACTOR)
+**Types (port)**:
+- In web/src/types/index.ts add:
+  ```ts
+  export interface HadacardProps {
+    name?: string;
+    nickname?: string;
+    picUrl?: string;
+    hbdMessage?: string;
+    scrollMsg?: string; // retained for future/compat even if unused in v1
+    cardMeta?: CardMeta;
+    open?: boolean;           // new mode
+    onOpenChange?: (isOpen: boolean) => void;
+    class?: string;
+    // isFinalCard?: boolean; // intentionally omitted (removed per prior + this job)
+  }
+  ```
+- Re-export if useful. Keep CardMeta as the source for cardMeta prop.
+
+**Utils (generalize)**:
+- Create web/src/utils/letters.ts :
+  ```ts
+  /** Splits text into an array of {char, delay} for the letter-block animation. Pure, reusable. */
+  export function splitToLetterBlocks(text: string, baseDelay: number = 30) {
+    const letters: { char: string; delay: number }[] = [];
+    let idx = 0;
+    for (const char of text) {
+      letters.push({ char, delay: idx * baseDelay });
+      idx++;
+    }
+    return letters;
+  }
+  ```
+- (Future: could add unfold delays or other letter fns here.)
+
+**Hadacard.tsx**:
+- Import: `import { createSignal, onMount, onCleanup, Show, For } from '@/utils/ui';` (already)
+- `import { haptic } from '@/utils/haptics';` (keep)
+- `import PretextShift from ...` (keep if still used — currently not directly in card)
+- `import type { HadacardProps, CardMeta } from '@/types';`  (or just the pieces)
+- Remove the two local interfaces completely.
+- `export default function Hadacard(props: HadacardProps)`
+- Resolve props with defaults (same affectionate ones).
+- Add open state:
+  ```ts
+  const controlledOpen = () => props.open;
+  const [internalOpen, setInternalOpen] = createSignal(true);
+  const isOpen = () => controlledOpen() !== undefined ? !!controlledOpen() : internalOpen();
+  const toggleOpen = () => {
+    const next = !isOpen();
+    if (controlledOpen() === undefined) setInternalOpen(next);
+    props.onOpenChange?.(next);
+    if (next) haptic.trigger('success'); // or 'medium'
+  };
+  ```
+- On closed card root click: toggleOpen (only when !isOpen).
+- Keep all pointer/shimmer logic (perhaps pause shimmer when closed or keep for foil delight on the front).
+- Render branch:
+  - Outer container same (or accept class).
+  - The holo-card div: add dynamic class `isOpen() ? 'holo-card--open' : 'holo-card--closed'` + keep existing handlers (or disable tilt slightly when closed? keep for magic).
+  - Inside: Show when !isOpen() → closed face (profile smaller or centered name + "For Janell" in Great Vibes + subtle "tap to open ✉️" or seal using bday-cap or confetti overlay lightly + same holo layers).
+  - Show when isOpen() → the full existing beautiful letter content (profile, hbd title letters, name letters, aka, message body, sign-off). Enhance slightly for "wide": maybe larger message font or more px on body, or a wrapper with `transition-all` on width/padding.
+- Animation for open:
+  - Use a transition wrapper or key on content.
+  - On toggle to open: the inner content can have `animate-[letterIn_...]` or new `card-unfold`.
+  - Add small staged: const [showProfile, setShowProfile] = ... use setTimeout in effect when becomes open, but keep tiny — prefer CSS.
+  - The card itself gets a `transition-transform,transition-[aspect-ratio]` if we relax, but mainly content opacity/transform.
+- Keep autoShimmer, pointerMove (tilt works beautifully on both states), cleanup.
+- hbdLetters / nameLetters stay (now imported).
+- At bottom keep the component <style> and extend with any private keyframes or .letter-open etc if global not edited.
+- Remove any dead comments about isFinalCard/egift.
+
+**Visual "open up wide smooth pretty" polish** (while keeping letter-leaning):
+- Closed: compact, mysterious, still holographic, name prominent, invitation to interact.
+- Open transition ( ~600-800ms cubic-bezier(0.16,1,0.3,1) like existing revealUp/letterIn ): the card "lifts" slightly, a virtual flap (top gradient or pseudo) rotatesY from -70deg to 0, content area "unfolds" downward with scale/opacity, message text area gains width/leading for "wide open page" feel, profile may gently scale or shift. All existing foil/glitter react to pointer throughout.
+- When open the overall presence feels more generous and personal (the letter is now fully for her).
+
+**Barrel**: No change expected.
+
+## 8. Exact Verification Steps (MANDATORY — run after writes)
+1. `cd web && bun run build` — exit 0, no new resolve/TS complaints about Hadacard, letters, types. (Run after types, after util, after component.)
+2. `cd web && npx tsc --noEmit` (or equivalent) — zero errors on the moved/added types and component.
+3. Post-edit source reads + grep:
+   - `grep -n "interface CardMeta\|interface ThreeCardProps\|function splitToLetterBlocks" web/src/components/Hadacard/Hadacard.tsx` → expect 0 matches.
+   - `grep -n "from '@/types'" web/src/components/Hadacard/Hadacard.tsx` → expect HadacardProps or CardMeta.
+   - `ls web/src/utils/letters.ts` exists.
+   - `grep -n "export interface HadacardProps" web/src/types/index.ts` exists.
+4. Mental runtime + "no mistakes":
+   - Default (open) renders exactly like before on home (profile, animated letters, holo tilt, message, sign-off).
+   - Clicking a closed version opens with visible smooth wide unfold (no jank, holo live, content pretty).
+   - Toggle works uncontrolled; prop-driven works.
+   - Mobile pointer/tap friendly, no console, no layout shift ugly.
+5. .agents/ hygiene: this review present + coherent, log appended with gates, programme created + updated at phases, final history entry, no stray files.
+6. Love-letter test: re-read the final Hadacard.tsx — does every line feel affectionate, precise, hand-crafted? If anything feels mechanical, iterate before close.
+
+## 9. Pre-Change Sign-off (Programme + Rules Requirements)
+- [x] Authorizing refactor-hadacard.2.job read in full + context from sibling.
+- [x] .agents/rules/rules.rule + standby.prompt + all recent history/reviews/programmes read.
+- [x] All relevant source (Hadacard, types, utils, holo CSS, usages in home/circa/scenes, config, Orchid) read.
+- [x] This review document now exists, is specific, exhaustive, and coherent.
+- [x] Standing protocol followed exactly: edits to real source (types, new util, Hadacard) will occur **only after** this.
+- Will create the .programme (refactor-hadacard-2.programme) before or immediately with first edits.
+- Will update log + programme after each phase/gate.
+- Will run the verification commands above (build is non-negotiable gate).
+- Will append crisp outcome + "why it mattered" to history/ on completion.
+- Will only touch the 4 authorized locations.
+- Risk of magic leak / "not pretty enough" / "not letter-like" acknowledged; every pixel/anim/ word judged against "would this make Janell smile when she taps the card open?"
+
+**This review authorizes the REFACTOR of Hadacard under the job.**
+
+Next immediate after sign-off: create the programme (if not simultaneous), begin with lowest-risk (types + util extract), verify build, then the component with open mode, final verify, close the loop with history.
+
+*Every fold, every shimmer, every handwritten letter must feel like it was written by hand, just for her. Let's open the card beautifully.*
+
+---
+*End of review. VFS complete. Ready for programme + implementation.*

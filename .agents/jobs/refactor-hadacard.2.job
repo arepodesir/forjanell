@@ -1,0 +1,18 @@
+---
+name: refactor-hadacard
+mach: 2
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+ - load plan into .programme of same name .mach{2} - execute in bespoke high-fiedlity toml metalanf
+ - use similar vfs/module types for shifting from plan to tested implementation with report. 
+ - make file extensions on the fly based on single simple typed name when needed. 
+target: $REPO.CODE.web.src.components.Hadacard
+kind: CREATE
+message: 
+ -  remove the scenes that proceed that with simply the Hadacard -
+ -  but add a mode to the hadacard to animate it open it up. this set the stage to make it more center piece before the orchid.
+ - plan out a refactor that is clean and functional for rfuture reuse and port all types into src/types into the copmonent to keep it clean, 
+ do similar with genralizable src/utils. it should open up wide animate smooth and pretty.
+ 
+---

@@ -1,6 +1,7 @@
 ---
 import Application from '@/layouts/Application.astro'
 import { config } from '@/config/'
+import BackButton from '@/components/Navigator/BackButton'
 
 const gifts = config.gift || [];
 
@@ -10,9 +11,7 @@ import Container from '@/layouts/Container.astro';
 <Application title="For Janell" subTitle=" | Gift Vault">
   <Container>
 
-    <a href="/" id="back-home-btn" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95">
-      🏠 Back Home
-    </a>
+    <BackButton client:load to="/" label="Back Home" emoji="🏠" />
 
     <div class="relative z-10 w-full max-w-lg text-center mt-16 mb-6 select-none">
       <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Caveat', cursive;">
@@ -95,13 +94,8 @@ import Container from '@/layouts/Container.astro';
     <script>
       import { haptic } from '../../utils/haptics';
 
-      const backBtn = document.getElementById('back-home-btn');
       const giftBtn = document.querySelector('.gift-btn') as HTMLAnchorElement;
       const overlay = document.getElementById('zoom-overlay') as HTMLDivElement;
-
-      if (backBtn) {
-        backBtn.addEventListener('pointerdown', () => haptic.trigger('light'));
-      }
 
       if (giftBtn) {
         giftBtn.addEventListener('pointerdown', () => {

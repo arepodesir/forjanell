@@ -1,0 +1,110 @@
+# Review: create-music-titlebar Job Execution (CREATE)
+
+**Job**: .agents/jobs/create-music-titlebar.md
+**Date**: 2026-06
+**Reviewer**: Grok (self, following P-always-review-before-code standing programme)
+**Status**: Pre-edit review complete. Authorizing artifact + all relevant sources read. This document now exists and is coherent. Source mutations to web/src/components/MusicTitlebar/* are authorized only after this point.
+**Flags honored**: --no-mistakes, --logs=.agents/logs/, --vfs=.agents/ (everything tracked here; no unlogged/unreviewed source changes).
+
+## 1. Authorizing Scope (verbatim)
+From frontmatter + message:
+- name: create-music-titlebar
+- target: $REPO.CODE.web.src.components.MusicTitlebar
+- kind: CREATE
+- message:
+  - Create a cute Music titlebar scroll component that hooks to a audio in src/services to show the song title and lyrics and artist like a mp3 player
+  - it should be mobile first, bubbly, clear, and highly functional
+
+This review authorizes creation of exactly the component (and its barrel) at the target. No other files in src/ will be edited in this execution unless a follow-up task appears.
+
+## 2. Pre-Reads Performed (per Programme)
+- Authorizing job file (and sibling jobs for context).
+- .agents/README.md (core contract, VFS rules, what is free vs requires artifact).
+- .agents/programmes/P-always-review-before-code.md (this exact process).
+- Recent history (2026-04-initial-bootstrap.md) + prior execution artefacts (configs-to-toml-2 log + R-configs-to-toml-2.md full review).
+- All audio/music UI: web/src/layouts/Application.astro (global floating 🎵 toggle + globalBgmAudio singleton + session restore + card-page pause), web/src/components/FlipBook/FrutigerScenes.tsx (scene BGM init + global pause on mount, sfxHbd, timeupdate patterns), web/src/config/config.ts + assets handling (Record<string,string> for audio), web/configs/assets.toml, web/public/assets/sounds/* + /assets/audio/main.wav.
+- Component style bible: Hadacard/Hadacard.tsx (aero-glass, haptics on pointerdown, solid signals, onMount/Cleanup, inline <style>, pointer-follow effects, PretextShift usage, careful Show/For, letter animations, emoji + pastel), Pretext/PretextShift.tsx (text effects, resize, word hovers), utils/ui.ts (solid reexports), utils/haptics.ts (vib + web audio ctx).
+- Styling system: web/src/css/global.css (aero-glass, aero-btn, aero-* palette, float/bubble/shimmer/letterIn keyframes, font stack, safe-area, user-select none, 100dvh).
+- Types: web/src/types/index.ts (Assets {audio: Record}, WebConfig, no music player types yet — none needed for self-contained component).
+- Pages & integration points: gifts/circa-1993/index.astro (uses FrutigerScenes + back), gifts/index.astro, pages/index.astro (global music toggle lives here), data/pages.ts.
+- Current state of target: web/src/components/MusicTitleBar/ and SongTitleBar/ exist but are empty (0 files). No MusicTitlebar/ yet. No usage of either in any import/grep. No src/services/.
+- No lyrics, no track metadata, no existing titlebar/player UI beyond the 40x40 floating emoji button.
+- Build & tooling: astro.config (solid + @/ @@ aliases), package (solid-js, tailwind v4, no extra player libs).
+
+## 3. Scope Check
+✅ Exact match. We are creating a new component whose public surface delivers "song title and lyrics and artist like a mp3 player" with "scroll" presentation. 
+- Target path respected (MusicTitlebar namespace).
+- Mobile-first, bubbly (aero-glass + rounded full + gradients + soft anim + emoji + pastel), clear (big labels, time, progress, single lyric focus), highly functional (play/pause/scrub/lyric sync/time display/gesture safe + haptic + global audio coordination).
+- "hooks to a audio in src/services": because no services/ exists yet and job is narrowly scoped to the component, we deliver a fully working self-contained implementation (owns its HTMLAudioElement). Clear code comment + prop shape prepared for future extraction to a services/audio layer or useAudioPlayer hook (common pattern after the configs-to-toml work). This is the minimal-correct way to be "highly functional" today without inventing unauthorized modules.
+
+No drift: we will not touch global player, will not inject into pages, will not edit tomls, will not add deps.
+
+## 4. Risk Assessment (High-Care Areas for This Project)
+- **Audio discipline (highest)**: Multiple simultaneous audios destroy the magic and cause browser policy pain. Mitigation: on user-initiated play, explicitly pause `(window as any).globalBgmAudio` if present (same pattern as FrutigerScenes). Component owns only its instance; no loop-by-default for "song" semantics. Cleanup on unmount. Volume conservative. First interaction gate respected.
+- **Mobile / touch / perf**: Progress scrub must work with pointer + touch. Large hit areas. No heavy RAF or canvas here (lyrics are simple index-by-percent; title uses lightweight CSS). Will test build + mental mobile model.
+- **"Bubbly cute" vs over-cute**: Use existing aero-glass + gradients + soft shadows + emojis + Patrick Hand/Comfortaa + gentle scale/opacity on interactions. Avoid new heavy keyframes unless tiny scoped ones. Match Hadacard emotional tone (affectionate, not toyish).
+- **Lyrics / data**: No source of truth yet. Component will ship with affectionate thematic defaults (short poetic lines about bubbles, stars, 1993, Janell) + full prop API so real data (from future toml or scene) can be passed. No hard-coded strings outside defaults.
+- **Casing / placement**: Target says MusicTitlebar. Existing empty dirs use TitleBar. We create a fresh clean `web/src/components/MusicTitlebar/MusicTitlebar.tsx` + `index.ts` (Hadacard convention) so import is `@/components/MusicTitlebar`. Empty dirs untouched (future cleanup separate).
+- **Integration risk**: Component is drop-in ready but not auto-placed. Placing it (e.g. in circa-1993 scene or as enhanced global) will be future tasking + new review. Good — keeps this job focused.
+- **State / session**: Optional future: persist this player's time/mute like global does. For v1 keep pure + local.
+- Low risk: pure additive new files in an empty-ish namespace. Build will surface any import/alias issues immediately.
+
+## 5. Invariant Check — "Love Letter" Character
+- Preserves: glassmorphism, aero palette, haptics on intentional taps, careful audio handoff, handwritten-font friendliness, emoji as delight not decoration, mobile joy (thumb friendly), emotional copy in defaults.
+- Does not leak: no trading-card metadata overload, no egift remnants, no techy particle connect-dots here (this is chrome for the music), no forced sound on load.
+- Adds magic: a real "mp3 player" titlebar that feels like a physical Walkman or tiny cassette label floating in the gift space — scrollable title, highlighted feeling lyric, bubbly controls. Something you want to tap and watch while the scene plays.
+
+## 6. Alternatives Considered
+- Pure CSS marquee title only, no audio controls: fails "highly functional" and "like a mp3 player".
+- Depend on a not-yet-existing services/audio.ts and make component non-functional until then: violates "highly functional" + would leave the job incomplete.
+- Full global player replacement + context: over-scope for this CREATE job; global toggle remains for non-card pages.
+- Use <audio> controls native: ugly, not bubbly/mobile-cute, no lyric sync, no custom progress affordance.
+- Lyrics as canvas or heavy animation: unnecessary; percent-driven index + fade is clear + cheap.
+- Put lyrics data in component only: accepted for defaults; props win.
+
+Chosen: self-contained + prop-complete + comment for services future. Perfect balance.
+
+## 7. Exact Implementation Notes (for the CREATE)
+- Solid component (client:load capable).
+- Props: `src: string` (required for hook), `title?, artist?, lyrics?: string[]`, `class?`, optional callbacks.
+- Internals: signals for playing, currentTime, duration, currentLyricIdx.
+- UI layout (mobile first):
+  - Row: [big play/pause bubble] | [scrolling/flex title + artist line | current lyric (single, transitioning) | cute progress track (scrubbable) | times]
+  - Or compact stacked for very small: controls on top row, info+progress below.
+  - Use aero-glass container, rounded-3xl or 2xl, soft inner padding, text shadows for legibility on dark.
+  - Playing state: subtle scale/glow on the bar or play button, animated "now playing" dot or note emoji.
+- Scroll: title/artist as a contained marquee (CSS animation of long text or duplicated for seamlessness; only when playing or always gentle). Lyric area is focal clear line (not full list unless expanded).
+- Interactions: 
+  - Tap play button or bar background → toggle (haptic).
+  - Drag/pointer on progress → seek (live update).
+  - Tap lyric → ? (future jump to section).
+- Time format: m:ss.
+- Defaults chosen to be instantly delightful and on-theme when dropped in (hbd.mp3 or similar + "Bubbly Birthday Reverie" / "AREPO for Janell" + 5-6 short lines).
+- Code style: match Hadacard — small pure helpers, () => getters for props, onCleanup audio, no unnecessary effects, inline style for dynamic progress + any scoped keyframes.
+- Export: default + types if useful.
+
+## 8. Exact Verification Steps (MANDATORY — run after the write)
+1. `cd web && bun run build` — must succeed with exit 0. No resolve errors, no new TS complaints about the new module.
+2. Post-build: confirm dist/ contains the chunk for the new component (or at least no breakage in other pages).
+3. Grep (post) for MusicTitlebar import/usage — expect only inside the new files themselves for now.
+4. Type/mental check: component can be imported as `import MusicTitlebar from '@/components/MusicTitlebar'`; accepts src from config.audio or literal path; renders without audio until user gesture.
+5. Audio policy: first play works in a browser-like mental model (user click required).
+6. .agents/ hygiene: this review + updated log + eventual history entry present. No stray files outside target.
+7. "No mistakes" feeling: the produced component feels hand-crafted, affectionate, instantly at home next to Hadacard and PretextShift. If anything feels off on reread, note in follow-up.
+
+## 9. Pre-Change Sign-off (Programme Requirements)
+- [x] Authorizing job read in full.
+- [x] Relevant source (audio sites, style models, types, pages, empty target dirs) read.
+- [x] Recent history + prior reviews + standing programme read.
+- [x] This review document now exists, is specific, and is coherent.
+- [x] Standing P-always-review-before-code followed exactly: edits to real source (the CREATE writes) will occur only after this.
+- Will update the execution log after each gate.
+- Will append crisp outcome to history/ on completion.
+- Will run the verification commands.
+- Risk of magic leak acknowledged; every pixel/animation/audio decision judged against "does this still feel like a personal love letter from Arepo to Janell?"
+
+**This review authorizes the CREATE of the MusicTitlebar component under the job.**
+
+Next immediate after sign-off: write the files (minimal, precise), run verification, close the loop.
+
+*Craft is care. Let's make something she will smile at when she taps play.*

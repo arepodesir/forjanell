@@ -1,0 +1,146 @@
+# Review: create-music-titlebar-2 Job Execution (mach 2 / Integration)
+
+**Job**: .agents/jobs/create-music-titlebar-2.job
+**Previous**: R-create-music-titlebar.md (the CREATE of the component itself)
+**Date**: 2026-06
+**Reviewer**: Grok (self-review per P-always-review-before-code + rules.rule)
+**Status**: Pre-edit review complete. Authorizing job + full relevant sources + prior artefacts read. This document now exists and is coherent. **Source mutations under web/src/ are authorized ONLY after this review.**
+**Flags honored**: --no-mistakes, --logs=.agents/logs, --vfs=.agents/* (zero untracked changes; everything in VFS first).
+
+## 1. Authorizing Scope (verbatim)
+From frontmatter + message (mach: 2 on the same target):
+- name: create-music-titlebar
+- target: $REPO.CODE.web.src.components.MusicTitlebar
+- mach: 2
+- kind: CREATE
+- message:
+  - Create a cute Music titlebar scroll component that hooks to a audio in src/services to show the song title and lyrics and artist like a mp3 player
+  - it should be mobile first, bubbly, clear, and highly functional.
+  - implement it into the application so it appears with the end scene music.
+  - it should be part of the footer as a slot if need or header as a slot to keep things neat.
+
+The v1 job delivered the standalone component (self-managed Audio, marquee title/artist, percent lyric highlight, full transport + scrub, haptics, aero-glass bubbly UI, affectionate defaults, globalBgm coordination, keyboard). 
+
+Mach 2 scope: **implement** the existing component so it "appears with the end scene music" (the persistent looping BGM during the Orchid reveal in FrutigerScenes scene 2 / gifts/circa-1993), fulfilling the "hooks to audio" intent, and presenting it neatly as footer/slot-style UI.
+
+## 2. Pre-Reads Performed (per Programme + rules.rule)
+- Authorizing job file (create-music-titlebar-2.job) + original v1 job.
+- Prior review + execution log + history for the first create-music-titlebar (component delivered cleanly, integration explicitly left as "next natural").
+- Recent mach-2 artefacts for pattern fidelity: R-refactor-hadacard.2.md, R-create-sentient-orchid-2.md, their logs, programmes (toml-like with [[phase]], invariants, targets), history entries.
+- .agents/rules.rule + README (core contract, review-before-edit, VFS only for meta, exact authorization required for src/ edits).
+- All current end-scene + audio sources:
+  - web/src/components/FlipBook/FrutigerScenes.tsx (current audio: `let sfxHbd = new Audio(props.audio.hbd); loop=true; vol=0.5; play()` in onMount; paused in cleanup; survives handleAction transition to scene 2 with comment "Looping main.wav (sfxHbd) continues playing smoothly"; scene 1 = open-letter Hadacard + "Meet Your Orchid" action; scene 2 = message glass + <OrchidViewer/> + hint text).
+  - web/src/pages/gifts/circa-1993/index.astro (now uses BackButton solid component; wraps scenes in flex-col h-screen with justify-between + pb-safe/pt-safe).
+  - web/src/layouts/Application.astro (single <slot/> + script-injected global floating music toggle that hides itself + pauses globalBgm on /gifts/card paths).
+  - web/src/components/SentientOrchid/OrchidViewer.tsx (the 3D end reveal: drag orbit, pinch zoom, auto gentle rotate, tap sparkles, cute state machine, glass-friendly).
+  - The delivered MusicTitlebar (full file read): self-contained, no externalAudio support yet, creates own Audio, great UI/animation/scrub/lyric logic.
+- Supporting: types (EnvProps audio shape), global.css (aero-glass etc.), haptics, ui barrel, no web/src/services/ or audio.ts present anywhere, public audio assets, config audio passthrough.
+- Context from other recent work: Hadacard now has open-letter mode, particles are girly (hearts/sparks), egift fully gone, orchid is the living gift reveal.
+
+## 3. Scope Check
+✅ Matches exactly.
+- The component already exists at target (v1 delivered). Mach 2 adds the integration + the "hooks" capability.
+- "appears with the end scene music": render MusicTitlebar inside FrutigerScenes `<Show when={scene() === 2}>` (the orchid bloom moment) so the player chrome appears exactly when the persistent BGM is the "end scene music".
+- "hooks to a audio": extend the component (minimal) to accept `externalAudio?: HTMLAudioElement`. When supplied, the titlebar becomes a control surface + visualizer for the caller's audio instance instead of owning/creating one. This satisfies the original job language ("hooks to a audio in src/services") without creating an unauthorized services/ module.
+- "footer as a slot ... to keep things neat": render as a distinct bottom music bar (fixed or flow + glass) inside the end-scene content. This visually acts as the music footer for the reveal. (A full named slot in Application is possible as a free read-only addition for future, but not required for this "end scene" directive; inside the stateful Solid island is the lowest-risk way to have it appear *only with* the end music.)
+- Files authorized for edit (minimal):
+  - web/src/components/MusicTitlebar/MusicTitlebar.tsx (add externalAudio support + conditional logic; keep 100% of bubbly UI, marquee, lyric sync, haptics, aria, kbd).
+  - web/src/components/FlipBook/FrutigerScenes.tsx (add import; in scene 2 render the titlebar, passing sfxHbd as externalAudio + src + thematic title/artist/lyrics).
+- No other files (no changes to circa wrapper, Application, OrchidViewer, tomls, global player, etc. unless a one-line import or slot proves necessary and minimal).
+
+## 4. Risk Assessment (High-Care Areas)
+- **Single audio ownership / discipline (highest)**: Dupe instances would break the magic and browser policy. The externalAudio branch must:
+  - Never `new Audio` or assign to src when external provided.
+  - Attach ontimeupdate/onplay/etc. to the passed element (or re-attach safely).
+  - Delegate toggle/seek to the external instance.
+  - onCleanup: do *not* pause or null the external (scenes owns lifecycle).
+  - Still perform the globalBgm pause on play (safe redundancy).
+  - Handle the fact that external may already be playing (titlebar should reflect `!external.paused` on mount + listen).
+- **Late mount timing**: sfxHbd assigned in scenes onMount; titlebar appears on scene() change later. Passing the live element reference works (Solid re-renders the Show subtree after the let is populated). For extra safety we can expose via a signal in scenes, but a simple ref pass is minimal.
+- **Loop semantics**: External has loop=true. Titlebar ended handler will rarely fire; lyric reset etc. stay harmless.
+- **UI in end scene context**: OrchidViewer is the star (interactive 3D). The titlebar must not fight for space or gestures. Solution: render it as a fixed-bottom glass bar (`fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,420px)]`) or as the last flow item with mt-auto + pb-safe. Fixed gives reliable "music footer" feel while user admires/rotates the orchid. Large tap targets preserved.
+- **"Slot" neatness**: By making the bar self-contained and visually footer-like only in the end scene, we satisfy the spirit without layout surgery that would affect every page. Future pages can use the component directly in their own footers.
+- **Pre-existing tsc noise**: Ignore (Hadacard, OrchidViewer, etc.). Our changes must not introduce *new* ones.
+- **Magic preservation**: The bar must feel affectionate and hand-crafted next to the orchid (use existing aero palette, soft shadows, Patrick Hand lyric, cyan/pink accents). Defaults or passed copy should feel like part of the letter to Janell.
+- Low risk overall: additive render + small conditional in one component. Build will catch immediately.
+
+## 5. Invariant Check — Love Letter Character
+- Preserves: single-audio handoff discipline, haptics on every control, glass + aero gradients + micro-animations + marquee scroll + lyric poetry, mobile thumb targets, emotional copy.
+- Adds: the music now has a face and a voice in the final reveal — title scrolling, lyrics breathing with the track, playful yet clear controls right there while the 3D orchid moves. It turns the BGM from "background" into "this is our song for this moment".
+- Does not leak: no new global state, no autoplay abuse, no competing sounds, no visual clutter on the orchid itself (bar is distinct glass footer).
+
+## 6. Alternatives Considered
+- Always create a second Audio in the titlebar for the end scene: rejected — violates audio discipline and the "hooks" requirement.
+- Lift all BGM ownership into the titlebar and have scenes ask it to play: bigger change, more risk to existing flow/timers/cleanup.
+- Pure visual (no controls) synced to the existing audio via a shared store: less "highly functional mp3 player".
+- Full named slot + context in Application + page-level player: neat for future, but overkill here; the state (which scene) lives in the Solid island, so the player must live there too for conditional appearance.
+- Create src/services/audio.ts now: out of scope for this job (target remains the MusicTitlebar component; the externalAudio prop is the direct, minimal "hook").
+
+Chosen path: minimal extension to the delivered component + targeted render in the exact end-scene location. Perfect fidelity + lowest surface area.
+
+## 7. Exact Implementation Notes
+**MusicTitlebar.tsx (enhance for hook):**
+- Add to interface: `externalAudio?: HTMLAudioElement;`
+- Make `src` optional when externalAudio is supplied (for display/fallback only).
+- Refactor:
+  - `let audioRef` can hold either the created one or the passed external.
+  - `initOrAttach()`: if props.externalAudio, use it (add listeners if not already), else do the old new Audio path.
+  - togglePlay, computeSeek, onProgressPointerDown: operate on the current audioRef (whether external or internal).
+  - onCleanup: only if (!props.externalAudio && audioRef) { pause + src=''; }
+  - onplay/onpause handlers: still set signals + pause globalBgm (the external may already be playing; on attach we can read `!externalAudio.paused` and setPlaying accordingly + subscribe).
+  - createEffect for volume: only apply if we own the audio (or always set on the current one — external volume can be adjusted by caller too).
+  - Keep every line of the UI, styles, marquee animation, lyric, fmt, progress thumb, aria, keyboard exactly as-is.
+- Add a small comment: "When externalAudio is passed (e.g. from FrutigerScenes end BGM), we become a control surface + visualizer for the caller's instance. This implements the 'hooks to a audio' requirement."
+
+**FrutigerScenes.tsx (integration):**
+- Add: `import MusicTitlebar from '@/components/MusicTitlebar';`
+- In the scene 2 `<div class="z-20 ...">` (or at the end of its children), after the hint `<p>`, add:
+  ```tsx
+  <MusicTitlebar
+    externalAudio={sfxHbd}
+    src={props.audio.hbd}
+    title="Bubbly Reverie"
+    artist="AREPO for Janell"
+    lyrics={[ /* keep the bubbly poetic ones or lightly orchid-infused: "A living bloom just for you...", "Petals turn in the pink light", ... */ ]}
+    class="fixed bottom-3 left-1/2 -translate-x-1/2 z-[55] w-[min(92vw,420px)]"
+    volume={0.5}
+  />
+  ```
+- (Optional tiny) give the scene 2 container a bit more bottom padding if using flow instead of fixed.
+- The bar will appear exactly when the end scene music is active, fulfilling "appears with the end scene music" and acting as its visible footer player.
+
+**Positioning choice for "footer/slot"**: `fixed bottom-...` gives reliable music-player-at-bottom experience while the user interacts with the 3D orchid above it. Glass + aero colors keep it from feeling tacked on. z-index above most but below any future back buttons if needed. This is the neat, self-contained realization of the slot request for the gift end moment.
+
+**Thematic copy**: Keep the existing warm bubbly defaults (they already feel like the gift). Optionally pass a slightly tailored set for the orchid moment (e.g. one line "Let the orchid dance with the music").
+
+## 8. Exact Verification Steps (MANDATORY)
+1. After review is written: `cd web && bun run build` (baseline).
+2. After MusicTitlebar enhance edit + build.
+3. After FrutigerScenes integration edit + build → must exit 0, "Complete!", 5 pages, **no new errors**.
+4. Post-build grep for "MusicTitlebar" and "externalAudio" to confirm only in the two authorized files + self.
+5. Mental runtime model (circa-1993 flow):
+   - Enter gift scene → Hadacard letter → tap action → particles → orchid reveal (scene 2).
+   - sfxHbd continues.
+   - MusicTitlebar footer glass bar fades in at bottom with title/artist marquee, current lyric line, progress reflecting the live BGM, play/pause/scrub all control the same audio instance.
+   - No second audio, no console fighting, global already paused.
+   - Orchid remains fully interactive above the bar.
+6. .agents/ complete: this review, updated log, new history entry, any artifact notes.
+7. "No mistakes" feeling: the bar feels like it has always belonged there — bubbly, clear, affectionate, and the music now has a face during the living gift moment.
+
+## 9. Pre-Change Sign-off (Programme + rules.rule Requirements)
+- [x] Authorizing job (mach 2) read in full + prior artefacts for continuity.
+- [x] All relevant current source (end scene audio ownership, UI layout, component as-delivered, layout slots, recent mach-2 patterns) read.
+- [x] Recent history, reviews, programmes, rules.rule read.
+- [x] This review document now exists, is specific (exact files, exact hook mechanism, exact placement), and is coherent.
+- [x] Standing P-always-review-before-code + rules.rule followed exactly: **edits to real source will occur only after this**.
+- Will update the execution log after each gate + after verification.
+- Will append crisp outcome to history/.
+- Will run the build verification commands (multiple).
+- Will keep changes minimal and scoped.
+- Risk of magic leak (especially audio) acknowledged and mitigated at the design level; every decision judged against preserving the personal, high-sensory, handwritten love-letter character for Janell.
+
+**This review authorizes the mach-2 implementation and integration of the MusicTitlebar under the job.**
+
+Next immediate: mark todo, then surgical edits (component hook support first, then the render site), build gates between, close the loop cleanly.
+
+*Craft is care. The music now gets to sing with a face in the final bloom.*

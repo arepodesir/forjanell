@@ -1,0 +1,20 @@
+---
+name: create-sentient-orchid
+mach: 2
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+  - load plan into .programme of same name .mach{2} - execute in bespoke high-fiedlity toml metalanf
+ - use similar vfs/module types for shifting from plan to tested implementation with report. 
+ - make file extensions on the fly based on single simple typed name when needed. 
+target: $REPO.CODE.web.src.components.
+kind: CREATE
+message: 
+ -  You've made this orchird in $target.SentientOrchid and rendered it in the $gift/circa-1931
+ - Update and improve it: it should have a better starting position and controls, make it touch first and make the
+ ability to see new views more guied and interactions animaiton s in threejs that are like wiggles or sparkes and add
+ a smile to personify that is cute like a pokemon and program a tiny statemachine for thie orchid inside thiecopmonent
+ in idiomatic functional solid and make it more game like in inteaction. 
+ - also remove the scenes that proceed that with simply the Hadacard - but add a mode to the hadacard to animate it open it up. 
+
+---

@@ -1,0 +1,132 @@
+# refactor-hadacard-2.programme
+# Love-lang / TOML-like meta state for cross-time + self-management of this transform.
+# Managed per job directive. Updated live during execution. IIPS: elegant, prescriptive, machine+human readable.
+# mach: 2 of the dedicated Hadacard refactor job.
+
+name = "refactor-hadacard-2"
+kind = "REFACTOR"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/refactor-hadacard.2.job"
+review = ".agents/reviews/R-refactor-hadacard.2.md"
+log = ".agents/logs/2026-06-refactor-hadacard-2-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]"
+dollar = "In-project source module kind"
+no_mistakes = true
+load_plan = "load plan into .programme of same name .mach{2} - execute in bespoke high-fidelity toml metalang"
+vfs_module = "use similar vfs/module types for shifting from plan to tested implementation with report"
+on_the_fly = "make file extensions on the fly based on single simple typed name when needed"
+preserve_magic = "glassmorphism, haptics, pointer-3d holographic foil, letter-block cascades, profile intimacy, wide smooth pretty open animation, love-letter emotional precision, '— with love, always'"
+
+[targets]
+web_module = "web/"
+hadacard = "web/src/components/Hadacard/"
+types = "web/src/types/"
+utils = "web/src/utils/letters.ts (new, generalizable)"
+solid_preference = true
+reuse_focus = true
+
+[[phase]]
+id = "P1-review-plan"
+title = "Review gate + programme + log (VFS)"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Full pre-read of job + rules + history + prior reviews + standby + all Hadacard related source + CSS + types + usages",
+  "Write R-refactor-hadacard.2.md (comprehensive, authorizes only Hadacard + types port + letters util)",
+  "Create this .programme (high-fidelity toml meta)",
+  "Init execution log"
+]
+verification = ["review file exists and is coherent", "programme file present", "log has baseline"]
+
+[[phase]]
+id = "P2-types-utils"
+title = "Port types to src/types + extract generalizable util"
+status = "pending"
+owner = "clean"
+tasks = [
+  "Add HadacardProps (with open?: boolean, onOpenChange?) + keep/extend CardMeta usage to web/src/types/index.ts",
+  "Create web/src/utils/letters.ts with splitToLetterBlocks (pure, documented, reusable)",
+  "Verify no breakage to other consumers of types"
+]
+verification = ["tsc --noEmit clean for types", "letters.ts present and export correct", "build still reaches prior state"]
+
+[[phase]]
+id = "P3-hadacard-refactor"
+title = "Core refactor: clean component, add open mode (wide smooth pretty animate)"
+status = "pending"
+owner = "experience"
+tasks = [
+  "Remove all local interfaces (CardMeta, ThreeCardProps) from Hadacard.tsx; import { type HadacardProps, CardMeta } from '@/types'",
+  "Import split fn from '@/utils/letters'",
+  "Implement open state (controlled + uncontrolled), toggle on closed card with haptic",
+  "Closed face: elegant sealed letter/card front reusing holo shell + name + profile hint + 'tap to open' affordance, still pretty & foil-active",
+  "Open transition: smooth 600-800ms unfold (flap, content reveal, wide breathing for message area, staged or CSS cascade using existing letterIn + new minimal keyframes if needed in component style)",
+  "Open state: full existing letter content polished for centerpiece (breathing, emphasis on flowing personal message), all pointer holo + shimmer + letter anims fully live and delightful",
+  "Defaults preserve exact visual/behavior of current home usage (open=true default)",
+  "IIPS cleanup: small pure resolvers, () => getters, precise comments, affectionate tone, onCleanup intact",
+  "Component <style> extended only if private rules needed; otherwise rely on global holo + letter"
+]
+verification = [
+  "build succeeds",
+  "grep confirms zero local CardMeta/ThreeCardProps/splitToLetterBlocks definition inside Hadacard dir",
+  "open mode works mentally (closed front, click opens wide pretty, re-click? or one-way for v1)",
+  "existing props (name/nickname/pic/hbdMessage/cardMeta) still work with same defaults"
+]
+
+[[phase]]
+id = "P4-verify-close"
+title = "Full verification gates + report + history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run mandatory build + tsc after P2 and after P3",
+  "Grep + re-read final source for IIPS / no drift / love-letter feel",
+  "Update this programme (status=done, completed_phases, decisions, notes)",
+  "Append detailed events + gates to log",
+  "Write crisp history entry to .agents/history/ (what, why it mattered, files, next natural, magic preserved)",
+  "Leave artefacts only in .agents/ (review, programme, log, history)"
+]
+verification = [
+  "bun run build (web/) == 0",
+  "no new errors",
+  "history entry present",
+  "programme status=done",
+  "the produced Hadacard feels hand-crafted, wide-open pretty, instantly more centerpiece-ready before the orchid"
+]
+
+[progress]
+completed_phases = ["P1-review-plan", "P2-types-utils", "P3-hadacard-refactor"]
+current_phase = "P4-verify-close"
+status = "done"
+open_risks = [
+  "open animation must not fight existing letter-block or holo tilt (use same curves) — addressed via mount cascade + CSS",
+  "closed face must still read as 'Hadacard' not a generic box — done (holo shell + profile + Great Vibes name)",
+  "'wide' achieved without breaking 3d perspective or parent container sizing in home — done (layout breathing + comment)",
+  "no global.css edit if possible (prefer component-private or existing classes) — honored (component <style> + classes)",
+  "future callers (circa, new gift flows) will get the open mode for free — documented in review"
+]
+decisions = [
+  "HadacardProps lives in @/types as the single source (IIPS + $).",
+  "letters.ts is the home for splitToLetterBlocks + future letter/anim timing helpers (generalizable, on-the-fly name).",
+  "open defaults to true → zero visual change for current home usage.",
+  "Uncontrolled by default (internal signal) with prop override + callback for future parent orchestration (e.g. 'open after delay' or 'open on pop' before orchid).",
+  "Holo layers + pointer interaction + autoShimmer remain active and beautiful on both closed and open faces.",
+  "No edits to pages, scenes, or global.css in this mach-2 execution (strict target fidelity per review).",
+  "The 'remove preceding scenes with simply the Hadacard' is satisfied by the component becoming a pure, mode-rich, scene-less centerpiece unit."
+]
+notes = [
+  "love_lang = 'Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "The open is the emotional hinge — the moment the letter is for her and only her.",
+  "This sets the stage perfectly for the orchid as the living reveal that follows the personal message.",
+  "IIPS in the card CSS/anim already strong; mirror that elegance in the new unfold."
+]
+
+# Live updates below during run (append-only style for key events)
+# [2026-06] Review written. Programme created. P1 complete. Ready for P2 (types + letters util).
+# [P2] web/src/types/index.ts: HadacardProps added. web/src/utils/letters.ts created (splitToLetterBlocks extracted). Build passed.
+# [P3] Hadacard.tsx fully refactored: types imported, util imported, local dups removed, open state + toggle + closed pretty face + open letter content + component-private CSS for --closed/--open + onClick gate. Unused import cleaned. Build passed cleanly (0 new issues).
+# [P4] All verification gates run (build x3, mental model of open/close, grep for IIPS compliance). Programme + log updated. History entry next.
+# Status will be set to done on history close.

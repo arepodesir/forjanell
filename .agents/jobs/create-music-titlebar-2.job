@@ -1,0 +1,11 @@
+---
+name: create-music-titlebar
+target: $REPO.CODE.web.src.components.MusicTitlebar
+mach: 2 
+kind: CREATE
+message: 
+ - Create a cute Music titlebar scroll component that hooks to a audio  in src/services to show the song title and lyrics and artist like a mp3 player
+ - it should be mobile first, bubbly, clear, and highly functional.
+ - implement it into the application so it appears with the end scene music. 
+ - it should be part of the footer as a slot if need or header as aslot to keep things neat.
+---

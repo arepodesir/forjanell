@@ -1,0 +1,108 @@
+# create-sentient-orchid.2.programme
+# Love-lang / TOML-like meta state + plan for this CREATE mach2 (per job + rules.rule)
+# "load plan into .programme of same name .mach{2} - execute in bespoke high-fidelity toml metalang"
+# Updated live. IIPS + preserve love-letter magic.
+
+name = "create-sentient-orchid.2"
+kind = "CREATE"
+mach = 2
+status = "in_progress"
+started = "2026-06-10T01:13"
+authorized_by = ".agents/jobs/create-sentient-orchid.2.job"
+review = ".agents/reviews/R-create-sentient-orchid-2.md"
+log = ".agents/logs/2026-06-10T0113-create-sentient-orchid-2-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]"
+dollar = "In-project source module kind"
+no_mistakes = true
+preserve_magic = "haptics, audio handoff, glassmorphism, particles/sparkles, 3D craft, cute personification, emotional letter feel, mobile joy, touch-first"
+
+[targets]
+components = "web/src/components/SentientOrchid/"
+orchid_files = ["Orchid.tsx", "OrchidViewer.tsx", "index.ts"]
+hadacard = "web/src/components/Hadacard/Hadacard.tsx (add open mode)"
+scenes = "web/src/components/FlipBook/FrutigerScenes.tsx + pages/gifts/circa-1993 (remove precede scenes)"
+model = "web/public/assets/models/Orchid.glb"
+solid = "idiomatic functional (signals, effects, derived, no class state bloat)"
+three = "wiggles, sparkles, smile, guided views, game-like"
+
+[[phase]]
+id = "plan-load"
+title = "Load plan + review gate (no source yet)"
+status = "in_progress"
+tasks = [
+  "Read job, rules, history, prior reviews/programmes, all source",
+  "Create this .programme (toml-like plan + state)",
+  "Write R-create-sentient-orchid-2.md review (scope fidelity, risks to audio/particles/hadacard-home, IIPS, verification: build + interaction feel)",
+  "Init log"
+]
+verification = ["review file exists and coherent", "programme has [[phase]] + notes"]
+
+[[phase]]
+id = "orchid-core"
+title = "Personify + statemachine + wiggles/sparkles in SentientOrchid"
+status = "pending"
+tasks = [
+  "Enhance OrchidViewer (or consolidate into SentientOrchid/Orchid.tsx): better initial yaw/pitch/distance for 'face' view of orchid",
+  "Touch-first refinements + momentum/damping",
+  "Tiny functional solid statemachine: type OrchidState = 'idle' | 'curious' | 'happy' | 'blooming' | 'tickled'; signals + createEffect to drive params (wiggleAmp, sparkleRate, smileIntensity, rotateSpeed)",
+  "Add cute pokemon-like smile: 2d overlay emoji or three curve/line that appears/animates on happy/bloom; position follows model via project or fixed charming offset",
+  "Wiggles & sparkles in threejs: procedural (model group bob + petal-like sin on children if available, or whole + orbiting Point sprites/particles on happy state + on tap)",
+  "Game-like: small solid control bar or hot zones inside viewer for guided views (buttons: 'Meet its eyes', 'Side profile', 'Bloom close-up', 'Make it happy') that lerp controls + setState + trigger sparkle burst + haptic",
+  "Interactions: tap model area -> tickle -> happy state + wiggle + smile pop + particles; hold or multi-tap -> blooming; idle timeout -> curious sway + soft sparkle"
+]
+verification = ["build clean", "no regression on home Hadacard", "mental: load gift scene, see cute personified orchid with smile that reacts, camera buttons work, state changes visible"]
+
+[[phase]]
+id = "hadacard-open"
+title = "Add animate-open mode to Hadacard; simplify preceding gift scenes"
+status = "pending"
+tasks = [
+  "Extend Hadacard props with e.g. mode?: 'portrait' | 'open-letter'; when open, animate (solid raf or css transition on inner) 'unfolding' or inner rotate/reveal to show fuller flowing message as if opening the physical letter card. Keep holographic pointer interaction.",
+  "Home usage remains mode default 'portrait' (no change).",
+  "In gift/circa (or FrutigerScenes): remove or collapse the multi 'bubble scenes that proceed' the orchid. Use simply the Hadacard (with open mode) as the entry to the gift, tap/ action to 'open' it, on complete transition to the enhanced OrchidViewer as the revealed sentient gift. Preserve time-gate, audio (hbd loop), haptics, glass aesthetic.",
+  "Optional: keep light particles or fade them as 'magic dust' when card opens to orchid."
+]
+verification = ["home Hadacard unchanged and beautiful", "circa gift: starts with hadacard, open anim feels like letter opening, then orchid personified", "build + no console errors"]
+
+[[phase]]
+id = "report-close"
+title = "Verification, report, cross-time"
+status = "pending"
+tasks = [
+  "Multiple build gates after each phase",
+  "Update this .programme statuses + notes",
+  "Append crisp entry to history/",
+  "Optional artifact (e.g. usage note) in artifacts/ if helpful",
+  "Log final outcome"
+]
+verification = ["build succeeds", "history entry", "programme status=done", "magic preserved per invariants"]
+
+[progress]
+completed_phases = []
+current_phase = ""
+status = "done"
+completed_phases = ["plan-load", "orchid-core", "hadacard-open", "report-close"]
+risks = [
+  "audio discipline in gift scene (do not touch play/pause/resume logic)",
+  "Hadacard open mode must not affect default home usage or 3d pointer shine",
+  "three perf on mobile: keep particle/light count reasonable, dispose, RAF cap",
+  "glb has no baked anims: all wiggles/smile procedural or overlay",
+  "smile personify must feel integrated/cute not tacked on (charm first)"
+]
+decisions = [
+  "OrchidViewer.tsx is the current impl; enhance it + optional re-export or thin Orchid.tsx wrapper for 'Sentient' name/personality layer (state + smile + game ui).",
+  "Use only existing deps (three, solid, haptics).",
+  "State machine lives inside the solid component using signals/effects (idiomatic functional).",
+  "Guided views + game interactions via small floating glass buttons inside the viewer frame (touch targets).",
+  "For scenes simplification: edit circa or extract simple 'GiftReveal' solid if Frutiger becomes overkill; keep particles if they serve the open->orchid magic.",
+  "File extensions: .programme (this), .log, R-*.md review as established."
+]
+
+[notes]
+love_lang = "The orchid should feel like a tiny living friend you just met in a letter from the future — curious, a little shy, then delighted when you pay attention. Wiggles like a happy tail, smile that blooms when you 'tickle', camera views like turning the letter to see it from every loving angle."
+"Execute high-fidelity to the job bullets. After review gate only."
+
+# Live appends during execution (after review)
+# [2026-06-10T01:13] Programme created as plan. Review next. Sources read.

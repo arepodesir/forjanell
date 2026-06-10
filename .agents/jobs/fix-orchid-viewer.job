@@ -1,0 +1,17 @@
+---
+name: fix-orchid-viewer
+tags: [anon, fix]
+mach: 1
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax
+ - $: In-project source module kind
+ - Follow full review + .programme + log + history flow for no-mistakes
+target: $REPO.CODE.web.src.components.SentientOrchid
+kind: FIX
+message: 
+ - fix the orchid start position in an anonymous job following our flow so it work well
+ - connect the player to the config main wave song in public assets
+ - remove the smiley face 
+ - make the glb animate instead 
+ - and dead centered and scale for high dpi properly.
+---

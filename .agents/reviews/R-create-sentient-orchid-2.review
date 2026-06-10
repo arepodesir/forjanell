@@ -1,0 +1,94 @@
+# Review: create-sentient-orchid.2 Job Execution (mach 2)
+
+**Job**: .agents/jobs/create-sentient-orchid.2.job
+**Prior**: create-sentient-orchid.job (v1 content was mis-scoped in file; actual prior delivery of OrchidViewer happened during configs-to-toml-2 execution)
+**Date**: 2026-06-10
+**Reviewer**: Grok (self, following rules.rule / root contract + no-mistakes)
+**Status**: Pre-edit review + execution plan. Authorizing artifact + rules + history + all relevant sources read. Baseline build known from prior (clean with current orchid wiring).
+**Command flags**: --no-mistakes --vfs=.agents/*
+
+## Authorizing Scope (from job frontmatter + message)
+- Invariants: IIPS (Ideal idiomatic principled Syntax — correct + elegant idiomatic prescriptive formation), $ (In-project source module kind)
+- "load plan into .programme of same name .mach{2} - execute in bespoke high-fidelity toml metalang"
+- "use similar vfs/module types for shifting from plan to tested implementation with report"
+- "make file extensions on the fly based on single simple typed name when needed"
+- Target: $REPO.CODE.web.src.components.
+- Kind: CREATE (mach:2)
+- Message (must address all):
+  - "You've made this orchid in $target.SentientOrchid and rendered it in the $gift/circa-1931" (note: actual circa-1993)
+  - Update and improve it:
+    - better starting position and controls
+    - make it touch first
+    - make the ability to see new views more guided and interactions animations in threejs that are like wiggles or sparkes
+    - add a smile to personify that is cute like a pokemon
+    - program a tiny statemachine for the orchid inside the component in idiomatic functional solid
+    - make it more game like in interaction
+  - "also remove the scenes that proceed that with simply the Hadacard - but add a mode to the hadacard to animate it open it up."
+
+## Current State (from reads, post-prior jobs)
+- SentientOrchid/Orchid.tsx : still the original stub (type OrchidProps {size}, empty div return).
+- SentientOrchid/OrchidViewer.tsx : substantial interactive three + solid implementation (GLTF load of Orchid.glb, pointer/touch drag yaw+ pitch, wheel/pinch zoom, auto-orbit idle, soft pink/blush/cyan lights, tap sparkle (haptic+scale+lights), loading/error states, full dispose, mobile touch-action none, "DRAG • PINCH • TAP" hint). Already quite advanced.
+- Integration: FrutigerScenes (in FlipBook/) currently renders bubble/pretext stage 1 (with enhanced girly particles from prior) -> on pop -> stage 2 OrchidViewer (as the end reveal, after egift removal).
+- circa-1993/index.astro : thin wrapper + BackButton + <FrutigerScenes client:load {...APP_CONFIG} />
+- Hadacard : cleaned (no egift/voucher/finalCard UI per prior job), still used on home (isFinalCard=false, now implicit portrait), 3d holographic pointer interaction + letter-block anims + profile pic + flowing message. Good base for "open mode".
+- Other: time-gate + BGM audio logic lives in FrutigerScenes (careful), globalBgmAudio handoff, haptics, glass css, three dep present.
+- Build: clean (prior gates passed).
+- .agents/ : programmes/ has configs example (toml-like with [[phase]]), logs, reviews (R-*-2.md style), history for music-titlebar (exemplar process: review first, build gates, history append, VFS only).
+
+## IIPS Application + High-Fidelity Plan
+- **SentientOrchid focus (target)**: Enhance the viewer (or wrap via thin Orchid.tsx for "Sentient" personality) while keeping file in SentientOrchid/. Do not duplicate; evolve OrchidViewer.tsx + possibly update stub/index to re-export the sentient version.
+- **Statemachine (idiomatic functional solid)**: Inside the component: `const [orchidState, setOrchidState] = createSignal<'idle'|'curious'|'happy'|'blooming'|'tickled'>('idle');` + derived signals (wiggleAmp, sparkleRate, smileOpacity). Use createEffect or on( state, ... ) to side-effect (trigger bursts, change anim params). No heavy classes.
+- **Smile personify (cute pokemon-like)**: Add a charming smile that "blooms". Options (choose elegant): 2D DOM overlay <div class="smile">😊</div> absolutely positioned over canvas + use three Vector3.project + css left/top to follow a "face" point on model (or fixed sweet spot with subtle bob). Or pure three: small Torus/Line curve in warm pink that scales/rotates in on happy. Trigger on state change + tap. Make it feel alive and affectionate.
+- **Wiggles or sparkles (threejs animations)**: In the RAF animate loop, react to state:
+  - idle/curious: gentle whole-model sway + slow bob + occasional soft sparkles (small Point sprites or simple points orbiting or at tips).
+  - happy/tickled: faster wiggle (sin on rotation.y + scale pulse on sub-group or whole), more sparkles, smile appears.
+  - blooming: bigger slow opening scale + color shift on emissive or extra lights, particle burst.
+  Add a tiny internal particle system (BufferGeometry points) for orbiting sparkles around the model — performant, disposed.
+- **Better starting position + controls + touch-first**: Set initial controls {yaw: -0.6, pitch: 0.35, distance: 2.1} for a lovely 3/4 "looking at you" view of the orchid "face". Improve damping/momentum on drag release. Touch: already good; add visual "bloom" ring or subtle press scale on canvas down. Explicit "touch to wake" on load if idle.
+- **Guided views + game-like interaction**: Inside the viewer container (glass framed), render a small row of touchable "view" affordances (solid buttons or hot labels): "Eyes", "Profile", "Under the petals", "Happy dance". On click: lerp/tween the controls values smoothly (use a simple accumulator or requestAnimationFrame lerp in the loop), setState('happy' or 'blooming'), trigger sparkle + haptic. Tap/hold zones on the 3d itself advance state ("tickle the orchid"). Make it feel like playing with a tiny friend that responds — reward curiosity.
+- **Remove preceding scenes + Hadacard open mode**:
+  - Add to Hadacard: prop `mode?: 'portrait' | 'open-letter'`, plus perhaps `onOpenComplete?: () => void`. When 'open-letter', trigger a one-shot or togglable "unfold" animation (e.g. via solid signal + style transform on .holo-card__inner : rotateX or scale + inner content swap to a larger flowing Pretext of the hbdMessage as the "letter inside", or a soft "page turn" via opacity + y translate of message area). Keep all holographic pointer magic. Default remains beautiful closed portrait for home.
+  - Gift flow (circa + FrutigerScenes): Remove or bypass the "scenes that proceed" the orchid (the bubble pretext stage 1 + pop). Start the gift experience directly with the Hadacard in portrait, provide a clear "open your letter" affordance (the existing action button or the card itself). On open-complete, transition (with existing flash or gentle fade) to the enhanced sentient OrchidViewer as the living gift inside the opened letter. Preserve: time early/late guards, BGM audio (careful handoff), haptics, glass, particles (perhaps as "opening dust" or keep light version around orchid). This makes the experience "card -> open -> sentient orchid friend".
+- **Solid + astro**: Keep heavy 3d + state in solid islands (client:load). Astro pages for shell + static guards.
+- **VFS + reporting**: This review + the .programme (created as the loaded plan) + log updates + final history entry. Use .programme / .log / R-*.md as established typed names.
+- **No new deps**: three + solid + existing utils only.
+
+## Risks & Mitigations (High Care — No Mistakes)
+- **Audio / scene logic**: FrutigerScenes owns BGM start/pause, global handoff, timers, timeStatus. Touch ONLY for removing the precede bubble stage + wiring hadacard->orchid. Never alter play/pause/resume.
+- **Hadacard regression on home**: The home card must remain unchanged in appearance/behavior when no mode (or default 'portrait'). Open mode is opt-in for gift flow. Test build + mental (home still pretty 3d letter).
+- **Three perf + mobile**: Current viewer is reasonable; added sparkles/wiggles must be light (few points, simple sin, no heavy geom every frame). Use existing dispose pattern. Test mental on touch drag + state changes.
+- **GLB limitations**: No baked animations assumed. All wiggles/smile/sparkles are procedural (RAF + math) or 2d overlay. Smile must read as "part of the orchid" not sticker.
+- **State machine scope creep**: Keep tiny (5 states max, drive 3-4 anim params). No complex reducer; signals + effects.
+- **"Remove scenes" scope**: Do not delete the entire FrutigerScenes or particles (they are beautiful and were enhanced for "girly powerful" in prior authorized work). Collapse the precede logic for the circa gift path while leaving reusable pieces. If too destructive, provide a simpler direct orchid+hadacard-open path in circa and leave Frutiger for other uses.
+- **Build / types**: Three types already there. New props on Hadacard must not break existing calls (home passes specific props, scenes will be updated).
+- **Magic leak**: Every change judged by "does this still feel like a handwritten love letter with a living cute friend inside?" Wiggles should feel organic and affectionate, not game-y tech demo. Smile is the heart of personification — make it charming and subtle.
+- **Cross-job**: Prior configs work already removed egift and put orchid at end; this mach2 refines per its specific bullets. Coordinate (don't revert prior).
+
+## Alternatives Considered
+- Full rewrite of gift scene into new component: higher risk; instead minimal edit to Frutiger or direct in circa + reuse.
+- Bake smile into glb or new model: no (can't mutate asset); procedural/overlay wins for craft control.
+- External animation lib or drei/solid-three: violates "in-project", minimal deps, IIPS. Pure three + solid signals is elegant here.
+- Keep full visual novel bubbles: job explicitly says "remove the scenes that proceed that" — honor by collapsing precede for the orchid reveal.
+
+## Exact Verification Steps (MANDATORY)
+1. `cd web && bun run build` — clean exit 0 after every significant edit (post-orchid, post-hadacard mode, post-scenes change). Repeat at end.
+2. Grep for residual "egift" (should be only comments in prior reviews/logs).
+3. Mental runtime (gift path): /gifts/circa-1993 loads -> Hadacard (portrait) -> clear affordance to open (anim unfolds like a real letter) -> transitions to sentient orchid -> tap/tickle -> happy state, smile appears + wiggles + sparkles, guided view buttons change camera sweetly + advance state, touch drag + pinch still work, idle has cute sway.
+4. Home unchanged: / still shows beautiful interactive Hadacard portrait with profile + message.
+5. No console errors, haptics fire, audio continues (BGM).
+6. .agents/ updates: this review, programme with live status, log appended, final history entry with decisions + "magic preserved".
+7. Source touched only under components/ + the two gift files (authorized by job message).
+
+## Pre-Change Sign-off (per rules.rule)
+- Authorizing job read in full.
+- Relevant source (SentientOrchid, viewer, scenes, circa, hadacard, public model, three patterns, audio, haptics, css, layouts) + rules.rule + history + prior reviews/programmes read.
+- This review document now exists and is coherent (scope exact, risks called out, IIPS applied, verification concrete, love-letter invariant front-and-center).
+- Standing protocol followed: only after this review will any search_replace or write to real web/src/ occur.
+- Will update programme + log at each gate.
+- Will append to history/ on completion.
+- Will honor VFS (no unlogged/unreviewed drift).
+- Risk of magic leak explicitly owned; every line will be written with care for the "tiny living friend in a letter".
+
+**Next immediate (post this review)**: Update log + programme status, then phase orchid-core (enhance SentientOrchid with state, smile, wiggles, guided, game interactions), then hadacard-open + scenes simplification, build gates throughout.
+
+*This review authorizes the full mach-2 execution under the job.*

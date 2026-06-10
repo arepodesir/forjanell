@@ -1,0 +1,10 @@
+---
+name: configs-to-toml
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+target: $REPO.CODE.web.src.components.
+kind: CREATE
+message: 
+ - Create a cute Music titlebar scroll component
+---

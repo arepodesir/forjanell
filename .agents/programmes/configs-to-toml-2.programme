@@ -1,0 +1,104 @@
+# configs-to-toml-2.programme
+# Love-lang / TOML-like meta state for cross-time + self-management of this transform.
+# Managed per job directive. Updated live during execution. IIPS: elegant, prescriptive, machine+human readable.
+
+name = "configs-to-toml-2"
+kind = "TRANSFORM"
+status = "in_progress"
+started = "2026-06-09T20:35"
+authorized_by = ".agents/jobs/configs-to-toml-2.md"
+review = ".agents/reviews/R-configs-to-toml-2.md"
+log = ".agents/logs/2026-06-09T2035-configs-to-toml-2-execution.md"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax"
+dollar = "In-project source module kind"
+no_mistakes = true
+preserve_magic = "particles, audio, haptics, glassmorphism, love-letter emotional precision"
+
+[targets]
+web_module = "web/"
+config = ["web/configs/*.toml", "web/src/config/", "web/src/hooks/useConfig.ts"]
+types = "web/src/types/"
+routes = ["web/src/pages/**/*.astro"]
+components = ["web/src/components/Hadacard/", "web/src/components/FlipBook/", "web/src/components/SentientOrchid/", "web/src/components/Nav/"]
+solid_preference = true
+astro_static_only = true
+
+[[phase]]
+id = "P1-config-types"
+title = "Coherent TOML-driven config + types relocation"
+status = "pending"
+owner = "config"
+tasks = [
+  "Fix imports + parser in config.ts to drive from real tomls (base->recipient, [[scene]]->scenes, messages scalar->[], assets arrays->records)",
+  "Remove egift from WebConfig, interfaces, parse, exports (complete removal of voucher data flow)",
+  "Move ALL types (Recipient, CardMeta, Scene, WebConfig, Gift, Assets, + new) to web/src/types/ (Config.ts or index.ts)",
+  "Ensure useConfig + APP_CONFIG + legacy shapes still work for zero-break on views during transition",
+  "Update index.ts barrel"
+]
+verification = ["bun run build clean", "grep -r egift web/src/config web/src/types | cat", "tsc --noEmit"]
+
+[[phase]]
+id = "P2-nav-distill"
+title = "Abstract nav, distill solid pieces, route structure"
+status = "pending"
+owner = "structure"
+tasks = [
+  "Create solid BackNav / type-safe route nav component (union of routes or config-driven)",
+  "Replace 4x duplicated back button + haptic script blocks in pages with the component",
+  "Fix home missing css import (styles/ or integrate to global)",
+  "Distil: extract TouchParticles solid component (share + enhance home/gift)",
+  "Pull dupe pageProps from data/pages.ts + home into single source (perhaps config or typed data)",
+  "Audit astro vs solid: move interactive bits (clock? menu? ) to islands where makes sense"
+]
+verification = ["build", "no more inline back-btn scripts in pages", "grep for duplicated logic reduced"]
+
+[[phase]]
+id = "P3-visual-gift-end"
+title = "Hadacard letter-ify, particles girly powerful, orchid end scene, remove voucher"
+status = "pending"
+owner = "experience"
+tasks = [
+  "Refactor Hadacard visual language: more 3D letter/profile (personal, flowing message, profile emphasis, letter aesthetics) vs trading-card badges/foil heavy. Keep pointer 3d interaction.",
+  "Enhance FrutigerScenes particles: girly palette (pinks, blush, rose, gold, sparkles), hearts/petal primitives or shapes, stronger interactive (attract + tap-to-burst + twinkle), more of them but capped perf, mobile touch. Keep connect lines delicate or theme.",
+  "Completely excise egift/voucher/claim/golden-ticket code from Hadacard.tsx (props, state, Show, modal, buttons, strings)",
+  "Implement OrchidViewer (solid + three): load Orchid.glb from /assets/models/, interactive (drag rotate yaw/pitch, wheel/pinch zoom, tap magic burst?, gentle auto-orbit), mobile friendly, beautiful well-designed framing (glass? soft lighting, floating petals around model, elegant labels or integrated final message via Pretext).",
+  "Wire end scene in FrutigerScenes: after pop, show OrchidViewer as the reveal (instead of Hadacard final + egift). Optionally keep a letter/profile Hadacard as intro to it or secondary.",
+  "Update circa-1993 and any callers; remove egift from APP_CONFIG spread"
+]
+verification = ["build", "no egift strings in src/", "OrchidViewer present and no console three errors in mental run", "particles code updated with girly comments"]
+
+[[phase]]
+id = "P4-state-readme-close"
+title = "Programme state, kitten readme, history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Keep this .programme updated at each phase gate (status, notes)",
+  "Update root README.md : replace gif with cute kitten gif (preserve alignment, dev section)",
+  "Append final session summary + decisions to .agents/history/",
+  "Clean any temp in artifacts/ if used"
+]
+verification = ["kitten gif in README", "history entry present", "programme status=done"]
+
+[progress]
+completed_phases = []
+current_phase = "P3-visual-gift-end"
+completed_phases = ["P1-config-types", "P2-nav-distill"]
+open_risks = ["audio discipline in scenes must not be touched", "build gate after every risky edit", "orchid three impl must be self-contained no new pkgs", "hadacard refactor scope vs dedicated job file", "egift removal will require follow-up cleans in Hadacard + circa page + any local types"]
+decisions = [
+  "Parser will be authoritative; legacy Records built from parsed data only.",
+  "Direct three.js + Solid for Orchid (GLTFLoader + pointer events + requestAnimationFrame).",
+  "Remove egift from model+UI completely; data can stay in cards.toml for now or commented.",
+  "Nav component will live under components/Navigator/ or components/Nav/ for discoverability.",
+  "P1 complete: build now reaches css-only failure; tomls drive data; types in @/types; egift gone from config."
+]
+
+[notes]
+love_lang = "Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy."
+"Use solid signals/effects for 3d state; astro for the quiet containers."
+"IIPS in TOML already strong in cards.toml — mirror that elegance in TS."
+
+# Live updates below during run (append-only style for key events)
+# [2026-06-09T20:35] Review written. Programme created. Ready for P1 edits.

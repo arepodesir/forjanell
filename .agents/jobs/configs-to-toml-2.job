@@ -1,0 +1,25 @@
+---
+name: configs-to-toml-2
+tags: [retry]
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+target: $REPO.CODE.web.[config/**, configs]
+kind: TRANSFORM
+mach: 2
+message: 
+ - You have refactored our config system from a previous $$mach in a way that is only barely satisfactory. we have detailed a pattern in the configs and we ask that you make the config.ts in /src/configs/ of the web module cohre with it in a type safe way and move all types to /src/types/ in the same 
+ - ns. 
+ - analyze the component structure and page structure of the routes - their not good. we want to use solid whereever possible and astro
+ - only for static or static ish elements - we need the hadacard well refactored and to loo kmore like a 3D letter thats profile then a trading card.
+ - enhance the particles for the gift scenes to be more girly interactive powerful. 
+ - remove the gift e voucher completely.
+ - instead the end scene needs to be: 
+   -   a rendering of the orchid.glb asset in /public in the astro project using a solid copataible lib that is 
+   -   mobiel friendly, interactive and well designed.
+ - abstract out the back button into a solid components for navigating the routes in a type safe way.
+ - scan the app content module types and seperate wheat from shaft, distil random llm code across all modules into isolated SOLID piecs to compose
+ - elegantly in the routes using hooks and higher order data acess and view constructs. 
+ - manage state in .agents/programmes with a programme of the prompt name .programme using a love-lang/toml like meta syntax.
+ - update the readme with a kitten gif instead of whats there.
+---

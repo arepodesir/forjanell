@@ -1,0 +1,98 @@
+# fix-orchid-viewer.programme
+# Love-lang / TOML-like meta + execution plan for this anonymous fix job.
+# Following our flow exactly (job + review gate + phases + builds + history).
+
+name = "fix-orchid-viewer"
+kind = "FIX"
+tags = ["anon", "fix"]
+status = "in_progress"
+started = "2026-06-10T01:17"
+authorized_by = ".agents/jobs/fix-orchid-viewer.job"
+review = ".agents/reviews/R-fix-orchid-viewer.md"
+log = ".agents/logs/2026-06-10-fix-orchid-viewer-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax"
+dollar = "In-project source module kind"
+no_mistakes = true
+preserve_magic = "romantic 3D orchid as living gift, touch delight, main wave song BGM, clean centered view, high quality on all screens, no cutesy distractions (remove smiley)"
+
+[targets]
+viewer = "web/src/components/SentientOrchid/OrchidViewer.tsx"
+usage = "web/src/components/FlipBook/FrutigerScenes.tsx (stage 2 orchid)"
+audio = "connect to config main (assets.toml [[audio]] main -> /assets/audio/main.wav )"
+changes = ["remove smiley entirely", "dead center + tuned start pos", "high dpi scale", "make glb animate (mixer + procedural model life)", "player audio hook"]
+
+[[phase]]
+id = "P0-gate"
+title = "Anonymous job authoring + full pre-edit review gate"
+status = "completed"
+tasks = [
+  "Create .job as authorizing artifact from user [[request]]",
+  "Read job + all sources + rules + prior artefacts",
+  "Create this .programme (toml plan)",
+  "Write R-fix-orchid-viewer.md (detailed, risks, IIPS, verification)",
+  "Log init"
+]
+verification = ["review exists and coherent before any web/src edit"]
+
+[[phase]]
+id = "P1-viewer-fixes"
+title = "Core viewer fixes (no smile, animate glb, center, dpi, audio)"
+status = "pending"
+tasks = [
+  "Remove smiley face completely: delete three smile creation, drive code in animate, DOM <Show>😊 overlay + styles, any state refs to smile/happy-smile.",
+  "Fix start position + dead centered: tune initial controls (yaw/pitch/distance) for nice front/centered orchid; in load remove y+=0.15 lift, improve centering math (box + position.set(0, computedY, 0)), adjust camera lookAt(0,0,0) or model center offset.",
+  "Scale for high dpi properly: renderer.setPixelRatio( Math.min(dpr, 2.5) or full ); ensure model scale / camera / world units are DPI independent (sharp on retina without giant model).",
+  "Make the glb animate instead: add THREE.AnimationMixer + clock delta; if (gltf.animations?.length) play them (or first clip). Enhance procedural: traverse(model, child => if mesh apply per-child gentle sway/scale sin for 'alive plant' animation on petals/stem). Keep tasteful wiggles/sparkles but tied to model life.",
+  "Connect the player to config main wave song: add to props externalAudio?: HTMLAudioElement, audioSrc?: string. In setup/onMount: if external use it else new Audio( audioSrc || config.assets?.audio?.main || '/assets/audio/main.wav' ); loop, volume ~0.35-0.45, play(). In cleanup pause + null. This makes the orchid view have 'its player' hooked to the love letter's main song from public assets / config."
+]
+verification = ["build clean", "no smiley code left in file/grep", "initial view dead centered on load (no lift, good framing)", "mixer code + enhanced traverse anim present", "audio creation from main path or external present + cleans up"]
+
+[[phase]]
+id = "P2-usage-audio-hook"
+title = "Hook the scenes usage for best audio connection"
+status = "pending"
+tasks = [
+  "In FrutigerScenes stage2 <OrchidViewer ... /> pass externalAudio={sfxHbd} (the parent's main wave player from config) so the 'player' (orchid + its music chrome) shares the single main song instance.",
+  "If sfxHbd timing (created in onMount) needs, use a ref or make the viewer gracefully handle undefined (falls back to internal main)."
+]
+verification = ["build", "no double audio (one source of main song for the orchid reveal)"]
+
+[[phase]]
+id = "P3-close"
+title = "Verify, report, cross time"
+status = "pending"
+tasks = [
+  "Multiple build gates after P1 and P2",
+  "Update this .programme live",
+  "Append full history entry",
+  "Log final"
+]
+verification = ["final build clean", "history present", "programme status=done", "request bullets all checked in review+log"]
+
+[progress]
+completed_phases = ["P0-gate"]
+current_phase = "P1-viewer-fixes"
+risks = [
+  "Removing smile may leave state machine with less 'happy' triggers — keep the states for wiggles/sparkles, just remove smile visuals.",
+  "GLB may have 0 animations (inspection hard in node) — mixer code is safe (no-op if none), focus on enhanced procedural 'the glb animates' via traverse.",
+  "Audio double play: use externalAudio pattern like MusicTitlebar already does in the same stage2; viewer only creates if no external.",
+  "Centering changes affect all users of viewer — tune conservatively and comment the values.",
+  "High dpi: avoid >2.5 to not tank mobile perf; test mental."
+]
+decisions = [
+  "Keep the statemachine + wiggles/sparkles (they make it 'alive'), just excise smiley.",
+  "For animate: mixer first (for future glb anims) + traverse-based per-mesh life for current static glb.",
+  "Audio: prefer externalAudio prop (to share parent's sfxHbd which is already the config main), fallback to internal using the public/config path.",
+  "Start pos: choose values that put the orchid dead center filling the nice square-ish view (after centering math).",
+  "All changes surgical search_replace in the viewer + one usage update."
+]
+
+[notes]
+"Following our flow: anonymous job file + this programme + review gate before source = no mistakes."
+"The main wave song from public/assets (via config) is the heart of the gift — the orchid reveal deserves to 'play' it as its BGM/player."
+"Dead centered + high dpi + living GLB animation (no smile distraction) = the orchid feels like a real precious 3D gift you can admire from every angle on any screen."
+
+# Live updates appended by execution
+# After review: P1 edits...

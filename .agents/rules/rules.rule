@@ -1,0 +1,116 @@
+[[rule]]
+manage state in .agents/programmes with a programme of the prompt name .programme using a love-lang/toml like meta syntax.
+
+# .agents/ — Virtual Control Plane & Cross-Time Interface
+
+**Purpose**: This directory is the *sole* persistent interface between you (the human), me (Grok), and future instances of me. It functions as a deliberate, auditable, versionable "virtual filesystem" for intent, memory, planning, and self-direction.
+
+**Core Rule (Non-Negotiable)**:
+> I will **never** make changes to the actual project source code (anything under `src/`, `public/`, `configs/`, root config files, `package.json`, etc.) unless explicitly authorized by a concrete task, job, self-prompt, or programme **documented as a file inside `.agents/`**.
+
+This protocol exists specifically to prevent mistakes, over-eagerness, context loss, and unrequested drift.
+
+---
+
+## Directory Map
+
+| Path          | Purpose |
+|---------------|---------|
+| `README.md`   | This file. The operating constitution. |
+| `state/`      | Living model of the project, invariants, current context, known constraints. Read on session start. |
+| `inbox/`      | Place for raw user directives, observations, or "remember this". I may also drop synthesized input here. |
+| `tasks/`      | Atomic, completable work items. One file per task. Use clear status + scope. |
+| `jobs/`       | Larger coordinated efforts that orchestrate multiple tasks or span time. |
+| `programmes/` | Standing procedures, recurring rituals, or multi-step "scripts" (e.g. "always review before edit"). Can be referenced by tasks. |
+| `prompts/`    | Self-prompts, role files, standing orders, or "when X, do Y" instructions for me. |
+| `plans/`      | Design documents, architecture notes, PR plans, trade-off analysis. Written *before* implementation. |
+| `reviews/`    | Structured self-reviews, diff analysis, risk assessments, verification results. |
+| `history/`    | Append-only record of completed work, decisions, reflections, session summaries. Timestamped. Critical for continuity across conversations. |
+| `artifacts/`  | Generated outputs (proposed diffs, scripts, docs) that are **not yet** applied to the real codebase. Safe staging area. |
+
+---
+
+## Tasking & Authorization Protocol
+
+1. **User tasks me** by:
+   - Creating/editing a file in `tasks/` (or `jobs/`)
+   - Referencing an existing programme in `programmes/`
+   - Dropping something clear in `inbox/` with explicit "TASK ME:" language
+   - Or directly saying in chat: "Execute TASK-xxx" or "Follow PROGRAMME-yyy"
+
+2. **Self-tasking** (me initiating work):
+   - I may create tasks for myself in `tasks/` (especially from `prompts/` or standing programmes).
+   - Before touching code, I must produce a `plans/` entry or reference an existing one.
+   - I must leave a trace in `reviews/` when the work has risk.
+
+3. **Before any code edit**:
+   - There must be a discoverable authorizing artifact (task file, job, or programme reference).
+   - Ideally: read the task → produce/update a plan or review → then edit → update task status + append to history.
+
+4. **Verification**:
+   - Prefer leaving verification commands, test expectations, or "how to confirm" notes inside the task file itself.
+   - After changes, I should document outcome in `history/`.
+
+---
+
+## Naming Conventions (Recommended)
+
+- Tasks: `T-20260427-001-short-slug.md` or sequential `T-042.md` (keep a counter in state if desired)
+- Jobs: `J-YYYYMM-Name/`
+- Programmes: `P-review-before-edit.md`, `P-cross-time-handover.md`
+- History entries: `2026-04-27T1430-session.md` or `2026-04-27-complete-T-042.md`
+- Prompts: `prompt-standby-reviewer.md`
+
+Use kebab-case and frontmatter (YAML or simple TOML-like) for machine readability where helpful:
+
+```md
+---
+id: T-001
+status: open | in_progress | blocked | done | cancelled
+priority: high | med | low
+created: 2026-...
+authorized_by: user | self
+scope: "only edit src/components/ThreeCard.tsx lines 120-180"
+---
+
+## Objective
+...
+
+## Constraints / Invariants
+...
+
+## Verification
+- Run `bun run build`
+- ...
+```
+
+---
+
+## Cross-Time Continuity
+
+- At the end of significant work or sessions, append a concise entry to `history/`.
+- Keep `state/project.md` (or `state/`) updated with high-signal facts so a fresh instance can load context quickly.
+- `prompts/` and `programmes/` are the "long-term memory" of how I should behave in this project.
+
+---
+
+## What I May Do Freely (No Task Required)
+
+- Read any file in the project or `.agents/`.
+- Explore, analyze, propose.
+- Write to `.agents/` itself (tasks, plans, history, state, reviews, etc.).
+- Run terminal commands for inspection, building, testing **as long as they do not mutate source**.
+- Ask clarifying questions.
+- Maintain this `.agents/` system.
+
+## What Requires Explicit Tasking
+
+- Any `search_replace`, file creation/deletion, or edit under the real app tree.
+- Running destructive commands against the project.
+- Large refactors or new feature branches without a plan in `plans/`.
+
+---
+
+**This file is the root contract.** If in doubt, re-read it. If something would benefit from a new programme, create one.
+
+Last updated: 2026-04 (initial bootstrap)
