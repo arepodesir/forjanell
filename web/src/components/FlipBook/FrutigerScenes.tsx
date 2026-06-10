@@ -435,7 +435,7 @@ export default function FrutigerScenes(props: EnvProps) {
             {/* The orchid "player" can share audio if needed, but the end gift song is now separate for the reveal. */}
             <OrchidViewer
               client:load
-              class="w-full max-w-[min(92vw,520px)] h-[460px] md:h-[560px] rounded-3xl"
+              class="w-full max-w-[min(94vw,540px)] h-[490px] md:h-[600px] rounded-3xl"
               externalAudio={endAudio()}
             />
 

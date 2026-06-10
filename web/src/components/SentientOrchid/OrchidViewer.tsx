@@ -51,9 +51,8 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let mixer: THREE.AnimationMixer | null = null;  // for glb animations (make the GLB animate instead of smile)
   let frameId: number | null = null;
   let lastAnimTime = 0;
-  // Dead centered start position (tuned for this GLB so the orchid is perfectly framed and "works well" on load)
-  // yaw/pitch/distance chosen so after proper box centering the model sits dead center with nice breathing room.
-  let controls = { yaw: -0.15, pitch: 0.18, distance: 2.25, auto: true, lastMove: 0 };
+  // Tuned for easy spin on pedestal: closer distance, good initial angle so spinning lets you see the full orchid, base, and tag from all sides.
+  let controls = { yaw: 0.1, pitch: 0.12, distance: 1.9, auto: true, lastMove: 0 };
 
   let pointerDown = false;
   let lastX = 0;
@@ -170,7 +169,8 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     lastY = ev.clientY; // still track but don't use for pitch
 
     // Only Y rotation (spin like a thing on a spinable pedestal). No pitch from drag.
-    controls.yaw += dx * 0.005;
+    // Increased sensitivity so it's easy and responsive to spin around and see all of it.
+    controls.yaw += dx * 0.0065;
     controls.lastMove = Date.now();
   };
 
@@ -235,7 +235,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       0.1,
       100
     );
-    camera.position.set(0, 0.55, controls.distance);
+    camera.position.set(0, 0.42, controls.distance);
 
     // romantic soft lighting (girly + elegant)
     const hemi = new THREE.HemisphereLight(0xffe4f0, 0x0a0b18, 0.6);
@@ -261,15 +261,15 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       });
       model = gltf.scene;
 
-      // Dead centered + properly scaled for the GLB (no lift, model at origin after box, fills the view nicely)
+      // Better scaled and positioned so the full orchid + base + tag is easy to spin around and see completely.
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 1.55 / maxDim;  // slightly tighter for better "dead center" presence
+      const scale = 1.72 / maxDim;  // larger presence for better viewing while spinning
       model.scale.setScalar(scale);
       model.position.sub(center.multiplyScalar(scale));
-      model.position.y = 0;  // dead centered — no lift
+      model.position.y = -0.02;  // sits nicely with the pedestal base visible at bottom
 
       scene.add(model);
 
@@ -298,7 +298,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       scene.add(baseRing);
 
       // 3D gift tag text element in the scene, styled like a cute orchid-themed gift tag
-      // (paper tag with string hole, pink accents, "Orchids :)" in gift-tag style)
+      // "For Janell" + small inscription about the loveliness of orchids.
       try {
         const tagCanvas = document.createElement('canvas');
         tagCanvas.width = 512;
@@ -310,55 +310,58 @@ export default function OrchidViewer(props: OrchidViewerProps) {
           ctx.strokeStyle = '#ff99cc';
           ctx.lineWidth = 10;
           ctx.beginPath();
-          ctx.roundRect(70, 45, 372, 155, 18);
+          ctx.roundRect(70, 38, 372, 168, 18);
           ctx.fill();
           ctx.stroke();
 
           // Top string hole
           ctx.fillStyle = '#0a0b18';
           ctx.beginPath();
-          ctx.arc(256, 58, 16, 0, Math.PI * 2);
+          ctx.arc(256, 52, 15, 0, Math.PI * 2);
           ctx.fill();
 
           // Delicate string (two curves for 3D tag feel)
           ctx.strokeStyle = '#ff99cc';
           ctx.lineWidth = 3.5;
           ctx.beginPath();
-          ctx.moveTo(256, 42);
-          ctx.quadraticCurveTo(256, 12, 210, 6);
+          ctx.moveTo(256, 37);
+          ctx.quadraticCurveTo(256, 8, 208, 4);
           ctx.stroke();
           ctx.beginPath();
-          ctx.moveTo(256, 42);
-          ctx.quadraticCurveTo(256, 12, 302, 6);
+          ctx.moveTo(256, 37);
+          ctx.quadraticCurveTo(256, 8, 304, 4);
           ctx.stroke();
 
-          // Main text - gift tag style, orchid cute
+          // "For Janell" - prominent
           ctx.fillStyle = '#c41e6a';
-          ctx.font = "bold 46px 'Great Vibes', cursive, serif";
+          ctx.font = "bold 34px 'Great Vibes', cursive, serif";
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText('Orchids', 256, 118);
+          ctx.fillText('For Janell', 256, 92);
 
-          // The ":)" smile per the request vibe
-          ctx.font = "36px 'Great Vibes', cursive, serif";
+          // Small inscription about the loveliness of orchids
+          ctx.font = "22px 'Great Vibes', cursive, serif";
           ctx.fillStyle = '#ff66c4';
-          ctx.fillText(':)', 256, 160);
+          ctx.fillText('the loveliness of orchids', 256, 125);
 
-          // Tiny decorative accents (orchid leaves / dots)
+          ctx.font = "18px 'Great Vibes', cursive, serif";
+          ctx.fillText('🌸', 256, 148);
+
+          // Tiny decorative accents
           ctx.fillStyle = '#ff99cc';
-          ctx.beginPath(); ctx.arc(185, 135, 5, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(327, 135, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(180, 115, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(332, 115, 4, 0, Math.PI * 2); ctx.fill();
         }
 
         const tagTex = new THREE.CanvasTexture(tagCanvas);
         tagTex.anisotropy = 8;
         const tagMat = new THREE.MeshBasicMaterial({ map: tagTex, transparent: true, side: THREE.DoubleSide });
-        const tag = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 0.82), tagMat);
-        // Position to the side, slightly forward and up — hangs like a real gift tag next to the orchid
-        tag.position.set(1.65, 0.65, 0.7);
-        tag.rotation.y = -0.35;
-        tag.rotation.x = 0.08;
-        // Attach to model so the whole thing (orchid + tag) spins together on the pedestal
+        const tag = new THREE.Mesh(new THREE.PlaneGeometry(1.72, 0.88), tagMat);
+        // Positioned nicely to the side so it's visible when spinning the pedestal and easy to see the inscription.
+        tag.position.set(1.48, 0.52, 0.62);
+        tag.rotation.y = -0.38;
+        tag.rotation.x = 0.06;
+        // Attach to model so tag spins with the orchid on the pedestal
         model.add(tag);
       } catch (e) {
         console.warn('Gift tag creation skipped:', e);
@@ -481,11 +484,11 @@ export default function OrchidViewer(props: OrchidViewerProps) {
 
       // position camera from spherical-ish
       const x = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const y = Math.sin(controls.pitch) * controls.distance * 0.9 + 0.35;
+      const y = Math.sin(controls.pitch) * controls.distance * 0.82 + 0.28;
       const z = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
 
       camera.position.set(x, y, z);
-      camera.lookAt(0, -0.05, 0);  // slight downward to frame the pedestal base + bottom of the container nicely
+      camera.lookAt(0, -0.12, 0);  // frame the pedestal base and full height so spinning shows everything nicely
 
       // WIGGLES + "the GLB animates" (procedural life on the loaded model instead of smile)
       if (model) {

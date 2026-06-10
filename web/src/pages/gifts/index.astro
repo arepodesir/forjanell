@@ -3,7 +3,7 @@ import Application from '@/layouts/Application.astro'
 import { config } from '@/config/'
 import BackButton from '@/components/Navigator/BackButton'
 
-const gifts = config.gift || [];
+const gifts = (config.gift || []).slice().reverse(); // newest/active first ("on top first" in the visual list)
 
 import Container from '@/layouts/Container.astro';
 ---
@@ -22,9 +22,10 @@ import Container from '@/layouts/Container.astro';
       </p>
     </div>
 
-    {/* Gift History Shelf */}
-    <div class="relative z-10 w-full max-w-lg flex flex-col gap-6 pb-12 animate-reveal-up" style="font-family: 'Patrick Hand', cursive;">
-      {gifts.map((gift: any) => (
+    {/* Gift History Shelf — header above, list scrolls (newest/active on top via reverse) */}
+    <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div class="w-full flex-1 overflow-y-auto flex flex-col gap-6 pb-12 animate-reveal-up" style="font-family: 'Patrick Hand', cursive;">
+        {gifts.map((gift: any) => (
         <div class={`relative rounded-3xl p-5 border-2 flex flex-col justify-between transition-all duration-300 overflow-hidden ${
           gift.active 
             ? 'bg-white/15 border-aero-pink shadow-[0_0_30px_rgba(255,102,196,0.3)] scale-100 hover:scale-[1.02] active:scale-98 animate-pulse-border' 
@@ -65,6 +66,7 @@ import Container from '@/layouts/Container.astro';
           </div>
         </div>
       ))}
+      </div>
     </div>
 
     {/* Fullscreen Zoom Transition Overlay */}

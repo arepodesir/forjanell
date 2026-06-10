@@ -1,0 +1,28 @@
+---
+name: fix-gifts-list
+mach: 1
+invariants:
+ - IIPS: clean, elegant, minimal changes.
+ - Follow VFS: job -> review gate before any src edit -> programme/log -> history.
+ - Preserve existing gift card styling, active ribbon, zoom transition, haptics, button behaviors.
+ - Make the list show newest/active items on top first (reverse render order).
+ - Make the gifts list properly scrollable while keeping header visible and layout nice within the Container (which has overflow-y-auto + flex justify-between).
+target: web/src/pages/gifts/index.astro
+kind: FIX
+message: |
+  Fix the /gifts (Gift Vault) list:
+  - "puts things on top first": currently maps gifts in toml array order (oldest to newest likely), so recent/active appears lower. Reverse the array for render so newest/active gift card is at the visual top of the list.
+  - "its scrollable": the list div uses flex-col gap-6 pb-12 inside max-w-lg. Due to parent Container's flex justify-between and lack of height constraint on the list, when multiple gifts the list grows the page (outer scrolls) but items may not feel "top first" or the shelf may not scroll independently with header pinned. Make the list area scrollable (overflow-y-auto + flex-1 in a proper flex wrapper) so the cards shelf scrolls while header stays above.
+  - Keep all existing functionality (active styling, ribbon "Target Bday", archived state, click zoom nav to circa-1993, etc.).
+  - Ensure it works with current single gift and scales to multiple.
+
+  Plan:
+  - In script frontmatter: const gifts = (config.gift || []).slice().reverse(); // newest first at top
+  - Restructure the content after BackButton:
+    - Keep header div (perhaps adjust mt).
+    - Wrap a scroll area: a flex-1 min-h-0 overflow-hidden container, inside which the list div gets flex-1 overflow-y-auto (or the list itself).
+    - To counter the outer justify-between pushing things, put header + scroll-wrapper inside a single flex-col block that starts from top.
+  - Add appropriate classes: e.g. the list parent becomes relative flex flex-col flex-1 min-h-0, list div keeps max-w-lg flex-col gap-6 pb-safe or pb-12 but now with overflow-y-auto.
+  - Test: build succeeds, mentally the list will stack from top of its scroll container, header above it, whole page still works with Container's scroll if needed.
+  - VFS: full review before edit, log the execution, final history.
+---

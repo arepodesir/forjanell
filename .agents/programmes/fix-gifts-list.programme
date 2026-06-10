@@ -1,0 +1,58 @@
+# fix-gifts-list.programme
+# Simple fix programme for the gifts vault list UX.
+
+name = "fix-gifts-list"
+kind = "FIX"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/fix-gifts-list.job"
+review = ".agents/reviews/R-fix-gifts-list.md"
+log = ".agents/logs/2026-06-fix-gifts-list-execution.log"
+
+[invariants]
+iips = "minimal, clean, no breakage to existing gift cards or interactions"
+reverse_for_top = "newest/active gift first in visual list (reverse render order)"
+scrollable_list = "header visible, cards shelf uses overflow-y-auto + flex-1 in constrained area"
+preserve = "active ribbon, styling, zoom nav, haptics, all current DOM inside map"
+
+[targets]
+page = "web/src/pages/gifts/index.astro"
+container = "leverages existing Container overflow + flex"
+
+[[phase]]
+id = "P1-vfs"
+title = "Job + review + programme + log"
+status = "completed"
+tasks = ["Create job", "Write review as gate", "Init programme + log"]
+verification = ["review coherent and authorizes the astro edit"]
+
+[[phase]]
+id = "P2-implement"
+title = "Reverse gifts + make list scrollable with layout wrapper"
+status = "pending"
+tasks = [
+  "Reverse the gifts array (newest on top)",
+  "Wrap header + list in flex-col flex-1 min-h-0 so list can scroll independently",
+  "Add overflow-y-auto + flex-1 to the shelf area",
+  "Keep all inner card markup, styles, script untouched"
+]
+verification = ["bun run build clean", "mental model with 1+ items shows top-first + scroll"]
+
+[[phase]]
+id = "P3-verify-close"
+title = "Build gate + VFS close + history"
+status = "pending"
+tasks = ["Run build", "Update log + programme", "Write history entry"]
+verification = ["build 0", "history present", "list works as requested"]
+
+[progress]
+completed_phases = ["P1-vfs"]
+current_phase = "P3-verify-close"
+status = "done"
+completed_phases = ["P1-vfs", "P2-implement", "P3-verify-close"]
+decisions = [
+  "Use .slice().reverse() for render order (non-destructive)",
+  "Minimal wrapper to work with Container's justify-between and overflow",
+  "No changes to gift card UI or the zoom script"
+]
+notes = "Small targeted fix. Make the vault feel like a proper top-down scrollable timeline shelf."

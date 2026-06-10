@@ -1,0 +1,133 @@
+# hadacard-invert-letter.programme
+# Love-lang / TOML-like meta state for the invert + letter polish refine.
+# Per job + prior mach pattern. Updated live during execution.
+
+name = "hadacard-invert-letter"
+kind = "REFACTOR"
+status = "done"
+started = "2026-06"
+authorized_by = ".agents/jobs/hadacard-invert-letter.job"
+review = ".agents/reviews/R-hadacard-invert-letter.md"
+log = ".agents/logs/2026-06-hadacard-invert-letter-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]"
+dollar = "In-project source module kind"
+no_mistakes = true
+build_on_prior = "Extend open (refactor-hadacard.2) + landscape button (hadacard-landscape-arrow) without breaking magic or existing controlled usage."
+invert_state = "Default to closed/sealed (more like receiving a physical letter you must open). Landscape features and button strictly require the open letter state first ('has to be open')."
+button = "Larger (w-11+), better positioned and integrated into the letter, only in the open branch."
+slower_deliberate = "All state transitions (open, landscape) 650-850ms+ with elegant, paper-like motion. More precious and intentional."
+letter_layout = "More like a real unfolded letter: clean top signifier, body as primary message, discovered extras in landscape, strong closing. Far less redundancy (no duplicate hbdMessage as both fancy title and body)."
+meaningful_text = "Completely remove the random trading-card corner badges (id + rarity / 'HC-001' / 'Ultra Rare Holo'). Replace with personal, letter-appropriate text (date/year, 'For Janell', correspondence credit, or elegant minimal)."
+preserve_magic = "Holographic 3d pointer + all foil/glitter/shine/glare layers, letter-block + letterIn anims, profile + cap + candles, confetti, sign-off '— with love, always', haptics, glassmorphism, affectionate defaults, prior open/landscape features — all stay and feel even more special."
+vfs = "Full recording: this job -> review (hard gate) -> this programme -> live log -> final history. Build gates after edits."
+
+[targets]
+hadacard = "web/src/components/Hadacard/"
+styles = "component-local <style> only (no global.css)"
+reuse = "existing letters.ts, aero-glass, letter-block primitives"
+solid = true
+
+[[phase]]
+id = "P1-job-review-vfs"
+title = "Job authoring + comprehensive review gate + programme + log (VFS foundation)"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Create .agents/jobs/hadacard-invert-letter.job (captures exact user words + detailed plan).",
+  "Full pre-reads of current component, types, CSS, prior VFS artefacts.",
+  "Write R-hadacard-invert-letter.md (full scope, risks, exact authorized files, implementation notes, verification list, sign-off).",
+  "Create this programme.",
+  "Init dedicated execution log."
+]
+verification = ["job + review + programme + log exist and are coherent", "review explicitly authorizes the work and lists files"]
+
+[[phase]]
+id = "P2-invert-state-button"
+title = "Invert default to closed + enlarge/reposition button (enforce 'has to be open')"
+status = "pending"
+owner = "state"
+tasks = [
+  "Change uncontrolledOpen default from true to false (card starts sealed).",
+  "Keep tap-to-open on closed card surface.",
+  "Enlarge the landscape button (w-11 h-11 / text-2xl or bigger).",
+  "Reposition the button to a better, more letter-integrated spot inside the open content (generous breathing room, aligned with sign-off or as elegant right-side element).",
+  "Reinforce that the button JSX lives only inside the isOpen() branch.",
+  "Build gate after these changes."
+]
+verification = ["build exit 0", "default is now false", "button classes show larger size", "button still strictly inside open branch", "tap still opens the card when closed"]
+
+[[phase]]
+id = "P3-slower-letter-layout-text"
+title = "Slower deliberate transitions + letter-like layout + remove random corner text + meaningful replacements + dedup"
+status = "pending"
+owner = "design"
+tasks = [
+  "Update all relevant transition durations in the component <style> to 650-850ms+ range (open, landscape, inner content). Refine motion for 'careful paper unfold' feel.",
+  "Clean open branch layout for real letter flow: meaningful top text (replacing the two-span random meta), cleaner title/greeting area, primary body message, keep landscape extras (scrollMsg banner + P.S.) as discovered pages, preserve sign-off.",
+  "Reduce redundancy: stop duplicating the hbdMessage as both split h1 title *and* large body paragraph. Make the body the hero long message; title area becomes elegant/salutation-like or minimal.",
+  "In closed face: remove or replace its small top meta line for consistency with the letter direction.",
+  "Replace all random corner/trading-card text (id + rarity in both states) with meaningful personal text (e.g. '2026', 'For Janell', elegant date-like signifier, or minimal correspondence credit).",
+  "Keep profile, candles, confetti, holo layers, pointer interaction, and '— with love, always' as anchors.",
+  "Build + grep + re-read gate after the layout/text changes."
+]
+verification = [
+  "build succeeds",
+  "no more 'HC-001' or 'Ultra Rare Holo' (or equivalent random meta) in the rendered content branches",
+  "meaningful personal text present in the former corner locations",
+  "hbdMessage no longer duplicated as both fancy title and body",
+  "letter flow feels cleaner (top signifier → body → extras in landscape → closing)",
+  "transitions are now deliberately slow (check <style> values)",
+  "button remains large + well placed + only in open",
+  "all prior magic (holo, tilt, letters, profile, candles, sign-off) intact",
+  "component re-read still feels like a handwritten love letter"
+]
+
+[[phase]]
+id = "P4-verify-close"
+title = "Full gates, VFS updates, history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run all mandatory verification steps from the review (builds after each phase, tsc, greps for removed text + new sizes/timings, mental model + source re-read).",
+  "Update this programme (status=done, completed_phases, decisions, notes, live events).",
+  "Append rich events + gates to the execution log.",
+  "Write final history entry in .agents/history/ (what happened, files touched, outcome, why it mattered, next natural, magic preserved).",
+  "Confirm strict VFS hygiene: only authorized source + complete .agents/ artefacts."
+]
+verification = [
+  "final build == 0",
+  "history entry present",
+  "programme status=done",
+  "the card now feels like a cherished physical letter you carefully open, then deliberately widen with a prominent button. Slower, cleaner, more personal, no random collectible text."
+]
+
+[progress]
+completed_phases = ["P1-job-review-vfs", "P2-invert-state-button", "P3-slower-letter-layout-text"]
+current_phase = "P4-verify-close"
+open_risks = [
+  "Changing default to closed will affect first-load appearance on home (desired per request; controlled prop still works).",
+  "Larger button + new position must not overflow containers or feel out of place in the letter.",
+  "Slower timings must still feel responsive and magical, not laggy.",
+  "Layout cleanup must keep the holographic magic and profile/candles as beloved anchors while removing visual noise."
+]
+decisions = [
+  "Default uncontrolledOpen = false (invert to sealed start). Parents can still force open={true}.",
+  "Button size increased and repositioned inside open content with better letter integration and breathing room.",
+  "All timing changes live in the component's existing <style> block.",
+  "Random meta (id + rarity) completely removed from both closed and open; replaced by minimal meaningful personal text (year/date/'For Janell' style).",
+  "Redundancy reduced by making the body paragraph the primary long message; title area becomes cleaner greeting/name treatment.",
+  "Landscape extras (banner + P.S.) remain as 'discovered pages' when you widen the letter.",
+  "No new props, no global.css, no page edits — strict scope from the review."
+]
+notes = [
+  "love_lang = 'Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "The experience is now: you receive a sealed beautiful object, you tap to carefully open the letter, you then use the prominent button to deliberately unfold it wider and discover the extra personal lines.",
+  "The holographic foil and pointer magic remain the secret undercurrent that makes it more than paper.",
+  "Corner text now means something to the recipient."
+]
+
+# Live updates below during run (append-only style)
+# [2026-06] Job created from user request. Full review R-hadacard-invert-letter.md written as the hard gate. Programme initialized. P1 complete. Ready for P2 (state invert + button).
+# [later] Phase gates and decisions recorded here and in the log.

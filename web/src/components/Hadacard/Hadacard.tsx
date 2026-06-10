@@ -10,10 +10,11 @@ export default function Hadacard(props: HadacardProps) {
   const [cardOpacity, setCardOpacity] = createSignal(0.4);
   const [isInteracting, setIsInteracting] = createSignal(false);
 
-  // Open mode (new in refactor-hadacard.2): wide smooth pretty letter unfold.
-  // Controlled via prop or internal (default open so existing usage is unchanged).
+  // Open mode (refactor-hadacard.2 + hadacard-invert-letter): wide smooth pretty letter unfold.
+  // Inverted default (per this job): starts closed/sealed so the recipient must deliberately open the letter.
+  // Controlled via prop or internal. Landscape button + its features still require isOpen() first ("has to be open").
   const controlledOpen = () => props.open;
-  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(true);
+  const [uncontrolledOpen, setUncontrolledOpen] = createSignal(false);
   const isOpen = () => (controlledOpen() !== undefined ? Boolean(controlledOpen()) : uncontrolledOpen());
   const setOpen = (next: boolean) => {
     if (controlledOpen() === undefined) {
@@ -141,9 +142,10 @@ export default function Hadacard(props: HadacardProps) {
             {/* Content layout inside the card (open mode: wide smooth pretty letter; closed: elegant sealed front) */}
             <div class="relative z-10 flex flex-col items-center text-center p-4 h-full">
               {!isOpen() ? (
-                /* Closed face — pretty sealed letter invitation, still fully holographic */
+                /* Closed face — pretty sealed letter invitation, still fully holographic.
+                   Clean top (no random trading-card meta) — meaningful minimal signifier only. */
                 <div class="flex flex-col items-center justify-center h-full py-2">
-                  <div class="text-[9px] text-pink-200/50 font-mono tracking-[1px] mb-1">{cardMeta().id}</div>
+                  <div class="text-[9px] text-pink-200/55 tracking-wider mb-0.5" style={{ "font-family": "'Patrick Hand', cursive" }}>2026</div>
 
                   {/* Smaller profile peek for closed state */}
                   <div class="relative w-16 h-16 mb-2 animate-float z-10 shrink-0">
@@ -167,12 +169,13 @@ export default function Hadacard(props: HadacardProps) {
                   <div class="text-[11px] mt-0.5">✉︎</div>
                 </div>
               ) : (
-                /* Open — the full wide, breathing, personal letter (centerpiece) */
+                /* Open — the full wide, breathing, personal letter (centerpiece).
+                   More like a real letter now: meaningful top text (no random corner trading-card badges),
+                   cleaner flow, primary body message, discovered extras only when widened. */
                 <>
-                  {/* Header meta */}
-                  <div class="w-full flex justify-between items-start mb-2 text-[10px] text-pink-200/70 font-mono">
-                    <span>{cardMeta().id}</span>
-                    <span>{cardMeta().rarity}</span>
+                  {/* Meaningful top signifier (replaces the previous random id/rarity corner text) */}
+                  <div class="w-full text-[9px] text-pink-200/60 tracking-[1px] mb-1 text-right" style={{ "font-family": "'Patrick Hand', cursive" }}>
+                    For Janell • 2026
                   </div>
 
                   {/* Profile picture with cap */}
@@ -274,11 +277,12 @@ export default function Hadacard(props: HadacardProps) {
                     <div class="text-right">{cardMeta().artist} · {cardMeta().year}</div>
                   </div>
 
-                  {/* Special glassy arrow button (hadacard-landscape-arrow) — only in open state.
-                      Matches the card: aero-glass + holo palette, big elegant arrow, perfect touch target.
-                      Toggles landscape "wide letter sheet" + reveals the cool new features below. */}
+                  {/* Special glassy arrow button (hadacard-invert-letter + prior landscape work).
+                      Larger, better positioned, and strictly only available once the card is open ("has to be open").
+                      Integrated as an elegant right-side "unfold further" element with breathing room inside the letter.
+                      Still matches the card (aero-glass + holo palette) but now more prominent and deliberate. */}
                   <button
-                    class="absolute bottom-2 right-2 z-30 aero-glass rounded-full w-9 h-9 flex items-center justify-center text-xl leading-none text-aero-cyan border border-white/20 shadow-md active:scale-90 transition-all hover:border-aero-pink/50 select-none"
+                    class="absolute bottom-3 right-4 z-30 aero-glass rounded-full w-11 h-11 flex items-center justify-center text-2xl leading-none text-aero-cyan border border-white/25 shadow-md active:scale-90 transition-all hover:border-aero-pink/60 hover:scale-105 select-none"
                     onClick={(e) => { e.stopPropagation(); toggleLandscape(); }}
                     aria-label={isLandscape() ? "Return to portrait letter view" : "Expand letter to landscape view"}
                   >
@@ -303,20 +307,21 @@ export default function Hadacard(props: HadacardProps) {
         }
         .holo-card--closed .holo-card__inner,
         .holo-card--open .holo-card__inner {
-          transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+          /* Slower, more deliberate (hadacard-invert-letter): feels like carefully unfolding a real letter */
+          transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
         }
         /* subtle lift + presence when opening */
         .holo-card--open {
           filter: saturate(1.05);
         }
 
-        /* Landscape (hadacard-landscape-arrow): the letter "unfolds" into a generous wide sheet.
-           Smooth aspect transition + the new banner/P.S. feel like discovered pages. */
+        /* Landscape (hadacard-invert-letter + prior): the letter "unfolds" into a generous wide sheet.
+           Slower and more deliberate aspect transition + the new banner/P.S. feel like discovered pages. */
         .holo-card--landscape {
           --card-aspect: 1.62;
         }
         .holo-card--landscape .holo-card__inner {
-          transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 320ms ease;
+          transition: transform 820ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 820ms ease;
         }
         /* A touch more presence + the new elements breathe with the wider format */
         .holo-card--landscape {

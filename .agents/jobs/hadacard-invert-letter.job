@@ -1,0 +1,95 @@
+---
+name: hadacard-invert-letter
+mach: 4
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+ - Build on prior open + landscape (hadacard.2 + landscape-arrow). All changes must feel like a personal handwritten love letter.
+ - Invert card state for better "letter" experience (default more closed/sealed, interaction deliberate).
+ - Button must be larger, better positioned, and only usable/visible once the card is in the open letter state ("has to be open").
+ - Transitions slower, more deliberate, better designed (600-900ms+ cubic, elegant easing, no rush).
+ - Layout + config of the card must be more like a real letter: clean vertical flow (top signifier/date/salutation, body, closing), far less redundancy (no duplicate hbdMessage as both title and body text, no repeated meta).
+ - Remove random corner/trading-card text (id, rarity, "Ultra Rare Holo", "HC-001" etc.) and replace with meaningful, personal, letter-appropriate text (e.g. a date, "For Janell", year as correspondence date, "with love from the universe", or elegant minimal signifier).
+ - Preserve (and enhance) all magic: holographic 3d pointer foil/glitter/shine, letter-block anims, profile + cap + candles, confetti, glassmorphism, haptics, "— with love, always", affectionate defaults.
+ - VFS discipline mandatory: full job (this) -> review -> programme -> live log updates -> history. Builds after every phase. No mistakes.
+ - Make file extensions on the fly only if truly needed (prefer staying in Hadacard.tsx + component styles).
+target: $REPO.CODE.web.src.components.Hadacard
+kind: REFACTOR / POLISH
+message: |
+  User request (direct):
+
+  "please invert the card state and position the button larger and better so it has to be open- make it slower and more delibeate and beter desined and update the config and layout of the card to be more like a letter with less redundency and remove random corner text for meaniful text and lof in vfs"
+
+  Detailed plan for the anonymous/refine task (to be executed with full VFS):
+
+  1. Invert the card state:
+     - Change default uncontrolledOpen to false (the card starts in the elegant sealed/closed face by default — more like receiving a physical letter that you must open).
+     - Keep the tap-to-open on the closed card surface (or enhance it).
+     - The landscape button (and its features) must remain strictly gated behind isOpen() — "has to be open" first.
+     - Optionally invert some visual priority so the "open letter" feels like the primary "unfolded" state.
+
+  2. Position the (landscape) button larger and better, and enforce "has to be open":
+     - Make the button significantly larger (e.g. w-11 h-11 or w-12 h-12, bigger glyph  text-2xl or 3xl).
+     - Better positioning inside the open letter: not tiny absolute bottom-right (which can feel tacked on). Integrate it more elegantly — perhaps as a right-edge "pull tab" or flap, lower-center "unfold" affordance, or prominent but still harmonious near the sign-off area or as a stylized letter seal/arrow on the right side of the content. Use more breathing room.
+     - Visual design: larger touch target, subtle inner glow or foil accent to match holo-card, clear arrow that communicates "widen the letter". Hover/active states more pronounced but still delicate. Label optional (or aria only) to keep it special/minimal.
+     - Only rendered in the open branch (already true; reinforce with comments and perhaps slight disabled/hidden state if somehow reached closed).
+
+  3. Make transitions slower, more deliberate, and better designed:
+     - All open/close and landscape transitions: increase from ~280-320ms to 650-850ms (or longer for the main unfold).
+     - Use more deliberate easing (keep or refine the cubic-bezier(0.16, 1, 0.3, 1) or a softer one for "unfolding paper").
+     - Enhance the open/landscape feel with additional subtle transforms (slight scale, translateY on content, better stagger for new elements like the P.S. and banner).
+     - The initial "open" from closed should feel like carefully lifting a flap or unfolding a real letter — not a quick pop.
+     - Landscape expand should feel like slowly stretching the paper wider to read the full sheet.
+
+  4. Update the config and layout of the card to be more like a letter with less redundancy:
+     - Overall aesthetic shift even further from "holo trading card" toward "unfolded personal letter / stationery" while keeping the beautiful holographic foil interaction as the magical underlayer.
+     - Clean the inner content structure (especially in open + landscape):
+       - Remove or heavily de-emphasize duplicate/redundant text: currently the hbdMessage is split-animated in the h1 title *and* repeated as the large body paragraph. Make the body the primary long-form message; turn the top title area into a proper letter salutation or short elegant header (e.g. "Happy Belated Birthday, my love" as a single tasteful line, or just the name as addressee).
+       - Better letter flow in open/landscape:
+         - Top: a small meaningful date or "May 2026 • Personal" (replacing random meta).
+         - Then profile (keep, but perhaps slightly smaller or with letter-appropriate framing in landscape).
+         - Greeting / main name treatment.
+         - The main flowing body message (Patrick Hand, generous leading, good measure for readability in wide landscape).
+         - The landscape-only scrollMsg banner and P.S. (already good "extra page" discovery — keep and integrate into the letter flow).
+         - Bottom closing / sign-off (already excellent — preserve "— with love, always" + artist/year as correspondence credit).
+       - In landscape: take advantage of width for two-column-ish or generous single-column with side notes, but keep it vertical-letter first. The profile + candles can move to a "left margin" treatment or stay centered with more air.
+       - Reduce overall inner padding redundancy, font size hierarchy, and visual noise.
+     - Update cardMeta defaults if helpful (keep the data but stop surfacing trading-card-y fields as primary UI text).
+     - Update closed state to match the new letter direction (cleaner, less meta badges).
+
+  5. Remove random corner text for meaningful text:
+     - In both open and closed states: completely remove or replace the small mono corner badges:
+       - "{cardMeta().id}" (HC-001)
+       - "{cardMeta().rarity}" (✦ Ultra Rare Holo)
+     - Replace with meaningful, personal, letter-appropriate content, for example:
+       - A date: "Spring 2026" or the year in elegant form.
+       - "For Janell" or "To you, with everything".
+       - The artist + year as "Written among the stars • 2026".
+       - Or a very minimal elegant single signifier at top-right like the scrollMsg short form or nothing (negative space is powerful for letters).
+     - Goal: the top of the letter should feel like the beginning of a real handwritten note, not a collectible card header.
+
+  6. VFS + execution requirements:
+     - Create this job first (planning the anonymous request).
+     - Full review (R-hadacard-invert-letter.md) as hard gate before any src edit.
+     - Programme (hadacard-invert-letter.programme) with phases.
+     - Live log in .agents/logs/.
+     - Repeated build gates (bun run build in web/) after each risky change.
+     - Final history entry.
+     - Only edit authorized files (primarily Hadacard.tsx; types only if props change is required; component <style> for all new timing/layout rules).
+     - No mistakes. Preserve every sensory and emotional invariant.
+
+  Outcome feeling: The Hadacard now feels even more like a cherished physical letter you receive, carefully open (first tap), then deliberately widen with a prominent elegant button to read the full beautiful sheet. Slower, more intentional animations. Clean letter layout with no trading-card cruft. Corner text now means something personal. Still holographic and magical underneath. Still 100% "for Janell".
+
+---
+
+# Notes for the executing agent
+- Start by authoring this job (done).
+- Immediately follow with full review as the authorizing document.
+- Then programme + log.
+- Then implement in small, verifiable search_replace steps on the component.
+- Pay special attention to the open branch layout and the two places that currently show the random meta (closed top line + open header meta div).
+- For the button: make it noticeably larger (increase size classes), move it to a more letter-integrated spot if bottom-right feels redundant (e.g. aligned with sign-off on the right, or as a vertical "unfold" element).
+- Slow everything that animates on state change.
+- Test mentally on both portrait open and landscape.
+- Update any comments to reflect the new "more letter, less card" direction.
+- After all changes + gates, update VFS artefacts and close with a nice history entry.
