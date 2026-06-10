@@ -61,8 +61,9 @@ import Container from "../layouts/Container.astro";
 
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
-      {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}
-      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
+      {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling).
+          Added top margin/padding for proper vertical centering on the index page. */}
+      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] mt-3 md:mt-4 animate-reveal-up" style="animation-delay: 0.1s;">
         <Hadacard 
           client:load 
           name={config.name}

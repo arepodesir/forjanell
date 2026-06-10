@@ -492,7 +492,11 @@ export default function FrutigerScenes(props: EnvProps) {
             <div class="aero-glass rounded-3xl px-4 py-2.5 max-w-xs text-center border border-white/15 mb-1">
               <p class="text-aero-cyan text-[10px] tracking-wider uppercase mb-0.5" style={{ "font-family": "'Comfortaa', sans-serif" }}>Your gift has opened</p>
               <div class="text-white/90 text-xs leading-snug" style={{ "font-family": "'Patrick Hand', cursive" }}>
-                A living orchid, grown just for you.
+                A virtual orchid just for you.
+              </div>
+              {/* Gift tag for Janell */}
+              <div class="mt-1 inline-flex items-center gap-1 text-[8px] tracking-[1.5px] text-pink-300/70">
+                <span class="border border-pink-300/40 px-2 py-px rounded-sm">FOR JANELL</span>
               </div>
             </div>
 

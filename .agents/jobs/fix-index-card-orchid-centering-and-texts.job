@@ -1,0 +1,34 @@
+---
+name: fix-index-card-orchid-centering-and-texts
+mach: 3
+invariants:
+ - IIPS
+ - Real source only (LOGOS/.../CODE/web/...)
+ - Preserve all prior fixes (video on card, large immersive card, heart button, confetti, orchid load position/rotation, etc.)
+ - No breaking changes to build or interactions
+ - Use VFS logging (this job + history)
+ - Make precise, minimal changes
+ - Test with build on real tree
+target: web/src/pages/index.astro (index card centering/padding) + web/src/components/FlipBook/FrutigerScenes.tsx (orchid centering + new texts) + web/src/components/SentientOrchid/OrchidViewer.tsx (if needed for base-at-bottom)
+kind: FIX / POLISH
+message: |
+  User: "please fix the index page card - add top padding so its properly center and fix the orchid, it is not center, do it please, make itcenter by putting the base on the bottom of its viewport - and say a virtual orchid just for you and adda gift tag in scene that says for janell please"
+
+  Tasks:
+  1. Index page card: Add top padding (to the card container or its parent) so the Hadacard is properly vertically centered on the home/index page.
+  2. Orchid (in gift scene 2): It is not centered. Fix by putting the base (pot) on the bottom of its viewport/container.
+     - Adjust model position.y or camera lookAt / y offsets in OrchidViewer so the lowest point of the model sits at/near the bottom of the 3D canvas.
+  3. Add text in the orchid scene: "a virtual orchid just for you"
+  4. Add a gift tag in the orchid scene that says "for janell" (or "For Janell"). Make it look like a small gift tag (perhaps with ribbon or tag styling using existing aero-glass or simple CSS).
+
+  Keep the orchid reveal large/filling as previously adjusted.
+  Ensure "for janell" gift tag is visible in the scene (near the orchid or in the message area).
+
+  VFS: Full job + history. Build verification after edits.
+---
+# Notes
+- Edit only real absolute paths.
+- For orchid base at bottom: likely need to adjust model.position.y more negative or change the camera y calculation / lookAt target so base aligns with bottom of view.
+- Gift tag: add a small absolute or flex element in the scene 2 div, e.g. a styled span or div with "For Janell" and maybe a small tag shape.
+- Index card: the fixed-height wrapper around Hadacard probably needs pt- or mt- added, or adjust the flex parent.
+- Be conservative with numbers; re-use existing classes where possible (aero-glass for tag).
