@@ -1,0 +1,17 @@
+---
+name: fix-orchid-pedestal-rotation
+tags: [fix, orchid, 3d]
+mach: 1
+invariants: 
+ - IIPS
+ - Follow review before source edits
+target: web/src/components/SentientOrchid/OrchidViewer.tsx + usage
+kind: FIX
+message: 
+ - the orchid is not usable
+ - we need the base along with the bottom of container
+ - it should be only rotatable like a thing on spinable pedestal
+ - it should have better pinch scaling thats intuitive
+ - the container should be borderless
+ - add a three text element in the scene that says in a gift tag like style (like orchids? :)
+---

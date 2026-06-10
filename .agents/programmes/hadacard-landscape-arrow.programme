@@ -1,0 +1,126 @@
+# hadacard-landscape-arrow.programme
+# Love-lang / TOML-like meta state for the anonymous glassy-arrow landscape enhancement.
+# Per job + prior mach pattern. Updated live. IIPS first.
+
+name = "hadacard-landscape-arrow"
+kind = "ENHANCE"
+status = "done"
+started = "2026-06"
+authorized_by = ".agents/jobs/hadacard-landscape-arrow.job"
+review = ".agents/reviews/R-hadacard-landscape-arrow.md"
+log = ".agents/logs/2026-06-hadacard-landscape-arrow-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]"
+dollar = "In-project source module kind"
+no_mistakes = true
+extend_prior = "Build directly on open mode (refactor-hadacard.2) — landscape only meaningful when open, zero breakage to portrait letter."
+button_language = "Glassy arrow must match Hadacard (aero-glass + holo palette, haptics, rounded, affectionate presence, not generic nav)."
+new_features = "scrollMsg banner (flowing, letter-animated) + charming P.S. dedication as the 'cool new way' discovered only in the wide view. Smooth aspect + reflow transition."
+preserve_magic = "All holo foils, pointer 3d tilt, letter-block cascades, profile + candles + confetti, sign-off, '— with love, always', glassmorphism, love-letter emotional precision."
+vfs = "Full recording: job (anonymous task) -> review -> this programme -> log -> history. Build gates after edits."
+
+[targets]
+hadacard = "web/src/components/Hadacard/"
+types = "web/src/types/ (HadacardProps extension)"
+reuse = "letters.ts for any new split text; aero-glass + existing letterIn/reveal classes"
+solid = true
+no_new_components = true
+
+[[phase]]
+id = "P1-review-vfs"
+title = "Job authoring + review gate + programme + log (VFS foundation)"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Create .agents/jobs/hadacard-landscape-arrow.job capturing the exact anonymous request + detailed plan.",
+  "Full pre-reads (Hadacard, types, aero-glass, button patterns, scrollMsg flow, prior VFS artefacts).",
+  "Write R-hadacard-landscape-arrow.md (comprehensive, explicit authorized files, implementation notes, verification list).",
+  "Create this programme (phases, invariants, decisions).",
+  "Init dedicated execution log."
+]
+verification = ["job + review + programme + log files exist and are coherent", "review sign-off present"]
+
+[[phase]]
+id = "P2-types"
+title = "Extend HadacardProps for landscape mode"
+status = "pending"
+owner = "clean"
+tasks = [
+  "Add landscape?: boolean and onLandscapeChange? to the HadacardProps interface in web/src/types/index.ts.",
+  "Optionally refresh the scrollMsg comment to note its new role in landscape.",
+  "Build + tsc gate immediately after."
+]
+verification = ["build exit 0", "tsc reports no new errors from our addition", "grep shows the new fields"]
+
+[[phase]]
+id = "P3-component-enhance"
+title = "Glassy arrow button + landscape transition + cool new features"
+status = "pending"
+owner = "experience"
+tasks = [
+  "Add parallel isLandscape signals (controlled + uncontrolled, default false) + setLandscape / toggleLandscape (haptic).",
+  "Add scrollMsg getter with affectionate default so the feature is instantly delightful.",
+  "Place the special arrow glassy button (aero-glass, rounded-full, big arrow glyph ⟶/⟵, aero-cyan + pink accents, absolute bottom-right inside open content, stopPropagation, only when isOpen()).",
+  "Wire holo-card--landscape class on the card root when active.",
+  "Add landscape rules inside the existing component <style> (wider --card-aspect ~1.55-1.65, smooth transitions, any content breathing).",
+  "In the open branch: render scrollMsg as flowing wide letter-block banner (or PretextShift for extra cool word-hover) + a P.S. dedication block that animates in (small, loving, handwriting font, part of the 'extra page').",
+  "Light layout reflow for landscape (more horizontal generosity for message + new elements) while keeping the core letter stack recognizable.",
+  "Preserve every prior behavior, tilt math, layers, and closed/open faces exactly.",
+  "Build gate after the main changes + after polish."
+]
+verification = [
+  "build succeeds cleanly",
+  "button present only in open, toggles landscape class + wider aspect + new content",
+  "scrollMsg + P.S. appear beautifully only in landscape",
+  "re-read of component feels IIPS + still 'handwritten love letter'",
+  "pointer tilt + holo + letter anims 100% intact"
+]
+
+[[phase]]
+id = "P4-verify-close"
+title = "Full gates, VFS closure, history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run all mandatory verification from the review (build xN, tsc, greps, mental model).",
+  "Update this programme (status=done, completed_phases, decisions, open_risks notes).",
+  "Append rich events + gates to the execution log.",
+  "Write final history entry (.agents/history/2026-06-hadacard-landscape-arrow.md) in the established style (what happened, files, outcome, why it mattered, next natural, magic preserved).",
+  "Confirm VFS only: no stray source edits."
+]
+verification = [
+  "build == 0 after final edits",
+  "history entry present and complete",
+  "programme status=done",
+  "the arrow button + landscape view still feel like a personal letter that just got one more beautiful, unexpected fold"
+]
+
+[progress]
+completed_phases = ["P1-review-vfs", "P2-types", "P3-component-enhance"]
+current_phase = "P4-verify-close"
+open_risks = [
+  "aspect-ratio transition + child reflow must stay smooth (use project's cubic-bezier + light DOM changes)",
+  "button must feel 'grown from the card' not pasted on (aero-glass + exact card colors + perfect size)",
+  "new content (scrollMsg banner + P.S.) must only appear in landscape+open and must feel discovered, not bolted on",
+  "zero visual or behavioral change when landscape is not active"
+]
+decisions = [
+  "Landscape is a strict child of open (like the job plan).",
+  "Button is inline absolute inside the card's open content (no new component file).",
+  "All new CSS lives in the component's existing <style> (encapsulation + matches .2 pattern).",
+  "scrollMsg gets a warm default so the 'cool new feature' is visible immediately; prop still wins.",
+  "P.S. line is a short, sparkling, personal fixed string (one loving sentence) — the emotional payoff of stretching the letter wider.",
+  "Glyph uses elegant arrows (⟶ / ⟵) for instant 'expand/collapse' communication.",
+  "No global.css or page changes in this execution (strict authorized scope from review)."
+]
+notes = [
+  "love_lang = 'Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "The arrow is the clasp. Clicking it is the reader choosing to open the letter even more.",
+  "The scrollMsg banner + P.S. are the paragraphs she finds only when she decides to make it wide.",
+  "Still holographic. Still 3d. Still 'for Janell'."
+]
+
+# Live updates (append-only)
+# [2026-06] Anonymous job created from user request. Review R-hadacard-landscape-arrow.md written as gate. This programme initialized. P1 complete. Ready for P2 (types).
+# [later gates] ... recorded in log + here.

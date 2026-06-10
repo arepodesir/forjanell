@@ -98,5 +98,7 @@ export interface HadacardProps {
   cardMeta?: CardMeta;
   open?: boolean; // new: open mode for wide smooth pretty letter unfold (default true)
   onOpenChange?: (isOpen: boolean) => void;
+  landscape?: boolean; // new (hadacard-landscape-arrow): glassy arrow button transitions the open letter to landscape "sheet" + reveals cool extra features (scrollMsg banner + P.S.)
+  onLandscapeChange?: (isLandscape: boolean) => void;
   class?: string;
 }

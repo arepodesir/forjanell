@@ -1,0 +1,50 @@
+---
+name: hadacard-landscape-arrow
+mach: 3
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+ - Extend prior open mode (refactor-hadacard.2) without breaking defaults or magic.
+ - Use VFS for all planning, review, state, logs, history. Authorize changes only via review.
+ - Button must match Hadacard visual language (aero-glass + holo-card palette, pink/cyan/gold, rounded, haptics, smooth transitions, letter-ish affection).
+ - Landscape transition + new features must feel "cool new way" (delightful, personal, not gimmicky): wider "open letter sheet" feel, surface previously unused scrollMsg beautifully, add a P.S. dedication or extra flowing element with stagger anim, keep pointer 3d + all prior layers alive.
+ - Make file extensions / small modules on the fly only if simple typed name needed (prefer inline in component for this).
+ - --no-mistakes, full build gates after edits, preserve glassmorphism / haptics / 3d foil / handwritten fonts / love-letter precision.
+ - Record everything in .agents/* normally (job -> review -> programme -> log updates -> history).
+target: $REPO.CODE.web.src.components.Hadacard
+kind: ENHANCE
+message: |
+  Anonymous task (user request, no attribution needed):
+
+  "please add a special arrow glassy button matcing the card the hadacard that transitions it lanscape and adds new features in a cool new way"
+
+  Detailed intent + plan for the refactor:
+  - Add a special, elegant arrow button that visually matches the Hadacard (use aero-glass base from global + accents that feel native to .holo-card: same border-white/20-30, text-aero-cyan or pink-200, rounded-full or 2xl, subtle inner highlight or mini shine if possible, large tappable arrow glyph like ⟶ / ↔ , no heavy text or tiny label unless "wide").
+  - The button lives inside the card (absolute positioned in a corner of the open content area, only visible/ active when isOpen() from prior mode).
+  - On tap/click: toggles a new "landscape" mode on the Hadacard (controlled or uncontrolled like open).
+  - The transition: smooth, pretty aspect-ratio change (from ~0.65 portrait letter to ~1.5-1.7 wide "landscape letter sheet"), card scales/ breathes a little during the 400ms cubic-bezier transition, content reflows (profile cluster stays but perhaps tighter left, main text + new elements take generous horizontal room for "wide open" breathing room).
+  - New features in a cool new way (self-contained, affectionate, magical):
+    - Surface the scrollMsg prop (already in HadacardProps + types but unused) as a beautiful flowing wide banner/ribbon under the name or above the main message when in landscape. Use splitToLetterBlocks + letter-block spans (or PretextShift for extra word-hover coolness) so it animates in with the same handwritten magic.
+    - Add a charming "P.S." or secondary dedication block that fades/slides in (e.g. a short fixed or prop-driven loving line like "The stars still talk about you." rendered in smaller Patrick Hand or with gentle letterIn). This is the "extra feature" that only appears in the expanded landscape view — makes the open letter feel even more personal and "unfolded further".
+    - Optional cool polish: in landscape the pointer tilt can be slightly more pronounced (multiply rotate values), or the candles gain a tiny on-tap local pulse + haptic (new interactive delight without new canvas).
+    - The button itself changes glyph on state (⟶ to expand, ⟵ or ⟲ to restore) or stays as a persistent "landscape toggle" with active state glow.
+  - Refactor notes: 
+    - Extend HadacardProps in src/types (add landscape?: boolean; onLandscapeChange?: (v: boolean) => void; keep scrollMsg comment updated).
+    - In component: add isLandscape signals (parallel to isOpen), toggleLandscape, expose scrollMsg getter.
+    - Add holo-card--landscape class + rules inside the component's <style> (wider --card-aspect, transition-all on the card, any layout tweaks for the inner content div when landscape).
+    - Keep 100% backward compat: landscape only meaningful + visible when open; default false; all existing open/closed/pointer/holo/letter behavior identical.
+    - No new files unless tiny on-the-fly util (probably not needed; letters.ts already exists and can be reused).
+    - Place button with stopPropagation so it doesn't fight card's pointerMove or closed-mode open.
+  - VFS requirement: full anonymous job -> review (R-hadacard-landscape-arrow.md) -> programme (hadacard-landscape-arrow.programme) -> live log -> final history. Build verification after every phase. Strict scope (primarily Hadacard.tsx + types/index.ts).
+  - Test: multiple `bun run build` in web/, visual/mental model of the transition + new elements, grep for cleanliness (no dupe logic, IIPS).
+  - Outcome feeling: the arrow button feels like a natural "unfold more" control grown from the card itself. Clicking it makes the letter dramatically wider and more generous, with the scrollMsg + P.S. arriving like a beautiful discovered extra page of the love letter. Still 100% "for Janell", still holographic and hand-written.
+
+---
+
+# Additional execution notes (for the agent carrying this out)
+- Follow the exact prior execution pattern from refactor-hadacard.2 (review as hard gate, programme with [[phase]], etc.).
+- Authorized changes will be listed in the review only.
+- Make the button "special": not a plain BackButton copy — give it card-specific presence (perhaps a very subtle foil or just perfect aero + the exact color/rounding/shadow language the card uses).
+- "transitions it landscape": the whole holo-card changes aspect and internal layout live with CSS transitions; content doesn't jump.
+- Cool new way: the new content (scrollMsg banner + P.S.) should use the same animation primitives (letter-block, revealUp, etc.) and feel like they were always part of the letter, just hidden until you "opened it wide".
+- After impl: update the .programme progress, append rich log, write history that celebrates the craft.

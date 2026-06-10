@@ -166,12 +166,11 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     if (!pointerDown || !model) return;
     const ev = 'touches' in e ? (e as TouchEvent).touches[0] : (e as PointerEvent);
     const dx = ev.clientX - lastX;
-    const dy = ev.clientY - lastY;
     lastX = ev.clientX;
-    lastY = ev.clientY;
+    lastY = ev.clientY; // still track but don't use for pitch
 
-    controls.yaw += dx * 0.0045;
-    controls.pitch = Math.max(-1.0, Math.min(1.1, controls.pitch - dy * 0.0042));
+    // Only Y rotation (spin like a thing on a spinable pedestal). No pitch from drag.
+    controls.yaw += dx * 0.005;
     controls.lastMove = Date.now();
   };
 
@@ -189,8 +188,16 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     e.preventDefault();
     controls.auto = false;
     controls.lastMove = Date.now();
-    const factor = e.deltaY > 0 ? 1.08 : 0.92;
-    controls.distance = Math.max(1.4, Math.min(5.5, controls.distance * factor));
+    if (model) {
+      // Intuitive scaling of the object itself (pedestal feel)
+      const factor = e.deltaY > 0 ? 0.95 : 1.05;
+      let newS = model.scale.x * factor;
+      newS = Math.max(0.4, Math.min(4.0, newS));
+      model.scale.setScalar(newS);
+    } else {
+      const factor = e.deltaY > 0 ? 1.08 : 0.92;
+      controls.distance = Math.max(1.4, Math.min(5.5, controls.distance * factor));
+    }
   };
 
   const onClick = (e: MouseEvent) => {
@@ -228,7 +235,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       0.1,
       100
     );
-    camera.position.set(0, 0.6, controls.distance);
+    camera.position.set(0, 0.55, controls.distance);
 
     // romantic soft lighting (girly + elegant)
     const hemi = new THREE.HemisphereLight(0xffe4f0, 0x0a0b18, 0.6);
@@ -265,6 +272,97 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       model.position.y = 0;  // dead centered — no lift
 
       scene.add(model);
+
+      // Spinable pedestal base + visible bottom of the "container" (the 3D view)
+      // The orchid now sits on a proper base so its bottom + pedestal are framed nicely in the viewer.
+      const pedestalRadius = 1.15;
+      const pedestalHeight = 0.13;
+      const pedestal = new THREE.Mesh(
+        new THREE.CylinderGeometry(pedestalRadius, pedestalRadius * 1.08, pedestalHeight, 48),
+        new THREE.MeshPhongMaterial({
+          color: 0x2a2a3a,
+          shininess: 35,
+          specular: 0x444455
+        })
+      );
+      pedestal.position.y = -0.09;
+      scene.add(pedestal);
+
+      // Subtle base ring/plate for extra "bottom of container" definition
+      const baseRing = new THREE.Mesh(
+        new THREE.RingGeometry(pedestalRadius * 0.92, pedestalRadius * 1.18, 48),
+        new THREE.MeshBasicMaterial({ color: 0x555566, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
+      );
+      baseRing.rotation.x = -Math.PI / 2;
+      baseRing.position.y = pedestal.position.y - pedestalHeight / 2 + 0.005;
+      scene.add(baseRing);
+
+      // 3D gift tag text element in the scene, styled like a cute orchid-themed gift tag
+      // (paper tag with string hole, pink accents, "Orchids :)" in gift-tag style)
+      try {
+        const tagCanvas = document.createElement('canvas');
+        tagCanvas.width = 512;
+        tagCanvas.height = 256;
+        const ctx = tagCanvas.getContext('2d', { alpha: true })!;
+        if (ctx) {
+          // Soft cream/pink tag body (gift tag paper look)
+          ctx.fillStyle = '#fff8f0';
+          ctx.strokeStyle = '#ff99cc';
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.roundRect(70, 45, 372, 155, 18);
+          ctx.fill();
+          ctx.stroke();
+
+          // Top string hole
+          ctx.fillStyle = '#0a0b18';
+          ctx.beginPath();
+          ctx.arc(256, 58, 16, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Delicate string (two curves for 3D tag feel)
+          ctx.strokeStyle = '#ff99cc';
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.moveTo(256, 42);
+          ctx.quadraticCurveTo(256, 12, 210, 6);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(256, 42);
+          ctx.quadraticCurveTo(256, 12, 302, 6);
+          ctx.stroke();
+
+          // Main text - gift tag style, orchid cute
+          ctx.fillStyle = '#c41e6a';
+          ctx.font = "bold 46px 'Great Vibes', cursive, serif";
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Orchids', 256, 118);
+
+          // The ":)" smile per the request vibe
+          ctx.font = "36px 'Great Vibes', cursive, serif";
+          ctx.fillStyle = '#ff66c4';
+          ctx.fillText(':)', 256, 160);
+
+          // Tiny decorative accents (orchid leaves / dots)
+          ctx.fillStyle = '#ff99cc';
+          ctx.beginPath(); ctx.arc(185, 135, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(327, 135, 5, 0, Math.PI * 2); ctx.fill();
+        }
+
+        const tagTex = new THREE.CanvasTexture(tagCanvas);
+        tagTex.anisotropy = 8;
+        const tagMat = new THREE.MeshBasicMaterial({ map: tagTex, transparent: true, side: THREE.DoubleSide });
+        const tag = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 0.82), tagMat);
+        // Position to the side, slightly forward and up — hangs like a real gift tag next to the orchid
+        tag.position.set(1.65, 0.65, 0.7);
+        tag.rotation.y = -0.35;
+        tag.rotation.x = 0.08;
+        // Attach to model so the whole thing (orchid + tag) spins together on the pedestal
+        model.add(tag);
+      } catch (e) {
+        console.warn('Gift tag creation skipped:', e);
+      }
 
       // Make the GLB animate (instead of smiley). Use any embedded clips + our procedural "life".
       try {
@@ -312,7 +410,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     el.addEventListener('wheel', onWheel, { passive: false });
     el.addEventListener('click', onClick);
 
-    // touch pinch (very lightweight)
+    // touch pinch - now intuitive direct model scaling (like grabbing and resizing the physical orchid on its pedestal)
     let lastDist = 0;
     const onTouchMove2 = (e: TouchEvent) => {
       if (e.touches.length === 2) {
@@ -320,9 +418,11 @@ export default function OrchidViewer(props: OrchidViewerProps) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const dist = Math.hypot(dx, dy);
-        if (lastDist) {
-          const delta = dist - lastDist;
-          controls.distance = Math.max(1.4, Math.min(5.5, controls.distance - delta * 0.012));
+        if (lastDist && model) {
+          const scaleFactor = dist / lastDist;
+          let newS = model.scale.x * scaleFactor;
+          newS = Math.max(0.4, Math.min(4.0, newS)); // intuitive limits
+          model.scale.setScalar(newS);
           controls.auto = false;
           controls.lastMove = Date.now();
         }
@@ -385,7 +485,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const z = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
 
       camera.position.set(x, y, z);
-      camera.lookAt(0, 0, 0);  // dead centered on the (now properly positioned) model
+      camera.lookAt(0, -0.05, 0);  // slight downward to frame the pedestal base + bottom of the container nicely
 
       // WIGGLES + "the GLB animates" (procedural life on the loaded model instead of smile)
       if (model) {
@@ -474,7 +574,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   return (
     <div
       ref={containerRef}
-      class={`relative w-full overflow-hidden rounded-3xl bg-[#0a0b18] border border-white/10 ${props.class || 'h-[520px] md:h-[620px]'}`}
+      class={`relative w-full overflow-hidden rounded-3xl bg-[#0a0b18] ${props.class || 'h-[520px] md:h-[620px]'}`}
       style={{ "touch-action": "none" }}
     >
       <canvas ref={canvasRef} class="absolute inset-0 w-full h-full" />
@@ -490,9 +590,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
         </div>
       )}
 
-      {/* Game-like guided views (more guided interactions + new views) */}
+      {/* Guided spin presets (pedestal only - yaw + nice framing/scale) */}
       <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 text-[9px] font-mono tracking-widest">
-        {(['Eyes', 'Profile', 'Bloom', 'Happy'] as const).map((label) => (
+        {(['Front', 'Side', 'Back', 'Close'] as const).map((label) => (
           <button
             class="aero-glass px-2.5 py-0.5 rounded-full text-white/80 active:scale-95 transition select-none cursor-pointer border border-white/10"
             style={{ "font-family": "'Comfortaa', sans-serif" }}
@@ -500,10 +600,12 @@ export default function OrchidViewer(props: OrchidViewerProps) {
               e.stopPropagation();
               haptic.trigger('light');
               const c = controls;
-              if (label === 'Eyes') { c.yaw = -0.6; c.pitch = 0.38; c.distance = 1.85; advanceState('curious'); }
-              else if (label === 'Profile') { c.yaw = 1.35; c.pitch = 0.22; c.distance = 2.15; advanceState('happy'); }
-              else if (label === 'Bloom') { c.yaw = -0.1; c.pitch = 0.65; c.distance = 1.55; advanceState('blooming'); }
-              else { c.yaw = -0.4; c.pitch = 0.18; c.distance = 2.0; advanceState('tickled'); }
+              if (model) {
+                if (label === 'Front') { c.yaw = -0.2; model.scale.setScalar(1.0); }
+                else if (label === 'Side') { c.yaw = 1.4; model.scale.setScalar(1.0); }
+                else if (label === 'Back') { c.yaw = 3.0; model.scale.setScalar(1.0); }
+                else { c.yaw = -0.1; model.scale.setScalar(1.55); } // intimate close look
+              }
               c.auto = false;
               c.lastMove = Date.now();
             }}
@@ -515,7 +617,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
 
       {/* subtle elegant hint */}
       <div class="absolute bottom-9 right-4 text-[9px] text-white/30 font-mono tracking-widest pointer-events-none z-10 select-none">
-        DRAG • PINCH • TAP • VIEWS
+        SPIN THE PEDESTAL • PINCH TO SCALE • TAP FOR MAGIC
       </div>
     </div>
   );

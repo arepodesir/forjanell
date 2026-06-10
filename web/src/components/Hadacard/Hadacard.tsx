@@ -23,6 +23,21 @@ export default function Hadacard(props: HadacardProps) {
     if (next) haptic.trigger('success');
   };
   const toggleOpen = () => setOpen(!isOpen());
+
+  // Landscape mode (hadacard-landscape-arrow): special glassy arrow button expands the open letter
+  // into a wider "sheet" and reveals cool new features (scrollMsg banner + P.S. dedication).
+  // Only meaningful when open; controlled/uncontrolled like the open mode.
+  const controlledLandscape = () => props.landscape;
+  const [uncontrolledLandscape, setUncontrolledLandscape] = createSignal(false);
+  const isLandscape = () => (controlledLandscape() !== undefined ? Boolean(controlledLandscape()) : uncontrolledLandscape());
+  const setLandscape = (next: boolean) => {
+    if (controlledLandscape() === undefined) {
+      setUncontrolledLandscape(next);
+    }
+    props.onLandscapeChange?.(next);
+    haptic.trigger(next ? 'success' : 'light');
+  };
+  const toggleLandscape = () => setLandscape(!isLandscape());
   
   let cardRef: HTMLDivElement | undefined;
   let autoShimmerRaf: number | undefined;
@@ -43,6 +58,7 @@ export default function Hadacard(props: HadacardProps) {
 
   const hbdLetters = () => splitToLetterBlocks(hbdMessage(), 50);
   const nameLetters = () => splitToLetterBlocks(name(), 40);
+  const scrollMsg = () => props.scrollMsg || "Every star still pauses when you smile.";
 
   const stopAutoShimmer = () => {
     if (autoShimmerRaf) {
@@ -103,7 +119,7 @@ export default function Hadacard(props: HadacardProps) {
       {/* 3D Holographic Card Viewport (No outer box container, perfectly centered) */}
       <div class="w-full flex items-center justify-center shrink-0">
         <div
-          class={`holo-card cursor-grab active:cursor-grabbing select-none transition-all duration-300 ${isOpen() ? 'holo-card--open' : 'holo-card--closed'}`}
+          class={`holo-card cursor-grab active:cursor-grabbing select-none transition-all duration-300 ${isOpen() ? 'holo-card--open' : 'holo-card--closed'} ${isLandscape() ? 'holo-card--landscape' : ''}`}
           ref={cardRef}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
@@ -215,6 +231,30 @@ export default function Hadacard(props: HadacardProps) {
                     </p>
                   )}
 
+                  {/* Landscape-only cool new features (hadacard-landscape-arrow).
+                      These arrive only when the glassy arrow has transitioned the letter wide — the "extra page"
+                      that feels discovered, not bolted on. scrollMsg (previously unused) + a short P.S. dedication. */}
+                  {isLandscape() && (
+                    <>
+                      {/* Flowing wide scrollMsg banner — the wish carried on the open sheet */}
+                      <div class="w-full mb-1 text-[12px] md:text-[14px] text-pink-200/85 tracking-[0.5px] italic"
+                           style={{ "font-family": "'Patrick Hand', cursive" }}>
+                        <For each={splitToLetterBlocks(scrollMsg(), 22)}>
+                          {(letter) => (
+                            <span class={letter.char === ' ' ? 'letter-space' : 'letter-block'}>
+                              {letter.char === ' ' ? '\u00A0' : letter.char}
+                            </span>
+                          )}
+                        </For>
+                      </div>
+
+                      {/* P.S. dedication — the private extra paragraph that only appears in the wide view */}
+                      <div class="w-full text-[11px] md:text-[12px] text-pink-200/75 italic mb-1 px-1">
+                        P.S. I would choose this lifetime again if it meant one more moment with you.
+                      </div>
+                    </>
+                  )}
+
                   {/* Confetti overlay */}
                   <img src="/resources/img/confetti.svg"
                        class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 rounded-2xl"
@@ -233,6 +273,17 @@ export default function Hadacard(props: HadacardProps) {
                     <div>— with love, always</div>
                     <div class="text-right">{cardMeta().artist} · {cardMeta().year}</div>
                   </div>
+
+                  {/* Special glassy arrow button (hadacard-landscape-arrow) — only in open state.
+                      Matches the card: aero-glass + holo palette, big elegant arrow, perfect touch target.
+                      Toggles landscape "wide letter sheet" + reveals the cool new features below. */}
+                  <button
+                    class="absolute bottom-2 right-2 z-30 aero-glass rounded-full w-9 h-9 flex items-center justify-center text-xl leading-none text-aero-cyan border border-white/20 shadow-md active:scale-90 transition-all hover:border-aero-pink/50 select-none"
+                    onClick={(e) => { e.stopPropagation(); toggleLandscape(); }}
+                    aria-label={isLandscape() ? "Return to portrait letter view" : "Expand letter to landscape view"}
+                  >
+                    {isLandscape() ? '⟵' : '⟶'}
+                  </button>
                 </>
               )}
             </div>
@@ -257,6 +308,23 @@ export default function Hadacard(props: HadacardProps) {
         /* subtle lift + presence when opening */
         .holo-card--open {
           filter: saturate(1.05);
+        }
+
+        /* Landscape (hadacard-landscape-arrow): the letter "unfolds" into a generous wide sheet.
+           Smooth aspect transition + the new banner/P.S. feel like discovered pages. */
+        .holo-card--landscape {
+          --card-aspect: 1.62;
+        }
+        .holo-card--landscape .holo-card__inner {
+          transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 320ms ease;
+        }
+        /* A touch more presence + the new elements breathe with the wider format */
+        .holo-card--landscape {
+          filter: saturate(1.08);
+        }
+        /* The glassy arrow is already styled inline to feel native; these rules just ensure it participates */
+        .holo-card--landscape .aero-glass {
+          border-color: rgba(255, 255, 255, 0.25);
         }
       `}</style>
     </div>

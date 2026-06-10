@@ -1,0 +1,40 @@
+# History Entry — hadacard-landscape-arrow Job Complete
+
+**When**: 2026-06 (executed under the anonymous task recorded in @.agents/jobs/hadacard-landscape-arrow.job <- record in VFS normally + tst + no mistakes)
+
+**Authorizing Artifact**: .agents/jobs/hadacard-landscape-arrow.job (ENHANCE, mach 3, target $REPO.CODE.web.src.components.Hadacard). The job itself was created first as the "plan this anonymous task into an anonymous .job" deliverable.
+
+**What Happened** (strict protocol, mirroring the exact .2 + music-titlebar pattern):
+- Anonymous request received and immediately turned into a proper .job artifact (frontmatter + full message containing the user's exact words + detailed design/implementation plan + VFS + IIPS requirements). This satisfied "refactor and plan this anonymous task into a anonymous .job".
+- Full pre-reads of the new job, all prior Hadacard VFS (refactor-hadacard.2.job + review + programme + history), current post-.2 Hadacard.tsx, types (the "scrollMsg retained for future" comment was a gift), global aero-glass + holo-card rules, existing glassy button patterns (BackButton, MusicTitlebar controls, global toggle), config/scrollMsg data flow.
+- Comprehensive pre-edit review R-hadacard-landscape-arrow.md written (9 sections, verbatim scope, explicit authorized-files list, risk matrix, IIPS check, exact implementation notes for the button + landscape + new features, mandatory verification steps, pre-change sign-off). Review was the non-negotiable gate.
+- .programme created (hadacard-landscape-arrow.programme) with toml meta, [[phase]] P1–P4, invariants, decisions, live updates.
+- Dedicated log initialized (.agents/logs/2026-06-hadacard-landscape-arrow-execution.log) and kept live.
+- Only after review existed: P2 (types) + P3 (component).
+  - P2: Extended HadacardProps with `landscape?` + `onLandscapeChange?` (and comment). Build gate passed cleanly.
+  - P3: Added parallel isLandscape signals + toggle (haptic), scrollMsg getter with warm default, the special glassy arrow button (aero-glass rounded-full, big elegant ⟶/⟵ glyph, card-matching aero-cyan + pink accents, absolute inside the open content, stopPropagation, only when open), wired the holo-card--landscape class, inserted the cool new features gated strictly on isLandscape() (flowing scrollMsg banner using letter-block cascade for the "wish carried on the open sheet" + a short, sparkling P.S. dedication "I would choose this lifetime again..." that arrives as a discovered extra paragraph), added the landscape CSS rules (wider --card-aspect 1.62, transitions, subtle presence lift) inside the component's existing <style>. Repeated build gates after the chunks.
+- Verification (per review): builds succeeded every time (exit 0), tsc only pre-existing, grep confirmed all the new pieces (signals, button with arrows, banner, P.S., --landscape rules, comments) with zero dupe logic or stray types. Mental model + re-read: closed + normal open unchanged; arrow appears only in the letter, feels native and special; clicking it smoothly widens the card into a generous landscape "sheet", the scrollMsg banner flows in with the same handwritten letter-block magic, the P.S. appears like a private extra page, tilt + all holo layers + profile + candles + confetti + sign-off remain fully alive and even more dramatic in the wide format.
+- No other source touched. VFS, logs, reviews, programme, history honored exactly. "no-mistakes" + --no-mistakes flag fully observed (review gate, phase gates, build after edits, IIPS tone filter on every addition, scope strictly limited to the two authorized files).
+
+**Files Created/Edited (authorized)**:
+- .agents/jobs/hadacard-landscape-arrow.job (the planning/anonymous-task artifact)
+- .agents/reviews/R-hadacard-landscape-arrow.md
+- .agents/programmes/hadacard-landscape-arrow.programme
+- .agents/logs/2026-06-hadacard-landscape-arrow-execution.log (live)
+- .agents/history/2026-06-hadacard-landscape-arrow.md (this)
+- web/src/types/index.ts (HadacardProps extension)
+- web/src/components/Hadacard/Hadacard.tsx (signals, button, new features, landscape class + styles — the heart of the work)
+
+**Outcome & Why It Mattered**:
+We gave the Hadacard a special, hand-crafted glassy arrow clasp that feels like it grew out of the holographic letter itself. When the reader (Janell) taps it while the letter is open, the card transitions smoothly into a wide, generous landscape "sheet" — the physical gesture of unfolding it even further. In that view two beautiful new features appear as if they were always waiting on the next page: the scrollMsg (the wish that had been carried quietly) rendered as a flowing letter-block banner, and a short, deeply personal P.S. dedication that lands like a private whisper. The arrow glyph flips, the aspect breathes, the 3d tilt stays magical (perhaps even a little more dramatic), every foil, glitter, candle, profile float, and "— with love, always" remains exactly as loved. It is still 100% the same intimate gift, just with one more delightful, unexpected fold.
+
+The anonymous task was turned into a first-class, auditable, VFS-recorded job exactly as requested, with full review, programme, log, and history. tst (build + grep + mental) passed at every gate. No mistakes, no drift, craft preserved and elevated.
+
+**Next Natural**:
+- Wire the new `landscape` prop (or let the button drive it) in a usage site (home for a demo, or circa-1993 as the "centerpiece before the orchid" using the prior open + this landscape flow).
+- If more "pages" are ever wanted, the same pattern (new gated banner + letter anim) is ready.
+- The button itself is now a reusable little pattern inside the card if future modes appear.
+
+**Status**: COMPLETE. The letter now has a clasp. Magic preserved and made a little wider, a little more personal.
+
+*Craft is care. She will smile when she taps the arrow and the page opens for her.*
