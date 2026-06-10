@@ -69,7 +69,9 @@ verification = [
 
 [progress]
 completed_phases = ["P1-setup"]
-current_phase = "P2-review"
+current_phase = "P4-inspect-implement"
+status = "done"
+completed_phases = ["P1-setup", "P2-review", "P3-log", "P4-inspect-implement"]
 decisions = [
   "Place confetti inside the .relative profile container so absolute positioning is relative to the profile pic itself, making 'above profile image' reliable.",
   "Use the existing confettiImage() default which points to the present Confetti.png",

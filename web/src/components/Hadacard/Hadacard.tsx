@@ -227,14 +227,14 @@ export default function Hadacard(props: HadacardProps) {
                         )}
                       </For>
                     </div>
-                  </div>
 
-                  {/* Confetti image above her profile - decorative fixed overlay with animation */}
-                  <img 
-                    src={confettiImage()} 
-                    class="absolute -top-6 left-1/2 -translate-x-1/2 w-20 h-20 object-contain opacity-70 pointer-events-none z-30 hadacard-confetti-anim"
-                    alt="" 
-                  />
+                    {/* Floating confetti asset above profile image - decorative, now inside relative profile for reliable 'above' positioning */}
+                    <img 
+                      src={confettiImage()} 
+                      class="absolute -top-4 left-1/2 -translate-x-1/2 w-16 h-16 object-contain opacity-70 pointer-events-none z-40 hadacard-confetti-anim"
+                      alt="" 
+                    />
+                  </div>
 
                   {/* Card Title - using Great Vibes handwriting font */}
                   <h1 class="text-3xl font-normal mb-1 leading-tight text-white drop-shadow-md text-glow"
