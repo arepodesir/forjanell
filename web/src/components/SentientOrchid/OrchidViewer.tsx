@@ -24,10 +24,6 @@ import { config } from '@/config';  // for main wave song connection from assets
 export interface OrchidViewerProps {
   class?: string;
   modelPath?: string; // default /assets/models/Orchid.glb
-  autoRotateSpeed?: number;
-  // Audio connection for "the player" to the config main wave song (public/assets/audio/main.wav via assets.toml)
-  externalAudio?: HTMLAudioElement; // preferred: share parent's sfxHbd (already the main from config)
-  audioSrc?: string;                // fallback path
 }
 
 export default function OrchidViewer(props: OrchidViewerProps) {
@@ -35,14 +31,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let canvasRef: HTMLCanvasElement | undefined;
 
   const modelPath = () => props.modelPath || '/assets/models/Orchid.glb';
-  const autoRotateSpeed = () => props.autoRotateSpeed ?? 0.0006;
 
   const [isLoading, setIsLoading] = createSignal(true);
   const [error, setError] = createSignal<string | null>(null);
-
-  // Tiny idiomatic functional solid statemachine for the sentient orchid (per job)
-  type OrchidState = 'idle' | 'curious' | 'happy' | 'blooming' | 'tickled';
-  const [orchidState, setOrchidState] = createSignal<OrchidState>('idle');
 
   let renderer: THREE.WebGLRenderer | null = null;
   let scene: THREE.Scene | null = null;
@@ -61,14 +52,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   // The "player" audio (main wave song). Reuses external if provided (best for no double-play with parent sfxHbd).
   let bgmAudio: HTMLAudioElement | undefined;
 
-  // Derived anim params from state (game-like reactivity)
-  const wiggleAmp = () => {
-    const s = orchidState();
-    if (s === 'tickled' || s === 'happy') return 0.018;
-    if (s === 'blooming') return 0.009;
-    return 0.003;
-  };
-  const sparkleRate = () => (orchidState() === 'happy' || orchidState() === 'tickled' || orchidState() === 'blooming' ? 0.12 : 0.02);
+  // (no state-driven animation params — pure focus on the model geometry and perfect framing)
 
   const disposeAll = () => {
     if (frameId) cancelAnimationFrame(frameId);
@@ -92,59 +76,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     model = null;
   };
 
-  const sparkle = (intensity = 1) => {
-    if (!scene || !model) return;
-    haptic.trigger('success');
+  // No extra sparkle or state visuals (focus strictly on the orchid geometry and perfect framing)
 
-    // quick scale pop + state advance for game-like feel
-    const origScale = model.scale.x;
-    model.scale.setScalar(origScale * 1.03);
-    const s = orchidState();
-    if (s === 'idle' || s === 'curious') setOrchidState('happy');
-    else if (s === 'happy') setOrchidState('tickled');
-
-    // temporary extra lights for sparkle
-    const pink = new THREE.PointLight(0xff99cc, 1.2 * intensity, 12);
-    pink.position.set(0.8, 1.2, 1.5);
-    scene.add(pink);
-
-    const cyan = new THREE.PointLight(0x66f0ff, 0.9 * intensity, 10);
-    cyan.position.set(-1.1, 0.6, -0.8);
-    scene.add(cyan);
-
-    setTimeout(() => {
-      scene?.remove(pink);
-      scene?.remove(cyan);
-      pink.dispose();
-      cyan.dispose();
-      if (model) model.scale.setScalar(origScale);
-    }, 420);
-  };
-
-  const advanceState = (next: OrchidState) => {
-    setOrchidState(next);
-    // gentle sparkle on state change
-    setTimeout(() => sparkle(0.6), 60);
-  };
-
-  // Connect "the player" (this orchid view) to the config main wave song in public assets.
-  // If externalAudio passed (e.g. parent's sfxHbd which is already new Audio(config audio.hbd = main.wav)), reuse it.
-  // Otherwise create our own using the path from config or the known public asset.
-  const connectMainWavePlayer = () => {
-    if (bgmAudio) return; // already connected
-    if (props.externalAudio) {
-      bgmAudio = props.externalAudio;
-      // Do not play/pause here — parent owns the lifecycle (FrutigerScenes already started it for the gift).
-      return;
-    }
-    const src = props.audioSrc
-      || (config?.assets?.audio?.main as string | undefined)
-      || '/assets/audio/main.wav';
-    bgmAudio = new Audio(src);
-    bgmAudio.loop = true;
-    bgmAudio.volume = 0.38;
-    bgmAudio.play().catch(() => { /* autoplay deferred is fine */ });
-  };
+  // (no audio connection — focus strictly on the visual orchid and perfect tip+base framing)
 
   const onPointerDown = (e: PointerEvent | TouchEvent) => {
     pointerDown = true;
@@ -154,11 +88,6 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     lastX = ev.clientX;
     lastY = ev.clientY;
     (containerRef as any)?.setPointerCapture?.((e as PointerEvent).pointerId);
-
-    // Touch-first tickle interaction -> game-like state
-    const s = orchidState();
-    if (s === 'idle' || s === 'curious') advanceState('happy');
-    else if (s === 'happy') advanceState('tickled');
   };
 
   const onPointerMove = (e: PointerEvent | TouchEvent) => {
@@ -201,17 +130,13 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   };
 
   const onClick = (e: MouseEvent) => {
-    // tap anywhere on viewer for sparkle + state
-    sparkle(0.85);
-    const s = orchidState();
-    if (s !== 'blooming') advanceState(s === 'tickled' ? 'blooming' : 'happy');
+    // tap stops auto-orbit (keeps focus on the static beautiful orchid)
+    controls.auto = false;
+    controls.lastMove = Date.now();
   };
 
   const setup = async () => {
     if (!canvasRef || !containerRef) return;
-
-    // Connect the player (orchid view) to the main wave song from config / public assets early.
-    connectMainWavePlayer();
 
     // renderer
     renderer = new THREE.WebGLRenderer({
@@ -288,97 +213,6 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       pedestal.position.y = -0.09;
       scene.add(pedestal);
 
-      // Subtle base ring/plate for extra "bottom of container" definition
-      const baseRing = new THREE.Mesh(
-        new THREE.RingGeometry(pedestalRadius * 0.92, pedestalRadius * 1.18, 48),
-        new THREE.MeshBasicMaterial({ color: 0x555566, side: THREE.DoubleSide, transparent: true, opacity: 0.55 })
-      );
-      baseRing.rotation.x = -Math.PI / 2;
-      baseRing.position.y = pedestal.position.y - pedestalHeight / 2 + 0.005;
-      scene.add(baseRing);
-
-      // 3D gift tag text element in the scene, styled like a cute orchid-themed gift tag
-      // "For Janell" + small inscription about the loveliness of orchids.
-      try {
-        const tagCanvas = document.createElement('canvas');
-        tagCanvas.width = 512;
-        tagCanvas.height = 256;
-        const ctx = tagCanvas.getContext('2d', { alpha: true })!;
-        if (ctx) {
-          // Soft cream/pink tag body (gift tag paper look)
-          ctx.fillStyle = '#fff8f0';
-          ctx.strokeStyle = '#ff99cc';
-          ctx.lineWidth = 10;
-          ctx.beginPath();
-          ctx.roundRect(70, 38, 372, 168, 18);
-          ctx.fill();
-          ctx.stroke();
-
-          // Top string hole
-          ctx.fillStyle = '#0a0b18';
-          ctx.beginPath();
-          ctx.arc(256, 52, 15, 0, Math.PI * 2);
-          ctx.fill();
-
-          // Delicate string (two curves for 3D tag feel)
-          ctx.strokeStyle = '#ff99cc';
-          ctx.lineWidth = 3.5;
-          ctx.beginPath();
-          ctx.moveTo(256, 37);
-          ctx.quadraticCurveTo(256, 8, 208, 4);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(256, 37);
-          ctx.quadraticCurveTo(256, 8, 304, 4);
-          ctx.stroke();
-
-          // "For Janell" - prominent
-          ctx.fillStyle = '#c41e6a';
-          ctx.font = "bold 34px 'Great Vibes', cursive, serif";
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('For Janell', 256, 92);
-
-          // Small inscription about the loveliness of orchids
-          ctx.font = "22px 'Great Vibes', cursive, serif";
-          ctx.fillStyle = '#ff66c4';
-          ctx.fillText('the loveliness of orchids', 256, 125);
-
-          ctx.font = "18px 'Great Vibes', cursive, serif";
-          ctx.fillText('🌸', 256, 148);
-
-          // Tiny decorative accents
-          ctx.fillStyle = '#ff99cc';
-          ctx.beginPath(); ctx.arc(180, 115, 4, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(332, 115, 4, 0, Math.PI * 2); ctx.fill();
-        }
-
-        const tagTex = new THREE.CanvasTexture(tagCanvas);
-        tagTex.anisotropy = 8;
-        const tagMat = new THREE.MeshBasicMaterial({ map: tagTex, transparent: true, side: THREE.DoubleSide });
-        const tag = new THREE.Mesh(new THREE.PlaneGeometry(1.72, 0.88), tagMat);
-        // Positioned nicely to the side so it's visible when spinning the pedestal and easy to see the inscription.
-        tag.position.set(1.48, 0.52, 0.62);
-        tag.rotation.y = -0.38;
-        tag.rotation.x = 0.06;
-        // Attach to model so tag spins with the orchid on the pedestal
-        model.add(tag);
-      } catch (e) {
-        console.warn('Gift tag creation skipped:', e);
-      }
-
-      // Make the GLB animate (instead of smiley). Use any embedded clips + our procedural "life".
-      try {
-        const gltfAnims = (gltf as any).animations || [];
-        if (gltfAnims.length > 0) {
-          mixer = new THREE.AnimationMixer(model);
-          gltfAnims.forEach((clip: any) => {
-            const action = mixer!.clipAction(clip);
-            action.play();
-          });
-        }
-      } catch {}
-
       setIsLoading(false);
     } catch (e: any) {
       console.warn('Orchid.glb load failed:', e);
@@ -436,31 +270,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     el.addEventListener('touchmove', onTouchMove2 as any, { passive: false });
     el.addEventListener('touchend', onTouchEnd2 as any);
 
-    // Tiny orbiting sparkle particles (threejs) for wiggles/sparkles when happy
-    let sparkles: THREE.Points | null = null;
-    const createSparkles = () => {
-      if (!scene || sparkles) return;
-      const count = 28;
-      const positions = new Float32Array(count * 3);
-      const sizes = new Float32Array(count);
-      for (let i = 0; i < count; i++) {
-        const r = 0.9 + Math.random() * 0.6;
-        const a = Math.random() * Math.PI * 2;
-        positions[i * 3] = Math.cos(a) * r;
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 0.8 + 0.2;
-        positions[i * 3 + 2] = Math.sin(a) * r * 0.6;
-        sizes[i] = 0.02 + Math.random() * 0.03;
-      }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-      const mat = new THREE.PointsMaterial({ color: 0xffd1e8, size: 0.035, transparent: true, opacity: 0.85, depthWrite: false });
-      sparkles = new THREE.Points(geo, mat);
-      sparkles.visible = false;
-      scene.add(sparkles);
-    };
-
-    // main loop with state-driven wiggles + sparkles + smile reactivity
+    // main loop (pure model + controls, no extra particles or state wiggles)
     const animate = () => {
       if (!renderer || !scene || !camera || !model) return;
 
@@ -469,17 +279,11 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       lastAnimTime = now;
 
       const idle = now - controls.lastMove > 1600;
-      const state = orchidState();
-      const w = wiggleAmp();
-
-      // Mixer update — makes the GLB itself animate if it has clips
-      if (mixer) {
-        mixer.update(delta);
-      }
 
       if (controls.auto && idle) {
-        controls.yaw += autoRotateSpeed() * (state === 'curious' ? 0.6 : 1);
-        controls.pitch = 0.28 + Math.sin(now * 0.00028) * 0.07;
+        controls.yaw += autoRotateSpeed();
+        // very subtle pitch bob for life, but kept minimal so framing of tip/base stays perfect
+        controls.pitch = 0.18 + Math.sin(now * 0.0003) * 0.04;
       }
 
       // position camera from spherical-ish
@@ -490,62 +294,15 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       camera.position.set(x, y, z);
       camera.lookAt(0, -0.12, 0);  // frame the pedestal base and full height so spinning shows everything nicely
 
-      // WIGGLES + "the GLB animates" (procedural life on the loaded model instead of smile)
+      // Minimal model orientation from controls only (no state wiggles or sub-part animation)
       if (model) {
-        const bob = Math.sin(now * 0.0016) * 0.018;
-        const wiggle = Math.sin(now * 0.004 + controls.yaw) * w;
-        model.rotation.y = controls.yaw * 0.12 + wiggle * 0.7;
-        model.position.y = 0.12 + bob + (state === 'blooming' ? Math.sin(now * 0.003) * 0.04 : 0);
-        // extra happy wiggle on x for "tail wag" feel (model life)
-        if (state === 'happy' || state === 'tickled') {
-          model.rotation.x = Math.sin(now * 0.0035) * 0.04;
-        } else {
-          model.rotation.x = 0;
-        }
-
-        // Extra: make sub-parts of the GLB sway (petals/stem "animate" the model)
-        // This gives the loaded glb organic life even if it has no baked clips.
-        model.traverse((child: any) => {
-          if (child.isMesh && child !== model) {
-            const phase = (child.id % 7) * 0.7;
-            const amp = 0.018 + (state === 'tickled' || state === 'happy' ? 0.012 : 0);
-            child.rotation.x = Math.sin(now * 0.0022 + phase) * amp * 0.6;
-            child.rotation.z = Math.sin(now * 0.0018 + phase * 1.3) * amp * 0.4;
-            if (state === 'blooming') {
-              const s = 1 + Math.sin(now * 0.003 + phase) * 0.012;
-              child.scale.setScalar(s);
-            }
-          }
-        });
-      }
-
-      // Orbiting sparkles when excited states (wiggles/sparkles)
-      if (sparkles) {
-        sparkles.visible = (state === 'happy' || state === 'tickled' || state === 'blooming');
-        if (sparkles.visible && sparkles.geometry) {
-          const pos = (sparkles.geometry.attributes.position as THREE.BufferAttribute).array as Float32Array;
-          const t = now * 0.0012;
-          for (let i = 0; i < pos.length / 3; i++) {
-            const r = 0.9 + Math.sin(t + i) * 0.15;
-            const a = (i * 1.7) + t * (state === 'tickled' ? 2.2 : 1.1);
-            pos[i * 3] = Math.cos(a) * r;
-            pos[i * 3 + 2] = Math.sin(a) * r * 0.55 + Math.sin(t * 1.3 + i) * 0.08;
-          }
-          (sparkles.geometry.attributes.position as any).needsUpdate = true;
-          // occasional extra sparkle burst chance
-          if (Math.random() < sparkleRate()) {
-            // nudge one
-            const idx = Math.floor(Math.random() * (pos.length / 3));
-            pos[idx * 3 + 1] += 0.03;
-          }
-        }
+        model.rotation.y = controls.yaw * 0.15;
       }
 
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
 
-    createSparkles();
     animate();
   };
 
@@ -593,35 +350,6 @@ export default function OrchidViewer(props: OrchidViewerProps) {
         </div>
       )}
 
-      {/* Guided spin presets (pedestal only - yaw + nice framing/scale) */}
-      <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 text-[9px] font-mono tracking-widest">
-        {(['Front', 'Side', 'Back', 'Close'] as const).map((label) => (
-          <button
-            class="aero-glass px-2.5 py-0.5 rounded-full text-white/80 active:scale-95 transition select-none cursor-pointer border border-white/10"
-            style={{ "font-family": "'Comfortaa', sans-serif" }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              haptic.trigger('light');
-              const c = controls;
-              if (model) {
-                if (label === 'Front') { c.yaw = -0.2; model.scale.setScalar(1.0); }
-                else if (label === 'Side') { c.yaw = 1.4; model.scale.setScalar(1.0); }
-                else if (label === 'Back') { c.yaw = 3.0; model.scale.setScalar(1.0); }
-                else { c.yaw = -0.1; model.scale.setScalar(1.55); } // intimate close look
-              }
-              c.auto = false;
-              c.lastMove = Date.now();
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* subtle elegant hint */}
-      <div class="absolute bottom-9 right-4 text-[9px] text-white/30 font-mono tracking-widest pointer-events-none z-10 select-none">
-        SPIN THE PEDESTAL • PINCH TO SCALE • TAP FOR MAGIC
-      </div>
     </div>
   );
 }

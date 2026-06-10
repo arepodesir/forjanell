@@ -46,7 +46,7 @@ export default function Hadacard(props: HadacardProps) {
   // Resolve properties with defaults (affectionate, in-project)
   const name = () => props.name || "For Janell";
   const nickname = () => props.nickname || "Janell";
-  const picUrl = () => props.picUrl || "/resources/img/janell.png";
+  const picUrl = () => props.picUrl || "/assets/img/janell.png";
   const hbdMessage = () => props.hbdMessage || "Happy Belated Birthday!";
   const cardMeta = () => props.cardMeta || {
     edition: "Quantum Extract · First Edition",
@@ -64,7 +64,7 @@ export default function Hadacard(props: HadacardProps) {
   // Gift video background connection (horsey optimized from assets/video, janell center, confetti overlay)
   const videoBg = () => props.videoBg || '';
   const centerImage = () => props.centerImage || picUrl();
-  const confettiImage = () => props.confettiImage || '/resources/img/Confetti.png';
+  const confettiImage = () => props.confettiImage || '/assets/img/Confetti.png';
 
   // State machine for Hadacard theme (preferred colocation with Tailwind-like generator + scoped styles)
   // States: closed (sealed letter), open (unfolded personal letter), landscape (wide sheet + extras), withVideo (gift video bg mode)
@@ -149,12 +149,11 @@ export default function Hadacard(props: HadacardProps) {
             {videoBg() ? (
               <video
                 src={videoBg()}
-                class="absolute inset-0 w-full h-full object-cover rounded-2xl z-0"
+                class="absolute inset-0 w-full h-full object-cover rounded-2xl z-[-1] pointer-events-none"
                 autoplay
                 loop
                 muted
                 playsinline
-                style={{ 'object-fit': 'cover' }}
               />
             ) : (
               /* Fallback background texture */
@@ -162,15 +161,15 @@ export default function Hadacard(props: HadacardProps) {
                    style={{ "background-image": "url(/resources/img/jaja.png)" }}>
               </div>
             )}
-            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl z-5"></div>
 
-            {/* Holographic foil overlays */}
-            <div class="holo-card__glitter"></div>
-            <div class="holo-card__shine"></div>
-            <div class="holo-card__glare"></div>
+            {/* Holographic foil overlays - on top of video bg */}
+            <div class="holo-card__glitter z-10"></div>
+            <div class="holo-card__shine z-10"></div>
+            <div class="holo-card__glare z-10"></div>
 
             {/* Content layout inside the card (open mode: wide smooth pretty letter; closed: elegant sealed front) */}
-            <div class="relative z-10 flex flex-col items-center text-center p-4 h-full">
+            <div class="relative z-20 flex flex-col items-center text-center p-4 h-full">
               {!isOpen() ? (
                 /* Closed face — pretty sealed letter invitation, still fully holographic.
                    Clean top (no random trading-card meta) — meaningful minimal signifier only. */
@@ -178,7 +177,7 @@ export default function Hadacard(props: HadacardProps) {
                   <div class="text-[9px] text-pink-200/55 tracking-wider mb-0.5" style={{ "font-family": "'Patrick Hand', cursive" }}>2026</div>
 
                   {/* Smaller profile peek for closed state */}
-                  <div class="relative w-16 h-16 mb-2 animate-float z-10 shrink-0">
+                  <div class="relative w-20 h-20 mb-2 animate-float z-10 shrink-0">
                     <img src="/resources/img/bday-cap.svg"
                          class="absolute -top-3 -right-1.5 w-7 h-7 z-20 rotate-12 drop-shadow" alt="" />
                     <div class="w-full h-full rounded-full border-[2px] border-pink-300/50 overflow-hidden"
@@ -209,7 +208,7 @@ export default function Hadacard(props: HadacardProps) {
                   </div>
 
                   {/* Profile picture with cap */}
-                  <div class="relative w-24 h-24 mb-3 animate-float z-10 shrink-0">
+                  <div class="relative w-28 h-28 mb-3 animate-float z-10 shrink-0">
                     <img src="/resources/img/bday-cap.svg"
                          class="absolute -top-4 -right-2 w-9 h-9 z-20 rotate-12 drop-shadow-lg" alt="" />
                     <div class="w-full h-full rounded-full border-[3px] border-pink-300/60 overflow-hidden"
@@ -229,6 +228,13 @@ export default function Hadacard(props: HadacardProps) {
                       </For>
                     </div>
                   </div>
+
+                  {/* Confetti image above her profile - decorative fixed overlay with animation */}
+                  <img 
+                    src={confettiImage()} 
+                    class="absolute -top-6 left-1/2 -translate-x-1/2 w-20 h-20 object-contain opacity-70 pointer-events-none z-30 hadacard-confetti-anim"
+                    alt="" 
+                  />
 
                   {/* Card Title - using Great Vibes handwriting font */}
                   <h1 class="text-3xl font-normal mb-1 leading-tight text-white drop-shadow-md text-glow"
@@ -287,13 +293,6 @@ export default function Hadacard(props: HadacardProps) {
                       </div>
                     </>
                   )}
-
-                  {/* Confetti overlay - fixed image above center with nice animation (colocated state styles) */}
-                  <img 
-                    src={confettiImage()} 
-                    class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 rounded-2xl hadacard-confetti-anim"
-                    alt="" 
-                  />
 
                   {/* Message body — flowing personal letter feel (wide + breathing for centerpiece) */}
                   <div class="flex-1 flex items-center overflow-y-auto px-3 py-1">

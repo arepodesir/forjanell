@@ -1,0 +1,97 @@
+# fix-orchid-perfect-framing.programme
+# VFS state for ensuring the orchid tip and base fit perfectly with zero distractions.
+
+name = "fix-orchid-perfect-framing"
+kind = "FIX"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/fix-orchid-perfect-framing.job"
+review = ".agents/reviews/R-fix-orchid-perfect-framing.md"
+log = ".agents/logs/2026-06-fix-orchid-perfect-framing-execution.log"
+
+[invariants]
+iips = "The 3D view must show the complete orchid (highest tip of the bloom to lowest point of the base) perfectly framed at all times with comfortable margins. No element outside the model + minimal base definition is allowed in the focus area."
+focus_on_nothing_else = "All UI presets, hints, gift tag, sparkles, state machine, wiggles, audio logic, and extra reactivity are removed. The canvas contains only the orchid (and if kept, a tiny clean pedestal to define 'base')."
+perfect_framing = "Bounding-box driven initial pose + clamps on distance/pitch + camera math guarantee tip and base never leave the view. Initial view is a clean, well-composed angle showing full height."
+vfs = "Everything (decisions, camera numbers, before/after, build output, greps) logged in .agents/."
+
+[targets]
+viewer = "web/src/components/SentientOrchid/OrchidViewer.tsx (only)"
+
+[[phase]]
+id = "P1-vfs"
+title = "Job + review gate + programme + log"
+status = "completed"
+owner = "protocol"
+tasks = ["Create job", "Write detailed review as gate", "Init programme + log with pre-reads"]
+verification = ["review coherent and authorizes only the viewer", "all base VFS artefacts present"]
+
+[[phase]]
+id = "P2-stripping"
+title = "Remove all distractions (focus on nothing else)"
+status = "pending"
+owner = "focus"
+tasks = [
+  "Remove preset button JSX and hint text",
+  "Remove gift tag canvas/texture/plane creation + attachment",
+  "Remove sparkles (creation, render, update)",
+  "Remove orchidState, wiggleAmp, sparkleRate, advanceState, all state-driven model mutations (wiggles, extra rotations, scales)",
+  "Remove audio connection (connectMainWavePlayer, bgmAudio, externalAudio/audioSrc handling, play/pause)",
+  "Remove or strip sparkle() and its calls if they add visual 'else'",
+  "Remove mixer/GLB clip playing and related if they are not core to the static beautiful model"
+]
+verification = ["source is dramatically smaller and free of the listed elements", "only model + minimal base + basic controls remain"]
+
+[[phase]]
+id = "P3-framing"
+title = "Implement perfect tip + base framing math + clamps"
+status = "pending"
+owner = "framing"
+tasks = [
+  "After model load + any kept pedestal: compute combined Box3 of (model + base)",
+  "Derive ideal scale/position so the vertical size fits the view with ~1.1-1.25 margin",
+  "Compute fitDistance from vertical size + camera fov + margin",
+  "Set initial controls (distance = fitDistance * factor, yaw ~0.3-0.5 for nice angle, pitch ~0.15-0.25)",
+  "Set lookAt to a y that centers tip and base (use computed center.y or tuned bias toward base visibility)",
+  "In animate + control change points (wheel, drag, touch, resize): use spherical position but clamp pitch (e.g. 0.05-0.45) and distance (fit*0.6 to fit*1.8) so extremes stay in view",
+  "Change wheel/pinch to always affect controls.distance (remove model-scale special case for consistent framing)",
+  "Ensure initial camera position + lookAt after load gives perfect full-height framing on first render"
+]
+verification = [
+  "On load and after yaw at various allowed pitches/distances the highest tip and lowest base point are always inside the viewport with good margins (no cutoff)",
+  "Zoom range is constrained to never lose the extremes",
+  "Resize preserves framing"
+]
+
+[[phase]]
+id = "P4-verify-log"
+title = "Build + grep + mental framing check + full VFS logging"
+status = "pending"
+owner = "verification"
+tasks = [
+  "Run build after stripping and after framing changes",
+  "Grep for removed elements (preset buttons, gift tag, sparkles, orchidState, bgmAudio, etc.) — expect absence",
+  "Re-read the viewer file and mentally simulate: load → full tip-to-base visible; spin/zoom within limits → still perfect",
+  "Append every decision (e.g. 'kept 1 minimal pedestal cylinder because it defines base without distraction', exact numbers for fitDistance / lookAt y / pitch clamps) to the log",
+  "Update programme + write history entry describing before/after and verification output"
+]
+verification = [
+  "build == 0",
+  "no remnants of distractions in source",
+  "framing logic documented in log",
+  "history entry exists with results"
+]
+
+[progress]
+completed_phases = ["P1-vfs"]
+current_phase = "P2-stripping"
+decisions = [
+  "Use combined bounding box of model (+ minimal pedestal if kept) for all framing calculations.",
+  "Zoom via camera distance only (more predictable framing than scaling the model).",
+  "Pitch will be limited; yaw remains the primary interaction for seeing the full 360 of the orchid.",
+  "Initial pose will be a gentle 3/4 view that clearly shows both the bloom tip and the full base height."
+]
+notes = "User directive is extremely narrow: perfect tip+base fit + focus on *nothing else*. All other 'sentient' / UI / audio / decorative features from prior iterations are to be excised. Log every result."
+
+# Live updates (append-only during execution)
+# [2026-06] Job + review written as gate. Programme + log initialized. Pre-reads done. P1 complete. Ready for stripping + framing work. All activity will be logged here.

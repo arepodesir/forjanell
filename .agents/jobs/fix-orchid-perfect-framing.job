@@ -1,0 +1,32 @@
+---
+name: fix-orchid-perfect-framing
+mach: 1
+invariants:
+ - IIPS: clean, focused, elegant. The view must show the full orchid (tip of bloom to bottom of base/pedestal) perfectly framed at all times with no cutoff.
+ - "focus on nothing else": Strip all extraneous UI, hints, presets, decorative elements, gift tag, sparkles, state wiggles, audio connections, extra meshes if they distract. The 3D canvas should contain *only* the orchid model + minimal clean pedestal/base for context if needed for "base".
+ - Camera, controls, initial pose, scaling, lookAt, and any orbit limits must guarantee tip + base always visible and nicely centered/filling the view (mobile + desktop).
+ - No other changes. Do not touch other files unless strictly necessary for the viewer itself.
+ - VFS perfection: full job -> review as gate -> programme + log -> implementation + verification -> history. Log *all* results in .agents/.
+target: web/src/components/SentientOrchid/OrchidViewer.tsx
+kind: FIX / REFACTOR
+message: |
+  User request: "please ensure the orchid tip and base all fit in the view perfectly and focus on nothing else. log resuls in .agents"
+
+  Task:
+  - In OrchidViewer, adjust the 3D setup (model loading/positioning/scaling, camera initial position + lookAt, controls.distance/pitch/yaw defaults + limits, onWheel/pinch behavior, resize, animate loop camera math) so that no matter the rotation (or with limited rotation), the very tip of the orchid bloom and the entire base/pedestal are always fully visible and well-framed inside the viewport.
+  - "fit in the view perfectly": Tight but comfortable framing — orchid fills most of the height/width appropriately, centered vertically so tip isn't near top edge and base isn't near bottom. Use bounding box calculations more robustly for initial framing and perhaps dynamically.
+  - "focus on nothing else": 
+    - Remove or hide the preset buttons (Front/Side/Back/Close).
+    - Remove the bottom hint text ("SPIN THE PEDESTAL • ...").
+    - Remove the gift tag (the canvas texture "For Janell" plane attached to model).
+    - Remove the extra sparkles/Points.
+    - Remove or disable the state machine (idle/curious/happy...) and all wiggle/rotation/scale animations driven by it on the model subparts.
+    - Remove the audio connection logic (connectMainWavePlayer, bgmAudio, externalAudio props) — not needed for pure viewing.
+    - Simplify lighting if any is overkill, but keep soft feminine look.
+    - Keep only: the loaded GLB model, a very minimal clean pedestal/base cylinder if it helps define the "base", basic orbit (yaw only or limited pitch), zoom (but constrained), the glass container, loading/error states.
+  - Make the view "perfect" by default: good initial camera that shows full height from tip to base, auto-orbit slow if wanted but perhaps disable or very subtle since "focus".
+  - Ensure on all sizes (the class h-[520px] etc.), on resize, and during user orbit/zoom, the framing stays good (perhaps clamp controls, adjust lookAt target to center of model bounds).
+  - Log all results, decisions, verification in .agents/ (this job, review, programme, log, history).
+
+  Focus exclusively on making the orchid (tip + base) perfectly visible and the viewer distraction-free.
+---
