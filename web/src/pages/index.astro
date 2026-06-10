@@ -65,9 +65,10 @@ import Container from "../layouts/Container.astro";
 
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
-      {/* Glowing glass welcome header */}
+      {/* Glowing glass welcome header - now populated so index page shows the greeting well */}
       <div class=" rounded-3xl p-3 md:p-5 text-white w-full border-white/20 animate-reveal-up text-center shadow-[0_8px_32px_rgba(255,102,196,0.15)] shrink-0">
-    
+        <h2 class="text-xl md:text-2xl font-semibold tracking-tight" style={{ "font-family": "'Great Vibes', cursive" }}>{pageProps.welcomeTitle}</h2>
+        <p class="text-[10px] md:text-xs mt-1 leading-snug opacity-80">{pageProps.welcomeDesc}</p>
       </div>
 
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}

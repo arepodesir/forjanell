@@ -2,6 +2,8 @@
 import Application from '../../layouts/Application.astro'
 import MessageList from '../../components/MessageList/MessageList'
 import BackButton from '@/components/Navigator/BackButton'
+import Container from '../../layouts/Container.astro'
+import { config } from '@/config';
 
 // Keep only 1 message hardcoded on the page (per T-003); the rest come from config (messages.toml) and are openable in the list.
 const MESSAGES = [
@@ -17,8 +19,6 @@ const MESSAGES = [
 // Load additional messages from config (toml) for the openable list.
 const configMessages = (config as any).messages || [];  // from messages.toml via parser
 const displayMessages = [...MESSAGES, ...configMessages];
-
-import Container from '../../layouts/Container.astro'
 ---
 
 <Application title="For Janell" subTitle=" | Messages">
@@ -38,7 +38,6 @@ import Container from '../../layouts/Container.astro'
 
     {/* Message list component (Client-side with Pretext line measurement and tactile/haptic features). displayMessages = 1 hardcoded + config from toml; openable via the list. */}
     <MessageList client:load messages={displayMessages} />
-  </div>
 
   <script>
     import { haptic } from '../../utils/haptics';

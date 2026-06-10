@@ -1,0 +1,38 @@
+---
+name: fix-build-config-undefined-index-page
+mach: 2
+invariants:
+ - IIPS
+ - Fast test + fix cycle
+ - Use real source at LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE (not just worktree)
+ - Log in .agents VFS (job + history)
+ - Make build succeed and index page (home + related) render/show well
+ - Do not regress the prior video-card-full changes or Hadacard
+target: web/src/pages/messages/index.astro + web/src/pages/index.astro + build
+kind: FIX / BUILD
+message: |
+  User: "fix the build fast it isn't showing inex page well test and fix fast usnig logic vfs"
+
+  The static build is failing with ReferenceError: config is not defined during prerender (hits on /messages generation, chunk index_* involved, Application layout).
+  Index/home page not showing well (possibly due to partial build or prior layout changes + empty sections).
+  Must test+fix fast, record via .agents VFS logic (new job + history like previous hadacard/video jobs).
+  Real code only: /home/arepo/LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE/web/...
+
+  Root cause (initial): messages/index.astro references `config` (for configMessages) but never imports it (unlike index.astro which does `import { config } from '@/config';`). Also import order is wrong (Container import after use), plus stray </div> in template. Frontmatter executes at prerender time -> crash.
+
+  Plan (fast):
+  1. VFS: create this job.
+  2. Add proper top-of-frontmatter import for config in messages page. Reorder imports. Remove stray </div> that likely breaks DOM.
+  3. cd to real web/, bun run build, capture full output.
+  4. If build passes, inspect dist/index.html (and messages) for "showing well".
+  5. If home index has issues (empty welcome header using pageProps but not rendered?, Hadacard sizing post-fragment/root changes), fix the astro.
+  6. Write history entry.
+  7. No new features, just make build green + index visible/correct.
+
+---
+# Notes for fast execution
+- Edit only real absolute paths under LOGOS/.../CODE/
+- Use search_replace for precise fixes.
+- Run build via terminal cmd with cd.
+- After fix, perhaps ls dist/ or head the generated index.html to verify content.
+- Keep it minimal and fast.
