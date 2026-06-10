@@ -190,11 +190,11 @@ export default function Hadacard(props: HadacardProps) {
               {!isOpen() ? (
                 /* Closed face — pretty sealed letter invitation, still fully holographic.
                    Clean top (no random trading-card meta) — meaningful minimal signifier only. */
-                <div class="flex flex-col items-center justify-center h-full py-2">
+                <div class="flex flex-col items-center justify-start h-full pt-5 pb-2">
                   <div class="text-[9px] text-pink-200/55 tracking-wider mb-0.5" style={{ "font-family": "'Patrick Hand', cursive" }}>2026</div>
 
-                  {/* Smaller profile peek for closed state */}
-                  <div class="relative w-20 h-20 mb-2 animate-float z-10 shrink-0">
+                  {/* Smaller profile peek for closed state — centered + moved down for better visual balance on the card face */}
+                  <div class="relative w-20 h-20 mt-2 mb-2 animate-float z-10 shrink-0">
                     <img src="/assets/img/bday-cap.svg"
                          class="absolute -top-3 -right-1.5 w-7 h-7 z-20 rotate-12 drop-shadow" alt="" />
                     <div class="w-full h-full rounded-full border-[2px] border-pink-300/50 overflow-hidden"
