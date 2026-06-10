@@ -40,6 +40,7 @@ export default function FrutigerScenes(props: EnvProps) {
   const [msgIndex, setMsgIndex] = createSignal<number>(0);
   const [showAction, setShowAction] = createSignal<boolean>(false);
   const [isTransitioning, setIsTransitioning] = createSignal<boolean>(false);
+  const [endAudio, setEndAudio] = createSignal<HTMLAudioElement | undefined>();
 
   let activeTimers: number[] = [];
 
@@ -267,6 +268,10 @@ export default function FrutigerScenes(props: EnvProps) {
   onCleanup(() => {
     clearAllTimers();
     if (sfxHbd) sfxHbd.pause();
+    const ea = endAudio();
+    if (ea) {
+      try { ea.pause(); } catch {}
+    }
 
     // Clean up particles
     if (typeof window !== 'undefined') {
@@ -317,11 +322,18 @@ export default function FrutigerScenes(props: EnvProps) {
       burstFn(rect.width * 0.5, rect.height * 0.42, 22);
     }
 
-    // Ensure the main wave song (config's main.wav) plays automatically for the orchid reveal.
-    // The tap on this button is a user gesture, so play() will succeed (or resume).
-    if (sfxHbd) {
-      sfxHbd.play().catch(e => console.log("Main BGM play on reveal gesture:", e));
+    // Switch to the special end gift song at the "gift open at the end"
+    // Pause any previous BGM (the hadacard stage audio)
+    if (sfxHbd && !sfxHbd.paused) {
+      try { sfxHbd.pause(); } catch {}
     }
+
+    // Load and play "what-friends-are-for.wav" automatically (user gesture from the open button guarantees autoplay works)
+    const newEndAudio = new Audio('/assets/audio/what-friends-are-for.wav');
+    newEndAudio.loop = true;  // keep it looping nicely for the reveal experience
+    newEndAudio.volume = 0.5;
+    newEndAudio.play().catch(e => console.log("End gift song play deferred:", e));
+    setEndAudio(newEndAudio);
 
     // Trigger transition without pop sounds or ambient loops pausing
     setIsTransitioning(true);
@@ -330,7 +342,6 @@ export default function FrutigerScenes(props: EnvProps) {
       // Transition to orchid end scene (no more card/egift)
       setScene(2);
       setIsTransitioning(false);
-      // Looping main.wav (sfxHbd) continues playing smoothly
     }, 900);
     activeTimers.push(t);
   };
@@ -421,24 +432,23 @@ export default function FrutigerScenes(props: EnvProps) {
               </div>
             </div>
 
-            {/* The orchid "player" is connected to the single main wave song instance (sfxHbd) owned by this scene
-                (which comes from props.audio.hbd = config main from assets.toml / public/assets/audio/main.wav). */}
+            {/* The orchid "player" can share audio if needed, but the end gift song is now separate for the reveal. */}
             <OrchidViewer
               client:load
               class="w-full max-w-[min(92vw,520px)] h-[460px] md:h-[560px] rounded-3xl"
-              externalAudio={sfxHbd}
+              externalAudio={endAudio()}
             />
 
             <p class="text-[10px] text-white/40 tracking-[2px] mt-1">TAP THE ORCHID • DRAG TO ORBIT • PINCH TO ZOOM</p>
 
-            {/* End scene music titlebar — appears with the persistent BGM (sfxHbd).
-                Uses externalAudio so we hook the single looping instance owned here.
-                Acts as the neat "music footer" for the orchid reveal (per mach-2 job). */}
+            {/* End scene music titlebar — integrated with the player component (in its own folder src/components/MusicTitlebar/).
+                Uses externalAudio for the what-friends-are-for.wav that auto-plays at gift open.
+                Shows the correct title "What Friends Are For" by Dionne Warwick. */}
             <MusicTitlebar
-              externalAudio={sfxHbd}
-              src={props.audio.hbd}
-              title="Bubbly Reverie"
-              artist="AREPO for Janell"
+              externalAudio={endAudio()}
+              src="/assets/audio/what-friends-are-for.wav"
+              title="What Friends Are For"
+              artist="Dionne Warwick"
               class="fixed bottom-3 left-1/2 -translate-x-1/2 z-[55] w-[min(92vw,420px)]"
             />
           </div>
