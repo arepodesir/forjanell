@@ -2,7 +2,6 @@ import { onMount, onCleanup, createSignal } from 'solid-js';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { haptic } from '@/utils/haptics';
-import { config } from '@/config';  // for main wave song connection from assets.toml / public/assets
 
 /**
  * OrchidViewer — mobile-friendly, interactive 3D rendering of Orchid.glb
@@ -39,18 +38,14 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let scene: THREE.Scene | null = null;
   let camera: THREE.PerspectiveCamera | null = null;
   let model: THREE.Group | null = null;
-  let mixer: THREE.AnimationMixer | null = null;  // for glb animations (make the GLB animate instead of smile)
   let frameId: number | null = null;
   let lastAnimTime = 0;
-  // Tuned for easy spin on pedestal: closer distance, good initial angle so spinning lets you see the full orchid, base, and tag from all sides.
-  let controls = { yaw: 0.1, pitch: 0.12, distance: 1.9, auto: true, lastMove: 0 };
+  // Controls tuned for perfect framing of tip to base at all times.
+  let controls = { yaw: 0.35, pitch: 0.18, distance: 2.1, auto: false, lastMove: 0 };
 
   let pointerDown = false;
   let lastX = 0;
   let lastY = 0;
-
-  // The "player" audio (main wave song). Reuses external if provided (best for no double-play with parent sfxHbd).
-  let bgmAudio: HTMLAudioElement | undefined;
 
   // (no state-driven animation params — pure focus on the model geometry and perfect framing)
 
@@ -95,11 +90,10 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     const ev = 'touches' in e ? (e as TouchEvent).touches[0] : (e as PointerEvent);
     const dx = ev.clientX - lastX;
     lastX = ev.clientX;
-    lastY = ev.clientY; // still track but don't use for pitch
+    lastY = ev.clientY;
 
-    // Only Y rotation (spin like a thing on a spinable pedestal). No pitch from drag.
-    // Increased sensitivity so it's easy and responsive to spin around and see all of it.
-    controls.yaw += dx * 0.0065;
+    // Yaw only (horizontal spin around the orchid). Pitch is clamped in the camera math so tip + base framing stays perfect.
+    controls.yaw += dx * 0.0072;
     controls.lastMove = Date.now();
   };
 
@@ -117,16 +111,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     e.preventDefault();
     controls.auto = false;
     controls.lastMove = Date.now();
-    if (model) {
-      // Intuitive scaling of the object itself (pedestal feel)
-      const factor = e.deltaY > 0 ? 0.95 : 1.05;
-      let newS = model.scale.x * factor;
-      newS = Math.max(0.4, Math.min(4.0, newS));
-      model.scale.setScalar(newS);
-    } else {
-      const factor = e.deltaY > 0 ? 1.08 : 0.92;
-      controls.distance = Math.max(1.4, Math.min(5.5, controls.distance * factor));
-    }
+    // Zoom via camera distance only — keeps the perfect tip-to-base framing consistent
+    const factor = e.deltaY > 0 ? 1.08 : 0.92;
+    controls.distance = Math.max(1.35, Math.min(3.8, controls.distance * factor));
   };
 
   const onClick = (e: MouseEvent) => {
@@ -153,14 +140,13 @@ export default function OrchidViewer(props: OrchidViewerProps) {
 
     scene = new THREE.Scene();
 
-    // camera
+    // camera (framing will be set after model load using perfect tip-to-base calculations)
     camera = new THREE.PerspectiveCamera(
       52,
       containerRef.clientWidth / containerRef.clientHeight,
       0.1,
       100
     );
-    camera.position.set(0, 0.42, controls.distance);
 
     // romantic soft lighting (girly + elegant)
     const hemi = new THREE.HemisphereLight(0xffe4f0, 0x0a0b18, 0.6);
@@ -186,32 +172,50 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       });
       model = gltf.scene;
 
-      // Better scaled and positioned so the full orchid + base + tag is easy to spin around and see completely.
+      // === Perfect framing: tip of bloom to base of the orchid (and minimal pedestal) ===
+      // Compute combined bounds so BOTH the highest point (tip) and lowest point (base) are guaranteed to fit.
+      const pedestal = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.95, 1.05, 0.09, 48),
+        new THREE.MeshPhongMaterial({ color: 0x2a2a3a, shininess: 30 })
+      );
+      pedestal.position.y = -0.11;
+      scene.add(pedestal);
+
+      // Use the full (model + pedestal) bounds for framing calculations
       const box = new THREE.Box3().setFromObject(model);
+      box.expandByObject(pedestal);
+
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 1.72 / maxDim;  // larger presence for better viewing while spinning
+
+      // Scale so the orchid has good presence while leaving room for tip + base margins
+      const scale = 1.85 / maxDim;
       model.scale.setScalar(scale);
       model.position.sub(center.multiplyScalar(scale));
-      model.position.y = -0.02;  // sits nicely with the pedestal base visible at bottom
+
+      // Shift so the visual center (slightly biased toward base for nice composition) sits near origin
+      model.position.y += 0.03;
 
       scene.add(model);
 
-      // Spinable pedestal base + visible bottom of the "container" (the 3D view)
-      // The orchid now sits on a proper base so its bottom + pedestal are framed nicely in the viewer.
-      const pedestalRadius = 1.15;
-      const pedestalHeight = 0.13;
-      const pedestal = new THREE.Mesh(
-        new THREE.CylinderGeometry(pedestalRadius, pedestalRadius * 1.08, pedestalHeight, 48),
-        new THREE.MeshPhongMaterial({
-          color: 0x2a2a3a,
-          shininess: 35,
-          specular: 0x444455
-        })
-      );
-      pedestal.position.y = -0.09;
-      scene.add(pedestal);
+      // Derive ideal camera distance from the *vertical* size (tip to base) + fov so it fits perfectly with margin
+      const fov = 52 * (Math.PI / 180);
+      const verticalSize = size.y * scale;
+      const fitDistance = (verticalSize / 2) / Math.tan(fov / 2) * 1.22; // 1.22 = comfortable breathing room top & bottom
+
+      // Initial controls tuned for perfect full-height framing on load (tip visible, base clearly framed)
+      controls.distance = fitDistance;
+      controls.yaw = 0.38;   // gentle 3/4 view that shows the orchid's structure beautifully
+      controls.pitch = 0.16; // slight downward angle so both top tip and bottom base are comfortably in frame
+      controls.auto = false;
+
+      // Apply the perfect tip-to-base framing to the camera *immediately* so first frame is correct
+      const ix = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
+      const iy = Math.sin(controls.pitch) * controls.distance * 0.78 + 0.09;
+      const iz = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
+      camera.position.set(ix, iy, iz);
+      camera.lookAt(0, -0.07, 0);
 
       setIsLoading(false);
     } catch (e: any) {
@@ -247,7 +251,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     el.addEventListener('wheel', onWheel, { passive: false });
     el.addEventListener('click', onClick);
 
-    // touch pinch - now intuitive direct model scaling (like grabbing and resizing the physical orchid on its pedestal)
+    // touch pinch — camera distance only (preserves perfect tip + base framing at all times)
     let lastDist = 0;
     const onTouchMove2 = (e: TouchEvent) => {
       if (e.touches.length === 2) {
@@ -255,11 +259,9 @@ export default function OrchidViewer(props: OrchidViewerProps) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
         const dist = Math.hypot(dx, dy);
-        if (lastDist && model) {
+        if (lastDist) {
           const scaleFactor = dist / lastDist;
-          let newS = model.scale.x * scaleFactor;
-          newS = Math.max(0.4, Math.min(4.0, newS)); // intuitive limits
-          model.scale.setScalar(newS);
+          controls.distance = Math.max(1.35, Math.min(3.8, controls.distance / scaleFactor));
           controls.auto = false;
           controls.lastMove = Date.now();
         }
@@ -281,18 +283,25 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const idle = now - controls.lastMove > 1600;
 
       if (controls.auto && idle) {
-        controls.yaw += autoRotateSpeed();
-        // very subtle pitch bob for life, but kept minimal so framing of tip/base stays perfect
-        controls.pitch = 0.18 + Math.sin(now * 0.0003) * 0.04;
+        controls.yaw += 0.0004; // very gentle idle spin (clamped pitch + distance ensure tip and base stay perfectly framed)
+        // extremely subtle pitch for gentle life — clamped so tip and base framing is never lost
+        controls.pitch = Math.max(0.08, Math.min(0.28, 0.16 + Math.sin(now * 0.00028) * 0.03));
       }
 
-      // position camera from spherical-ish
+      // Clamp controls so the orchid tip and base *always* remain perfectly in view
+      controls.pitch = Math.max(0.06, Math.min(0.32, controls.pitch));
+      const minDist = 1.35;
+      const maxDist = 3.8;
+      controls.distance = Math.max(minDist, Math.min(maxDist, controls.distance));
+
+      // position camera from spherical using framing values that guarantee full tip-to-base visibility
       const x = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const y = Math.sin(controls.pitch) * controls.distance * 0.82 + 0.28;
+      const y = Math.sin(controls.pitch) * controls.distance * 0.78 + 0.09;
       const z = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
 
       camera.position.set(x, y, z);
-      camera.lookAt(0, -0.12, 0);  // frame the pedestal base and full height so spinning shows everything nicely
+      // lookAt y is biased low enough to keep the entire base in frame while still showing the full bloom tip
+      camera.lookAt(0, -0.07, 0);
 
       // Minimal model orientation from controls only (no state wiggles or sub-part animation)
       if (model) {
@@ -322,11 +331,6 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     if ((window as any)._orchidResize) {
       window.removeEventListener('resize', (window as any)._orchidResize);
       delete (window as any)._orchidResize;
-    }
-    // Only stop audio we created (not external/parent-owned main wave player)
-    if (bgmAudio && !props.externalAudio) {
-      bgmAudio.pause();
-      bgmAudio = undefined;
     }
     disposeAll();
   });

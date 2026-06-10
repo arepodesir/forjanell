@@ -84,7 +84,9 @@ verification = [
 
 [progress]
 completed_phases = ["P1-vfs"]
-current_phase = "P2-stripping"
+current_phase = "P4-verify-log"
+status = "done"
+completed_phases = ["P1-vfs", "P2-stripping", "P3-framing", "P4-verify-log"]
 decisions = [
   "Use combined bounding box of model (+ minimal pedestal if kept) for all framing calculations.",
   "Zoom via camera distance only (more predictable framing than scaling the model).",
