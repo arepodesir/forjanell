@@ -1,0 +1,84 @@
+# remove-global-mute-button.programme
+# VFS state for complete removal of the global music mute button.
+
+name = "remove-global-mute-button"
+kind = "REMOVAL"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/remove-global-mute-button.job"
+review = ".agents/reviews/R-remove-global-mute-button.md"
+log = ".agents/logs/2026-06-remove-global-mute-button-execution.log"
+
+[invariants]
+iips = "Clean, complete removal. Zero dead code or hidden remnants of the button."
+complete = "The mute button (UI + all its toggle/mute state logic) is gone entirely."
+audio_discipline = "MusicTitlebar and FrutigerScenes continue to pause/resume globalBgmAudio for their own content. No simultaneous audio."
+no_mute_concept = "Since the only control was the button, 'bgm_muted' sessionStorage and its checks are removed."
+vfs = "Perfect recording: job -> review (gate) -> this programme + detailed log -> history. Build gate after edit."
+
+[targets]
+primary = "web/src/layouts/Application.astro"
+cleanup = "MusicTitlebar.tsx and FrutigerScenes.tsx (only the mute-specific branches)"
+
+[[phase]]
+id = "P1-vfs"
+title = "Job + review gate + programme + log (VFS foundation)"
+status = "completed"
+owner = "protocol"
+tasks = ["Create job", "Write review as hard gate", "Init programme + execution log"]
+verification = ["review exists and authorizes the three files", "all VFS artefacts present"]
+
+[[phase]]
+id = "P2-removal"
+title = "Remove button HTML + all toggle/mute JS + clean dependents"
+status = "pending"
+owner = "removal"
+tasks = [
+  "Delete the <button id=\"global-music-toggle\"> and its comment in Application.astro",
+  "Strip every line related to toggleBtn, bgm_muted, icon swapping (🎵/🔇), and the click toggle handler from the script",
+  "Simplify remaining global audio setup (keep creation + time restore + interaction start where useful, remove muted branches)",
+  "In MusicTitlebar: remove any bgm_muted session checks (keep the pause of global when it plays its track)",
+  "In FrutigerScenes: remove the 'bgm_muted' check in the resume path (keep the pause on mount and resume on cleanup for audio discipline)"
+]
+verification = [
+  "build succeeds",
+  "grep confirms zero occurrences of global-music-toggle, bgm_muted, and the old icon chars in toggle context",
+  "other audio handoff logic (pause global when local audio plays) is still present"
+]
+
+[[phase]]
+id = "P3-verify-close"
+title = "Build gate + VFS closure + history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run build after edit",
+  "Grep + mental verification that button and mute concept are completely gone",
+  "Update this programme + append rich events to log",
+  "Write final history entry"
+]
+verification = [
+  "final build == 0",
+  "history entry present",
+  "programme status=done",
+  "VFS recording is perfect (user request honored)"
+]
+
+[progress]
+completed_phases = ["P1-vfs"]
+current_phase = "P3-verify-close"
+status = "done"
+completed_phases = ["P1-vfs", "P2-removal", "P3-verify-close"]
+open_risks = [
+  "Must not accidentally remove globalBgmAudio creation that other components still rely on for coordination",
+  "Must keep the actual pause/resume calls in MusicTitlebar and FrutigerScenes (those are audio discipline, not the mute button)"
+]
+decisions = [
+  "'bgm_muted' sessionStorage is removed entirely (it only existed for the button we're deleting)",
+  "Keep minimal global audio setup for background music + the coordination pauses that scenes/titlebar perform",
+  "Card pages (circa) should still ensure global is paused on entry (audio discipline)"
+]
+notes = "User explicitly asked for complete removal + perfect VFS recording. Button and its entire supporting mute concept must disappear."
+
+# Live updates (append-only)
+# [2026-06] Job created. Review written as hard gate. Programme + log initialized. P1 complete. Ready for removal.

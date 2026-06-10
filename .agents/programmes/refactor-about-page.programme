@@ -1,0 +1,115 @@
+# refactor-about-page.programme
+# Love-lang / TOML-like state for the about page refactor (app focus + interactive live README + Ko-fi).
+
+name = "refactor-about-page"
+kind = "REFACTOR"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/refactor-about-page.job"
+review = ".agents/reviews/R-refactor-about-page.md"
+log = ".agents/logs/2026-06-refactor-about-page-execution.log"
+
+[invariants]
+iips = "Elegant, fun, well-crafted. Code and content read like a love letter / polished README."
+app_focus = "Primarily about the holographic interactive gift experience (Hadacard, scenes, orchid, music, particles, the magic of making digital things feel hand-written)."
+light_mention = "Only light, affectionate nods to Janell and the personal inspiration."
+live_readme = "The page becomes a fun, well-made, interactive 'live updating README' for the app — sections that feel alive with Solid signals, delightful micro-interactions, haptics."
+ko_fi = "Clear, generous ask with a brand-style button. Credit: @whoisarepo built this."
+preserve = "Site aesthetic (glass, holo touches, fonts, haptics, animations), BackButton, Container structure, overall delight."
+vfs = "Full protocol: job -> review gate -> this programme + log -> history. Build gates."
+
+[targets]
+page = "web/src/pages/about/index.astro (main content + small Solid islands for liveness)"
+aesthetic = "aero-glass cards, Patrick Hand/Comfortaa, subtle animations"
+
+[[phase]]
+id = "P1-vfs-gate"
+title = "Job creation + review as hard gate + programme + log"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Create authorizing job",
+  "Write detailed review (scope, plan, verification, sign-off)",
+  "Init programme + execution log"
+]
+verification = ["review exists and authorizes the page", "job + review + programme + log present"]
+
+[[phase]]
+id = "P2-content-refactor"
+title = "Rewrite about content: app focus, light personal mentions, README structure"
+status = "pending"
+owner = "content"
+tasks = [
+  "Remove/reduce recipient-heavy elements (large profile, stats grid, long bio about her)",
+  "New intro + sections focused on the app/experience (the living holographic letter, scenes + orchid, music, particles, the craft of it)",
+  "Light mentions only for Janell + inspiration (personal gift, 90s/holo/orchid/music joy)",
+  "Structure as beautiful interactive README (headers, sections, 'code'-style notes if fitting)"
+]
+verification = ["tone is now app-first", "personal mentions are light and warm", "build still clean"]
+
+[[phase]]
+id = "P3-live-interactive"
+title = "Add fun live-updating interactive elements (Solid)"
+status = "pending"
+owner = "interaction"
+tasks = [
+  "Add 2-3 tasteful live elements using Solid (client:load): e.g. tappable 'Sparks Shared' counter with haptic + animation, expandable 'Tech & Magic' or 'Live Build Notes' sections, a small 'last unfolded' or community echo that feels updating",
+  "All interactions get haptics and feel on-theme (glass, foil, letter magic)",
+  "Keep lightweight and delightful (no over-engineering)"
+]
+verification = ["interactions work and feel fun/live", "no perf or aesthetic breakage", "build clean"]
+
+[[phase]]
+id = "P4-ko-fi-button"
+title = "Add prominent Ko-fi brand button with @whoisarepo credit"
+status = "pending"
+owner = "support"
+tasks = [
+  "Create a nice, brand-harmonized 'Support on Ko-fi' button (warm accents + glass, coffee emoji or similar, clear '☕ Support @whoisarepo on Ko-fi' or equivalent)",
+  "Make it prominent (near end or dedicated support section) but not louder than the content",
+  "External link with proper rel/target",
+  "Nearby credit line: 'Built with love by @whoisarepo'"
+]
+verification = ["button looks branded yet fits the site", "credit is clear", "build clean"]
+
+[[phase]]
+id = "P5-verify-close"
+title = "Build gates + VFS closure + history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run build after major phases",
+  "Grep + mental re-read for tone, liveness, Ko-fi, light mentions",
+  "Update this programme + log",
+  "Write final history entry"
+]
+verification = [
+  "final build == 0",
+  "page feels like a fun interactive live-updating README about the app",
+  "Ko-fi button present and credited",
+  "VFS complete (review, programme, log, history)"
+]
+
+[progress]
+completed_phases = ["P1-vfs-gate"]
+current_phase = "P5-verify-close"
+status = "done"
+completed_phases = ["P1-vfs-gate", "P2-content-refactor", "P3-live-interactive", "P4-ko-fi-button", "P5-verify-close"]
+open_risks = [
+  "Balancing 'less about recipient' with keeping the personal heart of the project",
+  "Live elements must feel high-quality and not gimmicky",
+  "Ko-fi button must harmonize with glass/pink/cyan aesthetic"
+]
+decisions = [
+  "Use small Solid islands (or inline client:load) only for the live bits — keep most of the page static Astro for simplicity.",
+  "Ko-fi button will use a warm accent layer on top of aero-glass or a dedicated styled variant.",
+  "Structure will use multiple glass cards or one big 'document' wrapper for the README feel."
+]
+notes = [
+  "love_lang = 'Code (and content) should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "This about page should feel like the project's own love letter to the act of making the gift.",
+  "The 'live updating' part makes it feel alive and worth revisiting."
+]
+
+# Live updates (append-only during run)
+# [2026-06] Job + review written as gate. Programme + log initialized. P1 complete. Ready for content refactor.

@@ -98,8 +98,8 @@ export default function FrutigerScenes(props: EnvProps) {
         };
         window.addEventListener('resize', handleResize);
 
-        // GIRLY POWERFUL PARTICLES (configs-to-toml-2): more, blush/pink/rose/gold + sparkle, interactive bursts
-        const particleCount = 92;
+        // More exciting particle field for gift (no mistakes): higher count, richer types (hearts, sparks, orbs, trails), stronger interaction, bigger bursts on gift open/transition, vibrant colors, subtle connect for magic.
+        const particleCount = 140;
         const particles: Array<{
           x: number;
           y: number;
@@ -122,17 +122,18 @@ export default function FrutigerScenes(props: EnvProps) {
         ];
 
         for (let i = 0; i < particleCount; i++) {
-          const radius = Math.random() * 2.6 + 0.9;
-          const kind: 'dot' | 'heart' | 'spark' = Math.random() < 0.18 ? 'heart' : (Math.random() < 0.22 ? 'spark' : 'dot');
+          const radius = Math.random() * 3.2 + 0.7;
+          const r = Math.random();
+          const kind: 'dot' | 'heart' | 'spark' | 'orb' = r < 0.12 ? 'orb' : (r < 0.28 ? 'heart' : (r < 0.45 ? 'spark' : 'dot'));
           particles.push({
             x: Math.random() * width,
             y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 0.32,
-            vy: (Math.random() - 0.5) * 0.28 - 0.03,
+            vx: (Math.random() - 0.5) * 0.42,
+            vy: (Math.random() - 0.5) * 0.36 - 0.04,
             radius,
             baseRadius: radius,
             color: colors[Math.floor(Math.random() * colors.length)],
-            alpha: Math.random() * 0.42 + 0.22,
+            alpha: Math.random() * 0.55 + 0.18,
             kind
           });
         }
@@ -222,29 +223,48 @@ export default function FrutigerScenes(props: EnvProps) {
               p.alpha = 0.35 + Math.random() * 0.55;
             }
 
-            // draw
+            // draw - more exciting particle field (orbs glow, hearts bigger, sparks with extra rays, dots with soft halo for gift magic)
             ctx.save();
-            ctx.globalAlpha = Math.max(0.08, p.alpha);
+            ctx.globalAlpha = Math.max(0.07, p.alpha);
             if (p.kind === 'heart') {
-              // simple heart using two arcs + triangle
-              const s = p.radius * 1.35;
+              const s = p.radius * 1.45;
               ctx.fillStyle = p.color + p.alpha + ')';
               ctx.beginPath();
               ctx.moveTo(p.x, p.y + s * 0.3);
-              ctx.arc(p.x - s * 0.28, p.y - s * 0.1, s * 0.32, 0, Math.PI * 2);
-              ctx.arc(p.x + s * 0.28, p.y - s * 0.1, s * 0.32, 0, Math.PI * 2);
-              ctx.lineTo(p.x, p.y + s * 0.85);
+              ctx.arc(p.x - s * 0.28, p.y - s * 0.1, s * 0.34, 0, Math.PI * 2);
+              ctx.arc(p.x + s * 0.28, p.y - s * 0.1, s * 0.34, 0, Math.PI * 2);
+              ctx.lineTo(p.x, p.y + s * 0.9);
               ctx.closePath();
               ctx.fill();
             } else if (p.kind === 'spark') {
-              // 4-point sparkle
+              ctx.fillStyle = p.color + (p.alpha * 0.95) + ')';
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radius * 0.55, 0, Math.PI * 2);
+              ctx.fill();
+              // extra rays for excitement
+              ctx.fillRect(p.x - p.radius * 1.8, p.y - 0.5, p.radius * 3.6, 1);
+              ctx.fillRect(p.x - 0.5, p.y - p.radius * 1.8, 1, p.radius * 3.6);
+              ctx.fillRect(p.x - p.radius * 1.1, p.y - p.radius * 1.1, p.radius * 2.2, p.radius * 2.2 * 0.12);
+            } else if (p.kind === 'orb') {
+              // glowing orb for depth/excitement
+              const g = ctx.createRadialGradient(p.x - 1, p.y - 1, p.radius * 0.2, p.x, p.y, p.radius * 1.8);
+              g.addColorStop(0, p.color + '0.95)');
+              g.addColorStop(0.5, p.color + (p.alpha * 0.6) + ')');
+              g.addColorStop(1, p.color + '0)');
+              ctx.fillStyle = g;
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radius * 1.6, 0, Math.PI * 2);
+              ctx.fill();
               ctx.fillStyle = p.color + (p.alpha * 0.9) + ')';
               ctx.beginPath();
-              ctx.arc(p.x, p.y, p.radius * 0.6, 0, Math.PI * 2);
+              ctx.arc(p.x, p.y, p.radius * 0.7, 0, Math.PI * 2);
               ctx.fill();
-              ctx.fillRect(p.x - p.radius * 1.6, p.y - 0.6, p.radius * 3.2, 1.2);
-              ctx.fillRect(p.x - 0.6, p.y - p.radius * 1.6, 1.2, p.radius * 3.2);
             } else {
+              // soft halo dot
+              ctx.fillStyle = p.color + (p.alpha * 0.35) + ')';
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.radius * 1.7, 0, Math.PI * 2);
+              ctx.fill();
               ctx.fillStyle = p.color + p.alpha + ')';
               ctx.beginPath();
               ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -283,8 +303,8 @@ export default function FrutigerScenes(props: EnvProps) {
       }
     }
 
-    // Re-enable global bgm if available
-    if (typeof window !== 'undefined' && (window as any).globalBgmAudio && sessionStorage.getItem('bgm_muted') !== 'true') {
+    // Re-enable global bgm if available (components that need silence pause it themselves)
+    if (typeof window !== 'undefined' && (window as any).globalBgmAudio) {
       (window as any).globalBgmAudio.play().catch(() => {});
     }
   });
@@ -315,11 +335,15 @@ export default function FrutigerScenes(props: EnvProps) {
   const handleAction = () => {
     haptic.trigger('heavy');
 
-    // Girly powerful burst at the bubble location (centerish)
+    // More exciting burst for gift open (larger, multi type, trails for wow)
     const burstFn = (window as any)._giftBurst;
     if (burstFn && canvasRef) {
       const rect = canvasRef.getBoundingClientRect();
-      burstFn(rect.width * 0.5, rect.height * 0.42, 22);
+      burstFn(rect.width * 0.5, rect.height * 0.42, 38); // bigger for gift magic
+      // secondary burst for depth
+      setTimeout(() => {
+        if (burstFn && canvasRef) burstFn(rect.width * 0.5, rect.height * 0.55, 18);
+      }, 180);
     }
 
     // Switch to the special end gift song at the "gift open at the end"
@@ -369,10 +393,15 @@ export default function FrutigerScenes(props: EnvProps) {
       {/* Glass gradient tint overlay */}
       <div class="absolute inset-0 bg-gradient-to-b from-blue-950/30 via-transparent to-purple-950/40 pointer-events-none z-10"></div>
 
-      {/* Bubble pop flash layer */}
-      <div class={`absolute inset-0 bg-white z-40 transition-opacity duration-700 pointer-events-none ${
-        isTransitioning() ? 'opacity-100' : 'opacity-0'
-      }`}></div>
+      {/* Super cool full screen gradual backdrop blur decrease to 0 (replaces white flash to gift).
+          Dreamy sharpening reveal as the gift opens - full aspect, elegant, no harsh white. */}
+      <div 
+        class={`absolute inset-0 z-40 pointer-events-none bg-white/5 transition-all duration-[1600ms] ease-out ${isTransitioning() ? 'opacity-90' : 'opacity-0'}`}
+        style={{ 
+          'backdrop-filter': isTransitioning() ? 'blur(28px) saturate(0.7)' : 'blur(0px) saturate(1)',
+          'transition': 'backdrop-filter 1600ms cubic-bezier(0.23,1,0.32,1), opacity 900ms ease'
+        }}
+      ></div>
 
       {/* Early Guard Screen */}
       <Show when={timeStatus() === 'EARLY'}>
@@ -410,6 +439,10 @@ export default function FrutigerScenes(props: EnvProps) {
               hbdMessage={props.hbdMessage}
               cardMeta={props.cardMeta}
               mode="open-letter"
+              // Gift video bg from converted horsey (config connected), janell center, confetti overlay anim
+              videoBg="/assets/video/horsey.optimized.webm"
+              centerImage="/assets/img/janell.png"
+              confettiImage="/assets/img/Confetti.png"
             />
             <button
               onPointerDown={handleAction}

@@ -1,0 +1,34 @@
+---
+name: remove-global-mute-button
+mach: 1
+invariants:
+ - IIPS: clean removal, no leftover dead code or hidden buttons.
+ - Remove the mute button *completely* (UI + all direct toggle/mute state management in the global script).
+ - Do not break other audio features: MusicTitlebar still pauses globalBgmAudio when playing its track; FrutigerScenes still manages its own BGM and pauses global appropriately.
+ - Remove any references to the toggle button, bgm_muted sessionStorage (since the only way to toggle it was the button we're removing), and the 🔇/🎵 icon swapping.
+ - Keep the globalBgmAudio singleton creation + time persistence + interaction-gated autoplay where it makes sense for the experience (but simplify since no mute control).
+ - VFS perfection: full job -> review as hard gate -> programme + detailed log -> history entry. Build verification after edit. Record every decision.
+target: web/src/layouts/Application.astro (primary). Also audit and clean any references in other files if they were only for the mute button.
+kind: REMOVAL
+message: |
+  User request: "remove the mute button complete ly please - record in vfs perfecl please"
+
+  Complete removal of the global floating music mute/toggle button (the 🎵 / 🔇 button in the top-right).
+
+  This includes:
+  - The <button id="global-music-toggle"> element and all its classes/positioning.
+  - All JavaScript in the is:inline script that deals with the toggleBtn:
+    - Getting the button element
+    - Hiding/showing it based on isCardPage
+    - The entire "Handle mute/unmute state" block (bgm_muted sessionStorage)
+    - The toggleBtn.innerHTML swapping between 🎵 and 🔇
+    - The entire click listener on toggleBtn that flips the mute state
+    - Any code that was only there to support the button's icon or state.
+  - Clean up the autoplay startAudio logic to remove the isCurrentlyMuted checks that were tied to the removed mute feature.
+  - Since the mute button is gone, we can also remove the 'bgm_muted' sessionStorage usage entirely (it was only controllable via this button).
+  - In dependent files (MusicTitlebar, FrutigerScenes), remove or simplify any code paths that were checking 'bgm_muted' solely because of the global toggle (they still need to pause/resume globalBgmAudio for their own audio playback discipline).
+
+  Goal: The global background music (if present) should just play (or be managed by the components that need it), with no user-facing mute button anywhere.
+
+  Record *perfectly* in VFS (job, review, programme, log with decisions, final history).
+---

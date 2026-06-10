@@ -1,0 +1,31 @@
+---
+name: refactor-about-page
+mach: 1
+invariants:
+ - IIPS: elegant, fun, well-crafted interactive experience.
+ - Shift focus: about the *app/experience* (holographic interactive gift, scenes, music, orchid, letter magic), not the recipient.
+ - Merely mention her (Janell) and the inspiration lightly and affectionately.
+ - Turn the page into a "fun well made readme that is live updating": structure like a beautiful interactive README.md for the project/app, with live/dynamic elements (Solid signals for updating counters, expandable sections, fun interactions).
+ - Add a clear Ko-fi support ask using a well-designed brand-style button.
+ - Credit: @whoisarepo is the maker (link appropriately).
+ - Preserve aesthetic: aero-glass, holo effects, Patrick Hand/Comfortaa/Caveat fonts, haptics, animations, responsive.
+ - Keep BackButton and overall page structure consistent with other routes.
+ - VFS discipline: full job -> review gate -> programme/log -> history. Build verification. No mistakes.
+target: web/src/pages/about/index.astro
+kind: REFACTOR
+message: |
+  Refactor the /about route:
+
+  - Make it much less about the recipient (Janell). Remove heavy profile card, zodiac/rarity/edition stats, long bio all about her.
+  - Make it primarily about the *app*: what this interactive holographic experience is (a living love letter / gift with 3D card, visual novel scenes, music titlebar, sentient orchid reveal, particles, etc.).
+  - Merely mention her and the inspiration: e.g. "A personal interactive gift built for Janell, inspired by [90s nostalgia, holographic trading cards, orchids as living symbols, music as memory, the joy of crafting something by hand in code]."
+  - Turn the content into a fun, well-made, interactive "README" that feels *live updating*:
+    - Structure it like a polished README.md (with nice section headers, code-like blocks if fitting, but beautiful).
+    - Add live-updating elements using Solid (client:load island): e.g. a "Sparks Shared" counter that increments on tap with haptic, a "Last Unfolded" live timestamp or simulated updates, expandable "Tech & Magic" sections that feel dynamic, a fun "Build Log" or "Live Reactions" area.
+    - Make interactions delightful and on-theme (haptics, glass, foil touches, letter animations).
+  - At a prominent place (bottom or dedicated section): Ask for Ko-fi support with a nice brand button (orange/coffee aesthetic but harmonized with the site's pink/cyan/glass style). Mention "Built with love by @whoisarepo".
+  - Overall tone: affectionate, craft-focused, meta about the gift of making digital things feel physical and magical. Fun and inviting to explore the rest of the site.
+  - Keep technical consistency: use existing components where possible (BackButton), Solid for any live bits, match Container + aero styles.
+
+  This turns the about page from a recipient profile into the project's own charming, interactive self-documentation / love letter about itself.
+---

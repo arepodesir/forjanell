@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "convert:horsey": "ffmpeg -i public/assets/video/horesey.MOV -t 6 -vf \"scale=960:540:force_original_aspect_ratio=decrease,pad=960:540:(ow-iw)/2:(oh-ih)/2,fps=15\" -c:v libvpx-vp9 -crf 30 -b:v 0 -an -loop 1 -f webm -y public/assets/video/horsey.optimized.webm"
   },
   "dependencies": {
     "@astrojs/solid-js": "^6.0.1",

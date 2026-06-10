@@ -101,4 +101,8 @@ export interface HadacardProps {
   landscape?: boolean; // new (hadacard-landscape-arrow): glassy arrow button transitions the open letter to landscape "sheet" + reveals cool extra features (scrollMsg banner + P.S.)
   onLandscapeChange?: (isLandscape: boolean) => void;
   class?: string;
+  // Video background for gift reveal (horsey optimized loop + janell center + confetti overlay)
+  videoBg?: string;
+  centerImage?: string;
+  confettiImage?: string;
 }

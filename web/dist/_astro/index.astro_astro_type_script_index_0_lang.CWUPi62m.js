@@ -1,1 +1,0 @@
-import{h as r}from"./haptics.CX2_4n8b.js";const e=document.getElementById("avatar-frame"),t=document.getElementById("sparkle-bar");e&&e.addEventListener("pointerdown",()=>r.trigger("success"));t&&t.addEventListener("pointerdown",()=>r.trigger("medium"));

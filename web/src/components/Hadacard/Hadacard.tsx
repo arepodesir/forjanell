@@ -61,6 +61,23 @@ export default function Hadacard(props: HadacardProps) {
   const nameLetters = () => splitToLetterBlocks(name(), 40);
   const scrollMsg = () => props.scrollMsg || "Every star still pauses when you smile.";
 
+  // Gift video background connection (horsey optimized from assets/video, janell center, confetti overlay)
+  const videoBg = () => props.videoBg || '';
+  const centerImage = () => props.centerImage || picUrl();
+  const confettiImage = () => props.confettiImage || '/resources/img/Confetti.png';
+
+  // State machine for Hadacard theme (preferred colocation with Tailwind-like generator + scoped styles)
+  // States: closed (sealed letter), open (unfolded personal letter), landscape (wide sheet + extras), withVideo (gift video bg mode)
+  const getHadacardStateClasses = () => {
+    const states = [
+      'holo-card',
+      isOpen() ? 'holo-card--open' : 'holo-card--closed',
+      isLandscape() ? 'holo-card--landscape' : '',
+      videoBg() ? 'hadacard-with-video' : '',
+    ];
+    return states.filter(Boolean).join(' ');
+  };
+
   const stopAutoShimmer = () => {
     if (autoShimmerRaf) {
       cancelAnimationFrame(autoShimmerRaf);
@@ -120,7 +137,7 @@ export default function Hadacard(props: HadacardProps) {
       {/* 3D Holographic Card Viewport (No outer box container, perfectly centered) */}
       <div class="w-full flex items-center justify-center shrink-0">
         <div
-          class={`holo-card cursor-grab active:cursor-grabbing select-none transition-all duration-300 ${isOpen() ? 'holo-card--open' : 'holo-card--closed'} ${isLandscape() ? 'holo-card--landscape' : ''}`}
+          class={`holo-card cursor-grab active:cursor-grabbing select-none transition-all duration-300 ${getHadacardStateClasses()}`}
           ref={cardRef}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
@@ -128,11 +145,24 @@ export default function Hadacard(props: HadacardProps) {
           style={`${cardStyles()}; touch-action: none;`}
         >
           <div class="holo-card__inner">
-            {/* Background Texture */}
-            <div class="absolute inset-0 bg-cover bg-center opacity-25 rounded-2xl"
-                 style={{ "background-image": "url(/resources/img/jaja.png)" }}>
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl"></div>
+            {/* Video background for gift (horsey.optimized.webm connected via config/props to Hadacard) - full aspect, scales well, loops muted */}
+            {videoBg() ? (
+              <video
+                src={videoBg()}
+                class="absolute inset-0 w-full h-full object-cover rounded-2xl z-0"
+                autoplay
+                loop
+                muted
+                playsinline
+                style={{ 'object-fit': 'cover' }}
+              />
+            ) : (
+              /* Fallback background texture */
+              <div class="absolute inset-0 bg-cover bg-center opacity-25 rounded-2xl"
+                   style={{ "background-image": "url(/resources/img/jaja.png)" }}>
+              </div>
+            )}
+            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl z-10"></div>
 
             {/* Holographic foil overlays */}
             <div class="holo-card__glitter"></div>
@@ -153,7 +183,7 @@ export default function Hadacard(props: HadacardProps) {
                          class="absolute -top-3 -right-1.5 w-7 h-7 z-20 rotate-12 drop-shadow" alt="" />
                     <div class="w-full h-full rounded-full border-[2px] border-pink-300/50 overflow-hidden"
                          style={{ "box-shadow": "0 0 10px rgba(255,102,196,0.35), inset 0 0 6px rgba(0,0,0,0.25)" }}>
-                      <img src={picUrl()} alt={name()} class="w-full h-full object-cover" />
+                      <img src={centerImage()} alt={name()} class="w-full h-full object-cover" />
                     </div>
                   </div>
 
@@ -184,7 +214,7 @@ export default function Hadacard(props: HadacardProps) {
                          class="absolute -top-4 -right-2 w-9 h-9 z-20 rotate-12 drop-shadow-lg" alt="" />
                     <div class="w-full h-full rounded-full border-[3px] border-pink-300/60 overflow-hidden"
                          style={{ "box-shadow": "0 0 15px rgba(255,102,196,0.5), 0 0 30px rgba(188,19,254,0.2), inset 0 0 8px rgba(0,0,0,0.3)" }}>
-                      <img src={picUrl()} alt={name()} class="w-full h-full object-cover" />
+                      <img src={centerImage()} alt={name()} class="w-full h-full object-cover" />
                     </div>
 
                     {/* Candles */}
@@ -258,10 +288,12 @@ export default function Hadacard(props: HadacardProps) {
                     </>
                   )}
 
-                  {/* Confetti overlay */}
-                  <img src="/resources/img/confetti.svg"
-                       class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 rounded-2xl"
-                       alt="" />
+                  {/* Confetti overlay - fixed image above center with nice animation (colocated state styles) */}
+                  <img 
+                    src={confettiImage()} 
+                    class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none z-0 rounded-2xl hadacard-confetti-anim"
+                    alt="" 
+                  />
 
                   {/* Message body — flowing personal letter feel (wide + breathing for centerpiece) */}
                   <div class="flex-1 flex items-center overflow-y-auto px-3 py-1">
@@ -296,8 +328,8 @@ export default function Hadacard(props: HadacardProps) {
       </div>
 
       <style>{`
-        /* letter-leaning holographic card (profile > trading card) */
-        /* open mode polish (refactor-hadacard.2): wide breathing + smooth unfold feel */
+        /* Colocated Hadacard styles (state machine preferred: closed/open/landscape/withVideo).
+           All theme variants defined here for the component. Global holo base kept minimal. */
         .holo-card--closed {
           --card-aspect: 0.72;
           cursor: pointer;
@@ -330,6 +362,46 @@ export default function Hadacard(props: HadacardProps) {
         /* The glassy arrow is already styled inline to feel native; these rules just ensure it participates */
         .holo-card--landscape .aero-glass {
           border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Video background state (gift horsey) - full aspect, scales, sits behind holo layers */
+        .hadacard-with-video .holo-card__inner {
+          background: transparent;
+        }
+        .hadacard-with-video video {
+          filter: saturate(0.85) contrast(1.05);
+        }
+
+        /* Nice animation for fixed confetti image above center (subtle drift + sparkle) */
+        .hadacard-confetti-anim {
+          animation: confettiDrift 9s ease-in-out infinite, confettiSparkle 3.5s linear infinite;
+          will-change: transform, opacity;
+        }
+        @keyframes confettiDrift {
+          0%, 100% { transform: translateY(0) rotate(-1deg); }
+          50% { transform: translateY(-6px) rotate(1deg); }
+        }
+        @keyframes confettiSparkle {
+          0%, 100% { opacity: 0.08; }
+          50% { opacity: 0.18; }
+        }
+
+        /* More exciting particle field for Hadacard (colocated, on the holo surface when video/gift mode) */
+        .hadacard-with-video .holo-card__glitter::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(255,102,196,0.12) 0%, transparent 60%);
+          animation: particleField 4s ease-in-out infinite;
+          pointer-events: none;
+          z-index: 1;
+          mix-blend-mode: screen;
+        }
+        @keyframes particleField {
+          0%, 100% { opacity: 0.6; transform: translate(0, 0); }
+          50% { opacity: 1; transform: translate(1px, -1px); }
         }
       `}</style>
     </div>

@@ -1,36 +1,36 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta name="theme-color" content="#ff66c4"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="/manifest.json"><link rel="apple-touch-icon" href="/resources/favicon/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png"><title>For Janell | About</title><meta name="description" content="A holographic birthday card experience by Hadacard"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Caveat:wght@400;700&family=Patrick+Hand&family=Inter:wght@400;600;700&family=Outfit:wght@600;700;800;900&family=Great+Vibes&family=Alex+Brush&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/Application.DDl9vTOM.css"></head><body class="relative min-h-screen">  <div class="relative w-full min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-between p-4 bg-cover bg-center select-none pb-safe pt-safe" style="background-image: url(https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHJ2eHY3aTZ2eDFwdnV4amN1ZTZ1Z3R4bnlmdWxlb2p4dmN3dDRuZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VxbvpfaTTo3le/giphy.gif)"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var C=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var l=(i,o,a)=>C(i,typeof o!="symbol"?o+"":o,a);var E=new Set(["__proto__","constructor","prototype"]);{let i={0:t=>y(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},o=t=>{let[h,e]=t;return h in i?i[h](e):void 0},a=t=>t.map(o),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([h,e])=>[h,o(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},p=this.querySelectorAll("template[data-astro-template]");for(let r of p){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let d;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[p,{default:u}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),d=this.getAttribute("component-export")||"default";if(d.includes(".")){this.Component=p;for(let m of d.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${d}`);this.Component=this.Component[m]}}else{if(E.has(d))throw new Error(`Invalid component export path: ${d}`);this.Component=p[d]}return this.hydrator=u,this.hydrate},e,this)}catch(n){console.error("[astro-island] Error hydrating %s",this.getAttribute("component-url"),n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><script>window._$HY||(e=>{let t=e=>e&&e.hasAttribute&&(e.hasAttribute("data-hk")?e:t(e.host&&e.host.nodeType?e.host:e.parentNode));["click", "input"].forEach((o=>document.addEventListener(o,(o=>{if(!e.events)return;let s=t(o.composedPath&&o.composedPath()[0]||o.target);s&&!e.completed.has(s)&&e.events.push([s,o])}))))})(_$HY={events:[],completed:new WeakSet,r:{},fe(){}});</script><!--xs--><astro-island uid="Z2qsBDc" data-solid-render-id="s0" component-url="/_astro/BackButton.Ceitrhtp.js" component-export="default" renderer-url="/_astro/client.D9nbgWIg.js" props="{&quot;to&quot;:[0,&quot;/&quot;],&quot;label&quot;:[0,&quot;Back Home&quot;],&quot;emoji&quot;:[0,&quot;🏠&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BackButton&quot;,&quot;value&quot;:true}" await-children><a data-hk="s00000" href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95 select-none "><span>🏠</span><span>Back Home</span></a><!--astro:end--></astro-island> <div class="relative z-10 w-full max-w-lg aero-glass rounded-3xl p-6 text-white mt-16 animate-reveal-up border-white/20 shadow-2xl"> <div class="flex flex-col items-center gap-6">  <div class="relative w-36 h-36 shrink-0 animate-float" id="avatar-frame"> <div class="w-full h-full rounded-full border-4 border-aero-cyan overflow-hidden" style="box-shadow: 0 0 20px rgba(0,243,255,0.6), 0 0 40px rgba(188,19,254,0.3);"> <img src="/resources/img/janell.png" alt="Janell" class="w-full h-full object-cover"> </div> <span class="absolute -bottom-1 -right-1 bg-gradient-to-r from-aero-pink to-aero-cyan text-white text-[10px] font-extrabold px-3 py-1 rounded-full border border-white/40 shadow-lg">
-★ MVP
-</span> </div>  <div class="w-full text-center"> <h1 class="text-3xl font-extrabold mb-1 tracking-wide" style="font-family: 'Caveat', cursive;">
-Janell Hill-Bridget
-</h1> <p class="text-aero-cyan font-bold text-xs mb-4 tracking-wider uppercase" style="font-family: 'Comfortaa', sans-serif;">
-✦ Quantum Birthday Recipient ✦
-</p> <div class="grid grid-cols-2 gap-3 text-left text-xs font-semibold bg-black/20 p-4 rounded-xl border border-white/10" style="font-family: 'Patrick Hand', cursive;"> <div> <span class="text-white/50 block text-[9px] font-mono">ZODIAC</span> <span class="text-white font-bold">Taurus ♉</span> </div> <div> <span class="text-white/50 block text-[9px] font-mono">RARITY</span> <span class="text-aero-pink font-bold">✦ Ultra Rare Holo</span> </div> <div> <span class="text-white/50 block text-[9px] font-mono">EDITION</span> <span class="text-white font-bold">2026 Edition</span> </div> <div> <span class="text-white/50 block text-[9px] font-mono">CARD ID</span> <span class="text-aero-cyan font-bold">HC-001</span> </div> </div> </div> </div> <hr class="border-white/10 my-5">  <div class="space-y-4 text-sm leading-relaxed" style="font-family: 'Patrick Hand', cursive;"> <h2 class="text-xl font-bold text-aero-cyan" style="font-family: 'Comfortaa', sans-serif;">
-Bio & Attributes 💎
-</h2> <p class="text-blue-100/90 font-medium">
-Janell is a legendary individual, known across multiple servers and quantum realms for her dazzling aura, stellar fashion sense, and crystal-clear energy. This card represents a yearly extraction from the friendship field, designed to celebrate another year of her amazing existence!
-</p> <p class="text-blue-100/90 font-medium">
-She is certified 100% awesome, immune to bad vibes, and possesses a passive skill: <strong class="text-aero-pink">Instant Sparkle</strong>, which automatically brightens up any room she walks into. ✨
-</p> </div>  <div class="mt-6 space-y-2"> <div class="flex justify-between text-[10px] font-mono"> <span>SPARKLE LEVEL</span> <span class="text-aero-cyan font-bold">OVER 9000</span> </div> <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/10" id="sparkle-bar"> <div class="h-full bg-gradient-to-r from-aero-cyan to-aero-pink rounded-full animate-shimmer" style="width: 100%; background-size: 200% 100%;"></div> </div> </div> </div> <script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.CWUPi62m.js"></script>  </div>   <button id="global-music-toggle" class="fixed top-20 right-4 z-[9999] w-10 h-10 rounded-full aero-glass flex items-center justify-center text-white text-lg transition-transform hover:scale-105 active:scale-95 shadow-md border border-white/20 select-none hidden md:top-6">
-🎵
-</button> <script>
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"><meta name="theme-color" content="#ff66c4"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="manifest" href="/manifest.json"><link rel="apple-touch-icon" href="/resources/favicon/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/resources/favicon/favicon-16x16.png"><title>For Janell | About</title><meta name="description" content="A holographic birthday card experience by Hadacard"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Caveat:wght@400;700&family=Patrick+Hand&family=Inter:wght@400;600;700&family=Outfit:wght@600;700;800;900&family=Great+Vibes&family=Alex+Brush&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/Application.CP7FJO8T.css"></head><body class="relative min-h-screen">  <div class="relative w-full min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-between p-4 bg-cover bg-center select-none pb-safe pt-safe" style="background-image: url(https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHJ2eHY3aTZ2eDFwdnV4amN1ZTZ1Z3R4bnlmdWxlb2p4dmN3dDRuZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VxbvpfaTTo3le/giphy.gif)"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var C=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var l=(i,o,a)=>C(i,typeof o!="symbol"?o+"":o,a);var E=new Set(["__proto__","constructor","prototype"]);{let i={0:t=>y(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},o=t=>{let[h,e]=t;return h in i?i[h](e):void 0},a=t=>t.map(o),y=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([h,e])=>[h,o(e)]));class f extends HTMLElement{constructor(){super(...arguments);l(this,"Component");l(this,"hydrator");l(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},p=this.querySelectorAll("template[data-astro-template]");for(let r of p){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let u;try{u=this.hasAttribute("props")?y(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let d;await this.hydrator(this)(this.Component,u,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});l(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[p,{default:u}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),d=this.getAttribute("component-export")||"default";if(d.includes(".")){this.Component=p;for(let m of d.split(".")){if(E.has(m)||!this.Component||typeof this.Component!="object"&&typeof this.Component!="function"||!Object.hasOwn(this.Component,m))throw new Error(`Invalid component export path: ${d}`);this.Component=this.Component[m]}}else{if(E.has(d))throw new Error(`Invalid component export path: ${d}`);this.Component=p[d]}return this.hydrator=u,this.hydrate},e,this)}catch(n){console.error("[astro-island] Error hydrating %s",this.getAttribute("component-url"),n)}}attributeChangedCallback(){this.hydrate()}}l(f,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",f)}})();</script><script>window._$HY||(e=>{let t=e=>e&&e.hasAttribute&&(e.hasAttribute("data-hk")?e:t(e.host&&e.host.nodeType?e.host:e.parentNode));["click", "input"].forEach((o=>document.addEventListener(o,(o=>{if(!e.events)return;let s=t(o.composedPath&&o.composedPath()[0]||o.target);s&&!e.completed.has(s)&&e.events.push([s,o])}))))})(_$HY={events:[],completed:new WeakSet,r:{},fe(){}});</script><!--xs--><astro-island uid="Z2qsBDc" data-solid-render-id="s0" component-url="/_astro/BackButton.Ceitrhtp.js" component-export="default" renderer-url="/_astro/client.D9nbgWIg.js" props="{&quot;to&quot;:[0,&quot;/&quot;],&quot;label&quot;:[0,&quot;Back Home&quot;],&quot;emoji&quot;:[0,&quot;🏠&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BackButton&quot;,&quot;value&quot;:true}" await-children><a data-hk="s00000" href="/" class="absolute top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 rounded-full aero-glass text-white font-bold text-sm transition-transform hover:scale-105 active:scale-95 select-none "><span>🏠</span><span>Back Home</span></a><!--astro:end--></astro-island> <div class="relative z-10 w-full max-w-lg aero-glass rounded-3xl p-6 text-white mt-16 animate-reveal-up border-white/20 shadow-2xl">  <div class="text-center mb-6"> <h1 class="text-3xl font-extrabold mb-2 tracking-wide" style="font-family: 'Caveat', cursive;">
+The Experience
+</h1> <p class="text-aero-cyan text-xs tracking-wider uppercase font-bold" style="font-family: 'Comfortaa', sans-serif;">
+An Interactive Holographic Love Letter
+</p> </div> <p class="text-blue-100/90 text-sm leading-relaxed mb-5" style="font-family: 'Patrick Hand', cursive;">
+A living, responsive gift. A 3D card that tilts and shimmers under your fingers. Scenes that pop into a real interactive orchid. Music that feels present in the room. Particles that dance with your touch. This is a small digital world built to feel hand-written, intimate, and magical — the kind of thing you might keep on a shelf and open again on quiet nights.
+</p> <p class="text-blue-100/80 text-sm mb-6" style="font-family: 'Patrick Hand', cursive;">
+Made as a personal gift for Janell, inspired by the quiet power of physical objects (holographic cards, living orchids, music that carries memory) and the joy of crafting something in code that still feels like a letter from one person to another.
+</p> <hr class="border-white/10 my-5">  <div class="space-y-6 text-sm leading-relaxed" style="font-family: 'Patrick Hand', cursive;"> <div> <h2 class="text-lg font-bold text-aero-cyan mb-2" style="font-family: 'Comfortaa', sans-serif;">What This Is</h2> <p class="text-blue-100/90">
+A collection of small, deliberate moments: the Hadacard (a holographic letter that opens to your touch), FrutigerScenes (a gentle visual novel that ends in a living 3D orchid), a music titlebar that feels like an old cassette, and responsive particles that make the space feel alive.
+</p> </div> <div> <h2 class="text-lg font-bold text-aero-cyan mb-2" style="font-family: 'Comfortaa', sans-serif;">The Living Letter</h2> <p class="text-blue-100/90">
+The card responds to pointer and touch with real-time holographic foil, glitter, and gentle 3D tilt. It can be "closed" or opened wide into landscape. Every element (profile, candles, flowing text) is there to make it feel like a real object you are holding.
+</p> </div> <div> <h2 class="text-lg font-bold text-aero-cyan mb-2" style="font-family: 'Comfortaa', sans-serif;">How the Magic is Made</h2> <p class="text-blue-100/90 mb-2">
+Built with Astro for the quiet shell + Solid for the living parts, Three.js for the orchid, careful audio handoff, and a lot of love for glassmorphism, haptics, and handwriting fonts.
+</p> <div class="text-[10px] text-white/60 font-mono bg-black/20 p-2 rounded border border-white/10">
+Tech: Astro • SolidJS • Three.js • Tailwind • Love
+</div> </div> </div>  <div class="mt-6 pt-5 border-t border-white/10"> <h2 class="text-lg font-bold text-aero-cyan mb-3" style="font-family: 'Comfortaa', sans-serif;">
+Live Reactions
+</h2> <div id="sparks-container" class="aero-glass rounded-2xl p-4 mb-3 border border-white/10"> <div class="flex items-baseline justify-between"> <span class="text-white/70 text-xs tracking-wider uppercase">Sparks Shared</span> <span id="sparks-count" class="text-2xl font-bold text-aero-pink tabular-nums">142</span> </div> <p class="text-[10px] text-white/50 mt-1">Tap to add one. It only lives here for you.</p> </div> <button id="send-spark" class="w-full aero-glass active:scale-[0.985] transition-all rounded-full py-2.5 text-sm font-semibold tracking-wider border border-white/20 hover:border-aero-pink/40">
+✨ Send a Spark
+</button> <div class="mt-4 text-[10px] text-white/50 text-center" style="font-family: 'Comfortaa', sans-serif;">
+Last unfolded just now • The letter is still warm
+</div> </div>  <div class="mt-8 pt-5 border-t border-white/10 text-center"> <p class="text-xs text-white/70 mb-3" style="font-family: 'Comfortaa', sans-serif;">
+If this little world brought you a smile, you can keep the magic going.
+</p> <a href="https://ko-fi.com/whoisarepo" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#FF5E5B] hover:bg-[#e44d4a] active:scale-[0.985] transition-all text-white text-sm font-bold tracking-wider shadow-md border border-white/30">
+☕ Support @whoisarepo on Ko-fi
+</a> <p class="mt-2 text-[10px] text-white/50" style="font-family: 'Comfortaa', sans-serif;">
+Built with love by @whoisarepo
+</p> </div> </div> <script type="module" src="/_astro/index.astro_astro_type_script_index_0_lang.BmdWQXgW.js"></script>  </div>  <script>
       (function() {
         const isCardPage = window.location.pathname.startsWith('/gifts/card');
-        const toggleBtn = document.getElementById('global-music-toggle');
-        
-        if (isCardPage) {
-          if (toggleBtn) toggleBtn.classList.add('hidden');
-          // Immediately pause global player on visual novel card pages
-          if (window.globalBgmAudio) {
-            window.globalBgmAudio.pause();
-          }
-          return;
-        }
 
-        if (toggleBtn) {
-          toggleBtn.classList.remove('hidden');
-        }
-
-        // Create or retrieve single audio instance attached to window
+        // Create or retrieve single global BGM instance (still used by MusicTitlebar and scenes for coordination)
         let audio = window.globalBgmAudio;
         if (!audio) {
           audio = new Audio('/resources/sfx/hbd.mp3');
@@ -38,31 +38,31 @@ She is certified 100% awesome, immune to bad vibes, and possesses a passive skil
           audio.volume = 0.3;
           window.globalBgmAudio = audio;
 
-          // Restore playback position
+          // Restore playback position (time persistence kept for continuity)
           const savedTime = sessionStorage.getItem('bgm_currentTime');
           if (savedTime) {
             audio.currentTime = parseFloat(savedTime);
           }
         }
 
-        // Update stored position periodically
+        // Periodically persist current time
         setInterval(() => {
           if (audio && !audio.paused) {
             sessionStorage.setItem('bgm_currentTime', audio.currentTime.toString());
           }
         }, 500);
 
-        // Handle mute/unmute state
-        const isMuted = sessionStorage.getItem('bgm_muted') === 'true';
-        audio.muted = isMuted;
-        if (toggleBtn) {
-          toggleBtn.innerHTML = isMuted ? '🔇' : '🎵';
+        if (isCardPage) {
+          // Card/visual novel pages (e.g. circa-1993) take audio control
+          if (audio) {
+            audio.pause();
+          }
+          return;
         }
 
-        // Play BGM on first user interaction if not muted
+        // Play global BGM on first user interaction (no mute control remains)
         function startAudio() {
-          const isCurrentlyMuted = sessionStorage.getItem('bgm_muted') === 'true';
-          if (!isCurrentlyMuted && audio.paused) {
+          if (audio.paused) {
             audio.play().catch(e => console.log('Autoplay deferred:', e));
           }
           document.removeEventListener('click', startAudio);
@@ -70,28 +70,8 @@ She is certified 100% awesome, immune to bad vibes, and possesses a passive skil
           document.removeEventListener('touchstart', startAudio);
         }
 
-        if (!isMuted) {
-          document.addEventListener('click', startAudio);
-          document.addEventListener('keydown', startAudio);
-          document.addEventListener('touchstart', startAudio);
-        }
-
-        // Toggle logic
-        if (toggleBtn) {
-          toggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const currentMute = sessionStorage.getItem('bgm_muted') === 'true';
-            const newMute = !currentMute;
-            audio.muted = newMute;
-            sessionStorage.setItem('bgm_muted', newMute.toString());
-            toggleBtn.innerHTML = newMute ? '🔇' : '🎵';
-            
-            if (!newMute) {
-              audio.play().catch(e => console.log(e));
-            } else {
-              audio.pause();
-            }
-          });
-        }
+        document.addEventListener('click', startAudio);
+        document.addEventListener('keydown', startAudio);
+        document.addEventListener('touchstart', startAudio);
       })();
     </script> </body> </html>

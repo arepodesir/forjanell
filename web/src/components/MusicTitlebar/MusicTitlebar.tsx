@@ -43,7 +43,7 @@ const DEFAULT_LYRICS = [
  * - Highlights current lyric line driven by playback progress.
  * - Play/pause, draggable progress scrub, time display.
  * - Bubbly aero-glass + pastel aero palette, large touch targets, haptics.
- * - Coordinates with globalBgmAudio (pauses it when this plays).
+ * - Coordinates with globalBgmAudio (pauses it when this plays its own track).
  *
  * Hooking to audio:
  * - By default (no externalAudio) it self-manages an HTMLAudioElement (backward compat).
