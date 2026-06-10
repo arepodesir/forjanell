@@ -1,0 +1,29 @@
+---
+name: fix-hadacard-confetti
+mach: 1
+invariants:
+ - IIPS: the floating confetti should be decorative, above the profile image in the card, using the existing asset.
+ - The asset is /assets/img/Confetti.png (exists in public/assets/img/).
+ - Position it as floating above the profile pic (inside the relative profile container or with correct absolute to appear above it).
+ - Keep the animation .hadacard-confetti-anim if present.
+ - No other changes to the card or other states.
+ - VFS: named job, follow programme -> review (gate before edit) -> log pipeline. nomistakes --vfs=.agents/*
+target: web/src/components/Hadacard/Hadacard.tsx
+kind: FIX
+message: |
+  new JOB {fix the card floating confetti asset above progile image, it is missing}
+
+  The floating confetti overlay (decorative) above the profile image in the Hadacard is missing/not positioned correctly.
+
+  Currently the <img> for confetti is placed after the profile div in the open content, with absolute positioning that doesn't reliably place it "above" the profile pic (it may be at the top of the card content instead).
+
+  Fix:
+  - Move the confetti <img src={confettiImage()} ... class with hadacard-confetti-anim > inside the profile picture's relative container div, so it floats above the profile image (e.g. with negative top or appropriate positioning, z high enough).
+  - Ensure the asset path resolves (default to '/assets/img/Confetti.png' which exists).
+  - Keep opacity, pointer-events-none, size appropriate for "floating" above profile (w-20 h-20 or similar, centered or slightly offset).
+  - The animation keyframes for drift and sparkle should apply.
+  - Only affect the open state (or wherever profile is shown).
+  - Log all into the named job, follow full VFS pipeline (programme, review as gate, detailed log, history). No mistakes.
+
+  This makes the decorative floating confetti appear above the profile pic in the holographic card as intended.
+---

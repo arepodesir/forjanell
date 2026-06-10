@@ -1,0 +1,82 @@
+# fix-hadacard-confetti.programme
+# VFS meta for fixing the floating confetti asset in Hadacard above profile image.
+
+name = "fix-hadacard-confetti"
+kind = "FIX"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/fix-hadacard-confetti.job"
+review = ".agents/reviews/R-fix-hadacard-confetti.md"
+log = ".agents/logs/2026-06-fix-hadacard-confetti-execution.log"
+
+[invariants]
+iips = "The decorative floating confetti should appear above the profile image in the open card state, using the existing Confetti.png asset. Positioning must be reliable (inside the relative profile container)."
+asset = "Use /assets/img/Confetti.png (confirmed present in public/assets/img/). Keep the hadacard-confetti-anim class and keyframes for drift/sparkle."
+no_scope_creep = "Only fix the confetti placement above profile. Do not change other card elements, closed state, landscape, or unrelated code unless required for the fix."
+vfs = "Follow named job + programme + review (gate) + log pipeline. nomistakes. --vfs=.agents/* Record all."
+
+[targets]
+file = "web/src/components/Hadacard/Hadacard.tsx (the profile div in open state, confetti img, and related CSS if needed)"
+
+[[phase]]
+id = "P1-setup"
+title = "Named job + programme"
+status = "completed"
+tasks = ["Create job", "Create this programme"]
+verification = ["job and programme exist"]
+
+[[phase]]
+id = "P2-review"
+title = "Review as hard gate"
+status = "pending"
+tasks = ["Write detailed review authorizing the move of confetti img inside profile relative div, asset confirmation, animation preservation."]
+verification = ["review exists with sign-off, authorizes only the hadacard file for this fix"]
+
+[[phase]]
+id = "P3-log"
+title = "Init log"
+status = "pending"
+tasks = ["Create detailed log with pre-reads, events, verification."]
+verification = ["log initialized under named job"]
+
+[[phase]]
+id = "P4-inspect-implement"
+title = "Inspect and fix after gate"
+status = "pending"
+tasks = [
+  "Confirm asset /assets/img/Confetti.png exists and is referenced via confettiImage()",
+  "Move the confetti <img> inside the profile picture relative div (after the img or as sibling with higher z), adjust classes if needed for 'floating above' (e.g. -top-2 or appropriate, left positioned over the pic)",
+  "Ensure z-30 or higher than profile content, opacity for decorative, pointer-events-none",
+  "Preserve or ensure the .hadacard-confetti-anim styles are in the component <style>",
+  "Verify it appears above the profile image in open state"
+]
+verification = [
+  "build succeeds",
+  "grep confirms confetti img is now descendant of the profile relative div",
+  "mental: in open card, confetti floats above the round profile pic with animation"
+]
+
+[[phase]]
+id = "P5-verify-close"
+title = "Verify and close VFS"
+status = "pending"
+tasks = ["Build, grep, mental check, update log/programme, write history"]
+verification = [
+  "build 0",
+  "confetti visible above profile, asset not missing",
+  "full VFS (review, log, history) updated"
+]
+
+[progress]
+completed_phases = ["P1-setup"]
+current_phase = "P2-review"
+decisions = [
+  "Place confetti inside the .relative profile container so absolute positioning is relative to the profile pic itself, making 'above profile image' reliable.",
+  "Use the existing confettiImage() default which points to the present Confetti.png",
+  "Keep w-20 h-20 or tune slightly if needed for floating look above the w-28 profile",
+  "z-30 to be above the profile img and cap"
+]
+notes = "The confetti is decorative 'floating' element above the profile in the holographic card, as per original intent and comment in code."
+
+# Live updates
+# [2026-06] Job and programme created. Pre-reads started. Review next as gate.

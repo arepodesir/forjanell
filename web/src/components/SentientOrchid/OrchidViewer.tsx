@@ -92,8 +92,8 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     lastX = ev.clientX;
     lastY = ev.clientY;
 
-    // Yaw only (horizontal spin around the orchid). Pitch is clamped in the camera math so tip + base framing stays perfect.
-    controls.yaw += dx * 0.0072;
+    // ONLY single axis rotation (yaw / horizontal spin). No pitch from drag. Fixed pitch (0.18) used in camera for tight centered mobile full view of flower + pot.
+    controls.yaw += dx * 0.0075;
     controls.lastMove = Date.now();
   };
 
@@ -172,50 +172,40 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       });
       model = gltf.scene;
 
-      // === Perfect framing: tip of bloom to base of the orchid (and minimal pedestal) ===
-      // Compute combined bounds so BOTH the highest point (tip) and lowest point (base) are guaranteed to fit.
-      const pedestal = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.95, 1.05, 0.09, 48),
-        new THREE.MeshPhongMaterial({ color: 0x2a2a3a, shininess: 30 })
-      );
-      pedestal.position.y = -0.11;
-      scene.add(pedestal);
-
-      // Use the full (model + pedestal) bounds for framing calculations
+      // Just the flower and pot (native GLB geometry only — no added protruding base/pedestal/cylinder/ring in the center).
+      // Proper center for mobile full view + tight framing (tip of flower to bottom of pot centered and filling the view height).
       const box = new THREE.Box3().setFromObject(model);
-      box.expandByObject(pedestal);
-
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z);
 
-      // Scale so the orchid has good presence while leaving room for tip + base margins
-      const scale = 1.85 / maxDim;
+      const scale = 1.9 / maxDim;  // tuned for tight presence + full mobile view fill
       model.scale.setScalar(scale);
       model.position.sub(center.multiplyScalar(scale));
 
-      // Shift so the visual center (slightly biased toward base for nice composition) sits near origin
-      model.position.y += 0.03;
+      // Additional y shift so the pot base sits at the lower part of the frame and the flower tip reaches the upper part,
+      // with the overall vertical mid centered for the container height (mobile full view).
+      model.position.y = -0.08;
 
       scene.add(model);
 
-      // Derive ideal camera distance from the *vertical* size (tip to base) + fov so it fits perfectly with margin
+      // Derive tight fitDistance from the model's own vertical size (flower + native pot only) + fov.
       const fov = 52 * (Math.PI / 180);
       const verticalSize = size.y * scale;
-      const fitDistance = (verticalSize / 2) / Math.tan(fov / 2) * 1.22; // 1.22 = comfortable breathing room top & bottom
+      const fitDistance = (verticalSize / 2) / Math.tan(fov / 2) * 1.08;  // 1.08 = tight, minimal empty space, full centered view on mobile
 
-      // Initial controls tuned for perfect full-height framing on load (tip visible, base clearly framed)
+      // Initial controls: single axis (yaw only), fixed pitch for good pot visibility, tight distance.
       controls.distance = fitDistance;
-      controls.yaw = 0.38;   // gentle 3/4 view that shows the orchid's structure beautifully
-      controls.pitch = 0.16; // slight downward angle so both top tip and bottom base are comfortably in frame
+      controls.yaw = 0.4;
+      controls.pitch = 0.18;  // FIXED single value — shows the pot base nicely while keeping flower upright and full height tight in frame
       controls.auto = false;
 
-      // Apply the perfect tip-to-base framing to the camera *immediately* so first frame is correct
+      // Apply the tight, centered, mobile-full-view framing immediately (flower tip to pot base perfectly visible and centered).
       const ix = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const iy = Math.sin(controls.pitch) * controls.distance * 0.78 + 0.09;
+      const iy = Math.sin(controls.pitch) * controls.distance * 0.75 + 0.02;  // y offset tuned with the model y shift for vertical centering
       const iz = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
       camera.position.set(ix, iy, iz);
-      camera.lookAt(0, -0.07, 0);
+      camera.lookAt(0, 0, 0);  // model is centered at 0,0,0 vertically after the shifts
 
       setIsLoading(false);
     } catch (e: any) {
@@ -283,25 +273,21 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const idle = now - controls.lastMove > 1600;
 
       if (controls.auto && idle) {
-        controls.yaw += 0.0004; // very gentle idle spin (clamped pitch + distance ensure tip and base stay perfectly framed)
-        // extremely subtle pitch for gentle life — clamped so tip and base framing is never lost
-        controls.pitch = Math.max(0.08, Math.min(0.28, 0.16 + Math.sin(now * 0.00028) * 0.03));
+        controls.yaw += 0.0004; // very gentle idle spin — only single axis (yaw). Pitch is fixed at 0.18 for tight centered mobile full view of just the flower + pot.
       }
 
-      // Clamp controls so the orchid tip and base *always* remain perfectly in view
-      controls.pitch = Math.max(0.06, Math.min(0.32, controls.pitch));
+      // Clamp distance only (to keep the framing tight). Pitch is fixed single value (0.18) — no variation, only yaw rotation.
       const minDist = 1.35;
       const maxDist = 3.8;
       controls.distance = Math.max(minDist, Math.min(maxDist, controls.distance));
 
-      // position camera from spherical using framing values that guarantee full tip-to-base visibility
+      // position camera from spherical — fixed pitch (0.18), yaw only. y offset + lookAt(0,0,0) for proper center of flower tip to pot base in mobile full view.
       const x = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const y = Math.sin(controls.pitch) * controls.distance * 0.78 + 0.09;
+      const y = Math.sin(controls.pitch) * controls.distance * 0.75 + 0.02;
       const z = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
 
       camera.position.set(x, y, z);
-      // lookAt y is biased low enough to keep the entire base in frame while still showing the full bloom tip
-      camera.lookAt(0, -0.07, 0);
+      camera.lookAt(0, 0, 0);  // model centered at 0,0,0 after the y shift — full height (tip to pot base) centered and tight
 
       // Minimal model orientation from controls only (no state wiggles or sub-part animation)
       if (model) {

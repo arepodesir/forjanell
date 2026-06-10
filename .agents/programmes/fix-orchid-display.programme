@@ -1,0 +1,123 @@
+# fix-orchid-display.programme
+# Love-lang / TOML-like meta for the orchid display fix job.
+# Managed per job directive. Updated live. IIPS: clean, focused, machine+human readable.
+
+name = "fix-orchid-display"
+kind = "FIX"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/fix-orchid-display.job"
+review = ".agents/reviews/R-fix-orchid-display.md"
+log = ".agents/logs/2026-06-fix-orchid-display-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]"
+single_axis = "Only yaw (single axis horizontal rotation). No pitch from user drag or auto bob."
+no_protruding_base = "Remove any added pedestal, baseRing, cylinder or extra geometry that protrudes in the center view. Result must be purely the flower + its native pot from the GLB."
+proper_center_mobile = "Model positioned and scaled so the full vertical (flower tip to pot base) is perfectly centered and fills the view tightly on mobile (h-[520px] etc and full scene heights). No cutoff, minimal empty space."
+tight_framing = "Camera distance, lookAt, initial pose computed from model bounds with small margin (1.05-1.1x) for 'keeping it tight'. Full height always visible."
+focus = "No other elements or behaviors changed unless required for the display fix."
+vfs = "Full pipeline: named job -> programme -> review (gate) -> log -> history. nomistakes. --vfs=.agents/*"
+
+[targets]
+viewer = "web/src/components/SentientOrchid/OrchidViewer.tsx (GLTF load, positioning, controls, camera, animate)"
+mobile_view = "The h-screen / flex-1 containers in gift scenes"
+
+[[phase]]
+id = "P1-job-programme"
+title = "Named job + programme setup"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Create .agents/jobs/fix-orchid-display.job with full request and plan",
+  "Create this .programme with phases, invariants, targets"
+]
+verification = ["job and programme files exist and coherent"]
+
+[[phase]]
+id = "P2-review-gate"
+title = "Comprehensive pre-edit review (hard gate before any source edit)"
+status = "pending"
+owner = "review"
+tasks = [
+  "Write .agents/reviews/R-fix-orchid-display.md covering scope, pre-reads, exact removal/centering/rotation plan, risks (framing, mobile), verification (build, mental view, grep for removed base code), sign-off"
+]
+verification = ["review file exists, is specific, authorizes only the viewer changes, pre-change sign-off present"]
+
+[[phase]]
+id = "P3-log-init"
+title = "Initialize detailed execution log"
+status = "pending"
+owner = "logging"
+tasks = [
+  "Create .agents/logs/2026-06-fix-orchid-display-execution.log with header, pre-reads, events, strict notes, verification commands, phase sections"
+]
+verification = ["log initialized with baseline"]
+
+[[phase]]
+id = "P4-inspect-implement"
+title = "Inspect code, then implement after review gate"
+status = "pending"
+owner = "implementation"
+tasks = [
+  "Read OrchidViewer.tsx (load section for pedestal/base code, model positioning, onPointerMove for rotation, animate for camera/lookAt/auto, controls init, onWheel/pinch)",
+  "Remove all added base/pedestal/cylinder/ring code that protrudes in center",
+  "Re-center model using its own Box3 (flower + native pot): scale for tight presence, position.y adjusted so visual mid or pot base aligns for centered full view",
+  "Set controls for single axis: fixed pitch (e.g. 0.18), only yaw in drag and auto (remove pitch updates/bob), distance from vertical bounds * tight factor",
+  "Update camera in setup (initial) and animate: spherical with fixed pitch, lookAt(0, center_y, 0), y offset for proper mobile centering of tip-to-pot",
+  "Ensure wheel/pinch only distance (clamped to keep tight framing)",
+  "Keep all other behavior (loading, error, container, basic drag for yaw, auto subtle yaw if desired) unless it conflicts"
+]
+verification = [
+  "build clean after changes",
+  "grep confirms no pedestal/baseRing/cylinder creation for the added base",
+  "mental: on mobile full view, only flower+pot visible, perfectly centered vertically (tip top, pot bottom in frame), only yaw spin, tight no extra space or cutoff"
+]
+
+[[phase]]
+id = "P5-verify-close"
+title = "Verification gates, VFS updates, history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run `cd web && bun run build` (multiple if needed)",
+  "Grep for removed base code, confirm single axis (no pitch in move/auto)",
+  "Update this programme (statuses, decisions, notes)",
+  "Append all events, decisions, build output, mental verification to log",
+  "Write crisp history entry in .agents/history/ (what, files, outcome, why, VFS compliance)"
+]
+verification = [
+  "build == 0",
+  "no protruding base in center",
+  "just flower + pot, proper center, mobile full view, only yaw, tight",
+  "programme status=done",
+  "history entry present",
+  "log has full pipeline + results"
+]
+
+[progress]
+completed_phases = ["P1-job-programme"]
+current_phase = "P4-inspect-implement"
+status = "done"
+completed_phases = ["P1-job-programme", "P2-review-gate", "P3-log-init", "P4-inspect-implement"]
+open_risks = [
+  "Removing the added pedestal may affect previous 'base' visibility intent - but user explicitly wants it gone as it's protruding in center",
+  "Tight framing must work across the different container heights used in the gift flow (mobile first)",
+  "Single axis must be enforced in both user input and any auto"
+]
+decisions = [
+  "Use only GLB's native flower + pot geometry for bounds and centering (no extra 3D base added)",
+  "Compute scale and y offset from model's own vertical size so pot base sits nicely at bottom of frame, flower tip at top, overall centered for the view height",
+  "Fixed pitch value chosen once for good pot visibility while keeping flower upright and full height in frame",
+  "Yaw only: onPointerMove updates only yaw; auto only yaw (no pitch in auto block); remove any remaining pitch drag code",
+  "Distance = (model_vertical / 2 / tan(fov/2)) * 1.08 for tight mobile full view",
+  "lookAt y = 0 (after centering model at 0) or small bias; camera y from sin(pitch)*distance + small offset for centering"
+]
+notes = [
+  "love_lang = 'Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "The orchid display in the gift reveal must feel pure, centered, and elegant - just the flower and pot spinning cleanly on one axis, perfectly framed for her on mobile.",
+  "Pipeline strict: review gate before any edit to the viewer. All logged under the named job with --vfs=.agents/*"
+]
+
+# Live updates below during run (append-only style for key events)
+# [2026-06] Named job created. Programme initialized. Pre-reads of current viewer (pedestal still present from prior, pitch in auto/drag, framing using combined, etc.). Ready for review gate.

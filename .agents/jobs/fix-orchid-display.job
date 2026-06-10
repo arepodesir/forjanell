@@ -1,0 +1,31 @@
+---
+name: fix-orchid-display
+mach: 1
+invariants:
+ - IIPS: clean, minimal, elegant. Only the flower and its pot. No extra protruding base in center.
+ - Proper center position: model centered so flower tip and pot base are symmetrically framed for full mobile view (tight, fills height nicely without cutoff or too much empty space).
+ - Only single axis rotation: yaw only (horizontal spin on pedestal-like). No pitch from drag or auto. Fixed slight pitch for good view of pot base.
+ - Keep it tight: framing uses vertical bounds of (flower + pot) with small margin (e.g. 1.05-1.1x) so the entire thing is prominent and centered.
+ - Remove any added base/pedestal/ring that protrudes or interferes with centering.
+ - Mobile full view: works in the h-[520px] etc containers and full-height scenes. Camera distance computed from model height for perfect fit.
+ - No other changes. Do not touch UI hints, states, sparkles, audio, etc. unless they interfere with the display fix (strip only what's necessary for clean single-axis tight view).
+ - VFS perfection: named job -> programme -> review (gate before edit) -> detailed log -> history. All steps recorded. nomistakes. --vfs=.agents/*
+target: web/src/components/SentientOrchid/OrchidViewer.tsx
+kind: FIX
+message: |
+  new JOB {fix the orchid display, remove the base that is petruding in the center so its just the flower and pot with proper center position for mobile full view and only single axis rotation keeping it tight}
+
+  Specific fixes needed:
+  - In the GLTF load section: remove the added pedestal Cylinder and any baseRing or extra base geometry that is "protruding in the center".
+  - After loading model = gltf.scene, compute Box3 on the model ONLY (flower + its native pot/base from GLB).
+  - Scale and position the model so its center (vertical mid of flower and pot) is at 0,0,0 or adjusted y so in the 3D view the full height (tip of flower to bottom of pot) is perfectly centered and tight in the viewport.
+  - Set initial controls: yaw to a good starting angle, pitch to a fixed small value (e.g. 0.2) that shows the pot nicely without tilting the view, distance computed from model vertical size * tight factor for full mobile view (no cutoff, fills the container height well).
+  - Enforce ONLY single axis rotation: in onPointerMove, ONLY update yaw (remove any pitch calculation from drag). In animate auto, ONLY yaw, no pitch bob or variation. Remove pitch clamps if not needed, or keep pitch fixed.
+  - Update camera positioning in animate and initial setup: use fixed pitch, yaw * distance for x/z, appropriate y offset + lookAt(0, model_center_y, 0) so the flower+pot is centered vertically in the view.
+  - In onWheel and touch pinch: only adjust distance (keep tight range based on fit).
+  - Goal: when viewed (especially on mobile/full view in scenes), you see the complete flower (tip) down to the pot base, perfectly centered, no extra base cylinder sticking out in the middle of the view, only smooth yaw spin, framing is tight and professional for the gift reveal.
+  - Log all results, decisions (e.g. exact scale factor, pitch value, lookAt y, distance multiplier), before/after code snippets, build verification into the named job + programme + review + log.
+  - Follow pipeline strictly: create named job, set up programme, write review (as gate), init log, implement ONLY after review, verify, update history. nomistakes. Everything under --vfs=.agents/*
+
+  This is a targeted display polish for the end-scene orchid so it looks clean and perfectly presented.
+---
