@@ -1,0 +1,53 @@
+---
+name: fix-orchid-position-video-on-card-confetti
+mach: 3
+invariants:
+ - IIPS: correct, elegant, in-project
+ - Real source only: /home/arepo/LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE/...
+ - Preserve previous video auto-play + heart button + full intent, but correct "video on the card" (not site bg)
+ - Video must live inside the Hadacard surface (the "card") and the card surface itself should be large to help fill the view
+ - Orchid in gift end scene: move position, increase size/zoom to better fill the available window
+ - Confetti image above profile in Hadacard (gift/open state): fix using correct asset from public/assets/img/
+ - Use .agents VFS: this job + history
+ - Test via build + mental model of gift flow (closed letter over video card -> open letter over video card -> orchid reveal)
+target: web/src/components/Hadacard/Hadacard.tsx + web/src/components/FlipBook/FrutigerScenes.tsx + web/src/components/SentientOrchid/OrchidViewer.tsx (if needed) + styles + assets
+kind: FIX / POLISH (follow-up to video-card-full-auto-heart-arrow)
+message: |
+  User request (verbatim, with typos): "the orchid is still in the sam e place - please fcix, move its posiion and zoom to fill the window+ fix the confetti image above her profile look in public/assets for it please + fix window for video to be on the card not the background fully fix this please a"
+
+  Context from prior job:
+  - Video was made "full viewport" by rendering a fixed low-z <video> + floating letter surface.
+  - User wants video *on the card* (i.e. the <video> element should be a child/background of the .holo-card / .holo-card__inner surface itself).
+  - The card surface for the gift should be sized/positioned to help the video + letter feel like it fills the window (large card, not tiny letter on huge bg video).
+  - Orchid (scene 2) still appears in a small constrained box; needs reposition + larger size/zoom to fill more of the window.
+  - Confetti <img> above the profile pic (in open Hadacard state) needs fixing; inspect public/assets/img/* (Confetti.png and variants) and ensure correct src + positioning works over the video card.
+
+  Detailed fixes:
+  - Hadacard.tsx (gift video mode):
+    * Re-integrate the <video> *inside* .holo-card__inner (absolute inset-0, object-cover, appropriate z, no heavy rounding if card is large).
+    * Remove the previous fixed full-window video layer.
+    * For video mode: make the .holo-card itself large (e.g. ~92-95vw wide, tall enough to feel immersive, perhaps use min-h or specific vh, keep some centering but let it breathe as "the card" filling view).
+    * Keep holo layers (glitter/shine/glare) on top of the internal video.
+    * Letter content (profile, text, candles, confetti, landscape heart button) stays inside the card surface, overlaid on the video.
+    * Adjust confetti: use correct public/assets path (inspect /public/assets/img/Confetti.png etc.), tweak -top value or classes if needed for the larger card surface. Add any missing animation if broken.
+  - FrutigerScenes.tsx:
+    * Gift card area (scene 1): keep the absolute inset wrapper but ensure the large Hadacard card is the main visual. The "Open the Letter & Meet Your Orchid" CTA stays fixed at bottom.
+    * Orchid reveal (scene 2): move the OrchidViewer container. Increase size significantly (e.g. h-[75vh] or higher, wider max-w like 85-95vw or remove strict max for "fill the window"). Adjust pt/pb, flex, or add centering/absolute tweaks so the 3D orchid feels zoomed and centered/filling rather than a small box in the middle. Keep the soft message above and the TAP instruction + MusicTitlebar.
+  - If OrchidViewer component exposes size/zoom/camera props, consider passing larger values; otherwise size the wrapper aggressively.
+  - Confirm public/assets/img/ has Confetti.png (and any variants like balloon etc.) and that paths resolve (usually /assets/img/... from public/).
+  - Re-apply colocated + global CSS overrides for video-card mode (large surface, video inside with good filter, confetti anim on top).
+  - Build test after changes. Preserve auto-play, heart landscape button (centered), tilt, particles over the card, haptics, letter flow, etc.
+  - Log fully in VFS (job here, history on completion). No mistakes.
+
+  Outcome feeling: In the gift, you see a large, immersive holographic "card" (nearly filling the view) whose background is the playing horsey video with beautiful foil/glitter effects on top of the video. The sealed letter (profile + "TAP TO OPEN") sits elegantly on the video. Opening it reveals the personal message + confetti image correctly positioned above her photo, all within the video-backed card. The unfold heart button is centered. When you proceed, the orchid reveal is big, zoomed, and positioned to really fill and command the window instead of sitting in a small rounded box.
+
+---
+# Fast execution notes (for agent)
+- Work only on real absolute paths under LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE/
+- Start by creating this job (done).
+- Inspect: public/assets/img/* for confetti, current Hadacard (video integration), FrutigerScenes (wrappers + orchid), OrchidViewer.tsx for any size/zoom API.
+- Use search_replace for precise, safe edits.
+- After each risky chunk: run build in the real web/ dir.
+- Update colocated <style> blocks for the new large video-card sizing.
+- End with history entry + todo close.
+- Keep affectionate, holographic, love-letter magic intact.

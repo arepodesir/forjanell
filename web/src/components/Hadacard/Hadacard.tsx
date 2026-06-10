@@ -147,43 +147,40 @@ export default function Hadacard(props: HadacardProps) {
   `;
 
   return (
-    <>
-      {/* Full viewport video layer for gift card (decoupled so it fills totally, no gaps/borders/clip from card frame).
-          Low z so particles (canvas z-0) + letter UI sit above the video naturally. */}
-      {videoBg() && (
-        <video
-          ref={(el) => { videoRef = el || undefined; }}
-          src={videoBg()}
-          class="fixed inset-0 w-full h-full object-cover z-[-20] pointer-events-none"
-          autoplay
-          loop
-          muted
-          playsinline
-        />
-      )}
-
-      <div class={`w-full h-full flex flex-col items-center justify-center gap-3 ${videoBg() ? '' : 'backdrop-blur-sm opacity-80'}`}>
-      {/* 3D Holographic Card Viewport (No outer box container, perfectly centered) */}
+    <div class={`w-full h-full flex flex-col items-center justify-center gap-3 ${videoBg() ? '' : 'backdrop-blur-sm opacity-80'}`}>
+      {/* 3D Holographic Card Viewport (No outer box container, perfectly centered).
+          In video gift mode the card surface itself is large (fills most of the window) and the video lives *inside* it as the card's background. */}
       <div class="w-full flex items-center justify-center shrink-0">
         <div
           class={`holo-card cursor-grab active:cursor-grabbing select-none transition-all duration-300 ${getHadacardStateClasses()}`}
           ref={cardRef}
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
-          onClick={() => { if (!isOpen()) toggleOpen(); }}
+          onClick={() => { if (!isOpen()) toggleOpen(); ensureVideoPlays(); }}
           style={`${cardStyles()}; touch-action: none;`}
         >
           <div class="holo-card__inner">
-            {/* Note: the main gift video is rendered full-viewport fixed above (low z). No embedded video here to avoid any border/gap/clip.
-                Fallback texture only for non-video cards. Subtle gradient kept for text legibility over video. */}
+            {/* Video background lives on the card (inside the holo surface) for gift mode.
+                Full cover of the (now large) card, holo layers + letter content sit on top of it. */}
+            {videoBg() && (
+              <video
+                ref={(el) => { videoRef = el || undefined; }}
+                src={videoBg()}
+                class="absolute inset-0 w-full h-full object-cover z-[-1] pointer-events-none"
+                autoplay
+                loop
+                muted
+                playsinline
+              />
+            )}
             {!videoBg() && (
               <div class="absolute inset-0 bg-cover bg-center opacity-25 rounded-2xl"
-                   style={{ "background-image": "url(/resources/img/jaja.png)" }}>
+                   style={{ "background-image": "url(/assets/img/jaja.png)" }}>
               </div>
             )}
             <div class="absolute inset-0 bg-gradient-to-b opacity-40 from-blue-900/60 via-pink-900/40 to-indigo-900/70 rounded-2xl z-5"></div>
 
-            {/* Holographic foil overlays - on top of video bg */}
+            {/* Holographic foil overlays - on top of video bg (or fallback) */}
             <div class="holo-card__glitter z-10"></div>
             <div class="holo-card__shine z-10"></div>
             <div class="holo-card__glare z-10"></div>
@@ -198,7 +195,7 @@ export default function Hadacard(props: HadacardProps) {
 
                   {/* Smaller profile peek for closed state */}
                   <div class="relative w-20 h-20 mb-2 animate-float z-10 shrink-0">
-                    <img src="/resources/img/bday-cap.svg"
+                    <img src="/assets/img/bday-cap.svg"
                          class="absolute -top-3 -right-1.5 w-7 h-7 z-20 rotate-12 drop-shadow" alt="" />
                     <div class="w-full h-full rounded-full border-[2px] border-pink-300/50 overflow-hidden"
                          style={{ "box-shadow": "0 0 10px rgba(255,102,196,0.35), inset 0 0 6px rgba(0,0,0,0.25)" }}>
@@ -229,7 +226,7 @@ export default function Hadacard(props: HadacardProps) {
 
                   {/* Profile picture with cap */}
                   <div class="relative w-28 h-28 mb-3 animate-float z-10 shrink-0">
-                    <img src="/resources/img/bday-cap.svg"
+                    <img src="/assets/img/bday-cap.svg"
                          class="absolute -top-4 -right-2 w-9 h-9 z-20 rotate-12 drop-shadow-lg" alt="" />
                     <div class="w-full h-full rounded-full border-[3px] border-pink-300/60 overflow-hidden"
                          style={{ "box-shadow": "0 0 15px rgba(255,102,196,0.5), 0 0 30px rgba(188,19,254,0.2), inset 0 0 8px rgba(0,0,0,0.3)" }}>
@@ -384,17 +381,36 @@ export default function Hadacard(props: HadacardProps) {
           border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* Video gift mode: the full viewport video is a separate fixed layer (no gaps, no border, no clip).
-           The .holo-card / __inner here is just the floating letter surface (keeps its shape + holo foils for magic over video).
-           Make the surface borderless / transparent so it doesn't "frame" or gap the video underneath. */
+        /* Video gift mode: video lives *inside* the card (as the card's own background).
+           The .holo-card surface is intentionally large (fills most of the window) so the video + holo + letter elements feel immersive.
+           Inner has no border so video reaches the card edges; holo layers + content overlay the video. */
+        .hadacard-with-video .holo-card {
+          width: 94vw;
+          height: 78vh;
+          max-width: none;
+          aspect-ratio: unset;
+          border-radius: 18px;
+        }
         .hadacard-with-video .holo-card__inner {
           background: transparent;
           border: none;
           box-shadow: none;
+          border-radius: 18px;
+          overflow: hidden; /* keep video contained to card shape */
         }
-        /* The fixed video (outside the card surface) gets a gentle cinematic look via the element itself; foils live on the letter layer. */
+        .hadacard-with-video video {
+          filter: saturate(0.9) contrast(1.08);
+        }
 
-        /* Nice animation for fixed confetti image above center (subtle drift + sparkle) */
+        /* Confetti decoration above profile - a bit stronger on the video card */
+        .hadacard-with-video .hadacard-confetti-anim {
+          width: 4.75rem;
+          height: 4.75rem;
+          top: -1.1rem;
+          opacity: 0.82;
+        }
+
+        /* Nice animation for confetti image above center (subtle drift + sparkle) */
         .hadacard-confetti-anim {
           animation: confettiDrift 9s ease-in-out infinite, confettiSparkle 3.5s linear infinite;
           will-change: transform, opacity;
@@ -426,7 +442,6 @@ export default function Hadacard(props: HadacardProps) {
           50% { opacity: 1; transform: translate(1px, -1px); }
         }
       `}</style>
-      </div>
-    </>
+    </div>
   );
 }

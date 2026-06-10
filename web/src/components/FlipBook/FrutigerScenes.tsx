@@ -458,9 +458,8 @@ export default function FrutigerScenes(props: EnvProps) {
         {/* Precede removed per job: simply the Hadacard (open mode available) then the sentient orchid.
             The "letter" is now the direct gateway (home still uses portrait Hadacard). */}
         <Show when={scene() === 1}>
-          {/* Full-viewport video gift container (no max-w-md / px squeeze so the floating letter surface + full video can breathe and fill).
-              The Hadacard now contributes a fixed low-z full video + centered letter UI surface over it.
-              The action button is fixed high-z at bottom so it never gaps the video or fights layout. */}
+          {/* Large immersive card container for the gift. The Hadacard renders a big card surface whose *internal* video background + holo layers + letter elements (profile, confetti, message) fill most of the view.
+              Video is on the card (inside its surface), not a site-wide background. Action CTA fixed at bottom. */}
           <div class="z-20 absolute inset-0 flex items-center justify-center select-none">
             <Hadacard 
               client:load
@@ -485,25 +484,26 @@ export default function FrutigerScenes(props: EnvProps) {
           </button>
         </Show>
 
-        {/* Stage 2: Orchid Reveal (end scene — 3D interactive orchid, mobile friendly, no egift/voucher) */}
+        {/* Stage 2: Orchid Reveal (end scene — 3D interactive orchid, mobile friendly, no egift/voucher).
+            Positioned + sized to fill much more of the window with a nice zoom feel (larger canvas + less chrome around it). */}
         <Show when={scene() === 2}>
-          <div class="z-20 w-full flex flex-col items-center justify-start p-4 pt-8 pb-12 gap-5">
-            {/* Soft message above the 3D bloom */}
-            <div class="aero-glass rounded-3xl px-5 py-4 max-w-md text-center border border-white/15">
-              <p class="text-aero-cyan text-sm tracking-wider uppercase mb-1" style={{ "font-family": "'Comfortaa', sans-serif" }}>Your gift has opened</p>
-              <div class="text-white/90 text-[15px] leading-snug" style={{ "font-family": "'Patrick Hand', cursive" }}>
-                A living orchid, grown just for you. Touch it. Turn it. Let it catch the light.
+          <div class="z-20 w-full flex flex-col items-center justify-center p-3 pt-5 pb-6 gap-2 min-h-[82vh]">
+            {/* Soft message above the 3D bloom (kept small so the orchid can dominate) */}
+            <div class="aero-glass rounded-3xl px-4 py-2.5 max-w-xs text-center border border-white/15 mb-1">
+              <p class="text-aero-cyan text-[10px] tracking-wider uppercase mb-0.5" style={{ "font-family": "'Comfortaa', sans-serif" }}>Your gift has opened</p>
+              <div class="text-white/90 text-xs leading-snug" style={{ "font-family": "'Patrick Hand', cursive" }}>
+                A living orchid, grown just for you.
               </div>
             </div>
 
-            {/* The orchid "player" can share audio if needed, but the end gift song is now separate for the reveal. */}
+            {/* The orchid "player" — now much larger to fill the view + feel zoomed/immersive. */}
             <OrchidViewer
               client:load
-              class="w-full max-w-[min(94vw,540px)] h-[490px] md:h-[600px] rounded-3xl"
+              class="w-full max-w-[min(96vw,980px)] h-[64vh] md:h-[70vh] lg:h-[74vh]"
               externalAudio={endAudio()}
             />
 
-            <p class="text-[10px] text-white/40 tracking-[2px] mt-1">TAP THE ORCHID • DRAG TO ORBIT • PINCH TO ZOOM</p>
+            <p class="text-[10px] text-white/40 tracking-[2px] mt-0.5">TAP THE ORCHID • DRAG TO ORBIT • PINCH TO ZOOM</p>
 
             {/* End scene music titlebar — integrated with the player component (in its own folder src/components/MusicTitlebar/).
                 Uses externalAudio for the what-friends-are-for.wav that auto-plays at gift open.

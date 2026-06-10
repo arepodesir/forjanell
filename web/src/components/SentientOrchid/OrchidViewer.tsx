@@ -41,7 +41,8 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let frameId: number | null = null;
   let lastAnimTime = 0;
   // Controls tuned for perfect framing of tip to base at all times.
-  let controls = { yaw: 0.35, pitch: 0.18, distance: 2.1, auto: false, lastMove: 0 };
+  // Slightly closer initial distance in the gift reveal so the orchid feels more zoomed/filling the (larger) window.
+  let controls = { yaw: 0.35, pitch: 0.18, distance: 1.75, auto: false, lastMove: 0 };
 
   let pointerDown = false;
   let lastX = 0;
