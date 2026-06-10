@@ -42,6 +42,7 @@ export default function Hadacard(props: HadacardProps) {
   
   let cardRef: HTMLDivElement | undefined;
   let autoShimmerRaf: number | undefined;
+  let videoRef: HTMLVideoElement | undefined;
 
   // Resolve properties with defaults (affectionate, in-project)
   const name = () => props.name || "For Janell";
@@ -116,8 +117,21 @@ export default function Hadacard(props: HadacardProps) {
     autoShimmerRaf = requestAnimationFrame(tick);
   };
 
+  const ensureVideoPlays = () => {
+    if (videoRef && videoBg()) {
+      videoRef.play().catch(() => {});
+    }
+  };
+
   onMount(() => {
     startAutoShimmer();
+    // Make video on the card play automatically (muted + playsinline + force).
+    // Browser policies often require this even with autoplay attr.
+    if (videoBg()) {
+      // slight delay helps on some mobile/strict policies
+      setTimeout(ensureVideoPlays, 50);
+      setTimeout(ensureVideoPlays, 280);
+    }
   });
 
   onCleanup(() => {
@@ -128,12 +142,27 @@ export default function Hadacard(props: HadacardProps) {
     --pointer-x: ${pointerX()}%;
     --pointer-y: ${pointerY()}%;
     --card-opacity: ${cardOpacity()};
-    --rotate-x: ${((pointerX() - 50) / 50) * 14}deg;
-    --rotate-y: ${((pointerY() - 50) / 50) * -14}deg;
+    --rotate-x: ${((pointerX() - 50) / 50) * 20}deg;
+    --rotate-y: ${((pointerY() - 50) / 50) * -20}deg;
   `;
 
   return (
-    <div class="w-full h-full backdrop-blur-sm opacity-80 flex flex-col items-center justify-center gap-3">
+    <>
+      {/* Full viewport video layer for gift card (decoupled so it fills totally, no gaps/borders/clip from card frame).
+          Low z so particles (canvas z-0) + letter UI sit above the video naturally. */}
+      {videoBg() && (
+        <video
+          ref={(el) => { videoRef = el || undefined; }}
+          src={videoBg()}
+          class="fixed inset-0 w-full h-full object-cover z-[-20] pointer-events-none"
+          autoplay
+          loop
+          muted
+          playsinline
+        />
+      )}
+
+      <div class={`w-full h-full flex flex-col items-center justify-center gap-3 ${videoBg() ? '' : 'backdrop-blur-sm opacity-80'}`}>
       {/* 3D Holographic Card Viewport (No outer box container, perfectly centered) */}
       <div class="w-full flex items-center justify-center shrink-0">
         <div
@@ -145,23 +174,14 @@ export default function Hadacard(props: HadacardProps) {
           style={`${cardStyles()}; touch-action: none;`}
         >
           <div class="holo-card__inner">
-            {/* Video background for gift (horsey.optimized.webm connected via config/props to Hadacard) - full aspect, scales well, loops muted */}
-            {videoBg() ? (
-              <video
-                src={videoBg()}
-                class="absolute inset-0 w-full h-full object-cover rounded-2xl z-[-1] pointer-events-none"
-                autoplay
-                loop
-                muted
-                playsinline
-              />
-            ) : (
-              /* Fallback background texture */
+            {/* Note: the main gift video is rendered full-viewport fixed above (low z). No embedded video here to avoid any border/gap/clip.
+                Fallback texture only for non-video cards. Subtle gradient kept for text legibility over video. */}
+            {!videoBg() && (
               <div class="absolute inset-0 bg-cover bg-center opacity-25 rounded-2xl"
                    style={{ "background-image": "url(/resources/img/jaja.png)" }}>
               </div>
             )}
-            <div class="absolute inset-0 bg-gradient-to-b opacity-50 from-blue-900/70 via-pink-900/50 to-indigo-900/80 rounded-2xl z-5"></div>
+            <div class="absolute inset-0 bg-gradient-to-b opacity-40 from-blue-900/60 via-pink-900/40 to-indigo-900/70 rounded-2xl z-5"></div>
 
             {/* Holographic foil overlays - on top of video bg */}
             <div class="holo-card__glitter z-10"></div>
@@ -308,16 +328,17 @@ export default function Hadacard(props: HadacardProps) {
                     <div class="text-right">{cardMeta().artist} · {cardMeta().year}</div>
                   </div>
 
-                  {/* Special glassy arrow button (hadacard-invert-letter + prior landscape work).
-                      Larger, better positioned, and strictly only available once the card is open ("has to be open").
-                      Integrated as an elegant right-side "unfold further" element with breathing room inside the letter.
-                      Still matches the card (aero-glass + holo palette) but now more prominent and deliberate. */}
+                  {/* Special glassy arrow/heart button (hadacard-invert-letter + landscape + this job).
+                      Moved to center for easy access. Different icon: letter heart (💌 opens more / ♡ collapses).
+                      "Easier to rotate": button no longer hugs the right edge (frees space for pointer tilt); we also bumped the 3D rotate range.
+                      Still strictly only after the letter is open ("has to be open"). */}
                   <button
-                    class="absolute bottom-3 right-4 z-30 aero-glass rounded-full w-11 h-11 flex items-center justify-center text-2xl leading-none text-aero-cyan border border-white/25 shadow-md active:scale-90 transition-all hover:border-aero-pink/60 hover:scale-105 select-none"
-                    onClick={(e) => { e.stopPropagation(); toggleLandscape(); }}
+                    class="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 aero-glass rounded-full w-10 h-10 flex items-center justify-center text-xl leading-none text-aero-cyan border border-white/25 shadow-md active:scale-90 transition-all hover:border-aero-pink/60 hover:scale-105 select-none"
+                    onClick={(e) => { e.stopPropagation(); toggleLandscape(); ensureVideoPlays(); }}
                     aria-label={isLandscape() ? "Return to portrait letter view" : "Expand letter to landscape view"}
+                    onPointerDown={ensureVideoPlays}
                   >
-                    {isLandscape() ? '⟵' : '⟶'}
+                    {isLandscape() ? '♡' : '💌'}
                   </button>
                 </>
               )}
@@ -363,13 +384,15 @@ export default function Hadacard(props: HadacardProps) {
           border-color: rgba(255, 255, 255, 0.25);
         }
 
-        /* Video background state (gift horsey) - full aspect, scales, sits behind holo layers */
+        /* Video gift mode: the full viewport video is a separate fixed layer (no gaps, no border, no clip).
+           The .holo-card / __inner here is just the floating letter surface (keeps its shape + holo foils for magic over video).
+           Make the surface borderless / transparent so it doesn't "frame" or gap the video underneath. */
         .hadacard-with-video .holo-card__inner {
           background: transparent;
+          border: none;
+          box-shadow: none;
         }
-        .hadacard-with-video video {
-          filter: saturate(0.85) contrast(1.05);
-        }
+        /* The fixed video (outside the card surface) gets a gentle cinematic look via the element itself; foils live on the letter layer. */
 
         /* Nice animation for fixed confetti image above center (subtle drift + sparkle) */
         .hadacard-confetti-anim {
@@ -403,6 +426,7 @@ export default function Hadacard(props: HadacardProps) {
           50% { opacity: 1; transform: translate(1px, -1px); }
         }
       `}</style>
-    </div>
+      </div>
+    </>
   );
 }

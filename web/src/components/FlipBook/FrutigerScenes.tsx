@@ -430,7 +430,10 @@ export default function FrutigerScenes(props: EnvProps) {
         {/* Precede removed per job: simply the Hadacard (open mode available) then the sentient orchid.
             The "letter" is now the direct gateway (home still uses portrait Hadacard). */}
         <Show when={scene() === 1}>
-          <div class="z-20 flex flex-col items-center text-center px-4 w-full max-w-md gap-4 select-none animate-reveal-up">
+          {/* Full-viewport video gift container (no max-w-md / px squeeze so the floating letter surface + full video can breathe and fill).
+              The Hadacard now contributes a fixed low-z full video + centered letter UI surface over it.
+              The action button is fixed high-z at bottom so it never gaps the video or fights layout. */}
+          <div class="z-20 absolute inset-0 flex items-center justify-center select-none">
             <Hadacard 
               client:load
               name={props.name}
@@ -439,21 +442,19 @@ export default function FrutigerScenes(props: EnvProps) {
               hbdMessage={props.hbdMessage}
               cardMeta={props.cardMeta}
               mode="open-letter"
-              // Gift video bg from converted horsey (config connected via HadacardProps).
-              // Converted using CLI tool: bun run convert:horsey (or direct ffmpeg single-line pipeline in package.json scripts).
-              // See "convert:horsey" script: uses ffmpeg CLI to produce short, optimized, loopable webm from horesey.MOV.
+              // Gift video bg (horsey) — now auto-playing + full viewport (see Hadacard).
               videoBg="/assets/video/horsey.optimized.webm"
               centerImage="/assets/img/janell.png"
               confettiImage="/assets/img/Confetti.png"
             />
-            <button
-              onPointerDown={handleAction}
-              class="mt-2 aero-btn text-xs tracking-wider px-6 py-2"
-              style={{ "font-family": "'Comfortaa', sans-serif" }}
-            >
-              Open the Letter &amp; Meet Your Orchid 🌸
-            </button>
           </div>
+          <button
+            onPointerDown={handleAction}
+            class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[70] aero-btn text-xs tracking-wider px-6 py-2"
+            style={{ "font-family": "'Comfortaa', sans-serif" }}
+          >
+            Open the Letter &amp; Meet Your Orchid 🌸
+          </button>
         </Show>
 
         {/* Stage 2: Orchid Reveal (end scene — 3D interactive orchid, mobile friendly, no egift/voucher) */}

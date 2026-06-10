@@ -275,6 +275,16 @@
       max-width: 340px;
     }
   }
+
+  /* Video gift mode overrides (full viewport fill, no gaps/borders around the video layer).
+     The .holo-card surface in this mode is the letter UI only (video is fixed separate low-z layer). */
+  .hadacard-with-video .holo-card {
+    max-width: 460px; /* still nicely letter-sized surface, not full bleed text */
+  }
+  .hadacard-with-video .holo-card__inner {
+    border: none;
+    background: transparent;
+  }
 }
 
 

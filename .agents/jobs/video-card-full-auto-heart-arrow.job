@@ -1,0 +1,44 @@
+---
+name: video-card-full-auto-heart-arrow
+mach: 3
+invariants: 
+ - IIPS: Ideal idiomatic principled Syntax [correct and elegant idiomatic prescriptive formation.]
+ - $: In-project source module kind
+ - Preserve all prior Hadacard letter + holo + landscape + open invert behavior.
+ - Video (horsey) must play automatically (muted autoplay + imperative .play() on mount + attrs), fill the viewport 100% with no gaps, no card border/frame clipping it.
+ - Video is "on the card" conceptually but visually full-bleed background layer (decoupled fixed low-z) so letter UI, particles, tints layer naturally above it.
+ - The landscape arrow button (the "arrow open button"): move somewhere center (bottom center), change to a letter-heart icon (💌 / heart-envelope or ♡/♥), make the overall rotate/tilt of card easier (increased angle range) and button easier to access without blocking edges.
+ - "log in vfs .agents" - this job + history entry required.
+ - Full build verification after edits. No mistakes. Keep affection, haptics, 3d foil, handwritten feel.
+target: $REPO.CODE.web.src.components.Hadacard + scenes usage site
+kind: ENHANCE / POLISH
+message: |
+  @.agents{new Job { make the video on the card play automatically and fill up the view port totally - no gaps or border - log in vfs .agents - and easier to rotate and move the arrow open button somehwere center and different icon like aletter heart } }
+
+  Detailed intent:
+  - Video on the (gift) card: autoplay reliably (attributes + ref + onMount play()).
+  - Video fills viewport totally: use fixed inset-0 object-cover low z (under canvas particles + letter UI), no rounded, no card borders around the video area.
+  - The letter/card surface (profile, message, etc) and holo layers stay as the "card" floating nicely centered over the full video.
+  - Update placement wrapper in gift scene (FrutigerScenes) so no max-w-md / px constraining the letter surface positioning.
+  - Arrow open button (landscape toggle): 
+    * Move it somewhere center (e.g. bottom center of the letter surface).
+    * Different icon like "a letter heart" (use 💌 for "open more", ♡ or ↩︎ or ♥ when expanded).
+    * Easier to rotate: increase the 3D tilt rotation multiplier (e.g. 14deg -> 20deg) so pointer move gives more visible/ fun rotate response; moving button to center also frees edges for easier drag-to-tilt.
+  - Log everything in .agents VFS (job here, history on completion).
+  - Only touch Hadacard.tsx, FrutigerScenes.tsx (for wrapper), colocated styles, global if needed for video polish. Build after.
+
+  Outcome feeling: When you land on the gift, the personal video (horsey) immediately and smoothly fills the entire screen as the living background — no little card window, no rounded borders, no padding gaps. The holographic letter UI (sealed or open) floats elegantly in the center on top of it with all the foil magic. Particles dance over the video. Tapping the letter opens it as before. The unfold arrow clasp is now a sweet letter-heart (💌) sitting centered at the bottom for easy reach, and dragging anywhere on the letter (edges free) gives a stronger, more delightful 3D rotate/tilt. All previous deliberate open/landscape letter behaviors preserved.
+
+---
+# Execution notes
+- Create this job (VFS log).
+- Edit source with search_replace for precision.
+- Force video play + full fixed video layer in Hadacard.
+- Decouple video from the .holo-card__inner so no clipping/borders affect it.
+- Reposition + reicon the landscape button in the open branch.
+- Bump rotate range.
+- Loosen the gift scene wrapper (max-w-md was preventing "totally").
+- Colocated <style> + any global.css additions for .hadacard-with-video clean overrides (transparent, no border on letter surface in video).
+- bun run build -C web (or from root if script) after key edits.
+- Write history entry.
+- Preserve: closed starts sealed, "has to be open" for landscape button, all particles/tints/letter-blocks/candles/confetti/signoff/haptics/tilt-on-pointer.
