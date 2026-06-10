@@ -1,0 +1,29 @@
+---
+id: T-004
+status: open
+priority: high
+created: 2026-06
+authorized_by: .agents/jobs/fix-ux-styling-particles-orchid-messages.job
+scope: "Main particles background - likely the canvas in web/src/components/FlipBook/FrutigerScenes.tsx (girly particles, connect lines, mouse attract). Or home mouse-bubbles in web/src/pages/index.astro script + global.css .mouse-bubble. Stylize with gradients, animation noisiness using SVG (SVG filters? or canvas drawing with noise), sea of Perlin noise well distributed. Probably enhance FrutigerScenes canvas for the gift bg 'sea'."
+---
+## Objective
+Make the TS particles background way more stylized:
+- Using gradients (color stops in ctx or css).
+- Animation noisiness using svg stuff (perhaps draw with SVG-like paths, or use SVG noise filter if overlay, but since canvas, simulate Perlin with math or simple noise func for jitter).
+- Like a sea of Perlin noise well distributed (add layered noise for organic flow, multiple particle types with different noise offsets, distribute evenly but organic, slow drifting waves).
+
+Likely target: FrutigerScenes canvas particles (already has ~92 particles, hearts/sparks/dots, connect lines, mouse attract, girly colors). Enhance the draw/animate for more stylized sea-like noise.
+
+Keep performance (cap count), mobile touch.
+
+## Constraints / Invariants
+- Preserve audio handoff, time gates, scene logic, orchid end.
+- IIPS, elegant.
+- Well distributed, no clustering.
+- Use existing colors (aero-pink etc) + gradients.
+
+## Verification
+- Particles look like stylized Perlin sea (organic, noisy, gradient fills, animated jitter).
+- No perf drop, build clean.
+- In gift scene bg.
+---

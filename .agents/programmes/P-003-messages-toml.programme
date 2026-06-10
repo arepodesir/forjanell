@@ -1,0 +1,27 @@
+# P-003-messages-toml.programme (sub for T-003)
+name = "P-003-messages-toml"
+kind = "ENHANCE"
+status = "pending"
+authorized_by = ".agents/tasks/T-003-messages-toml-openable.task"
+review = ".agents/reviews/R-003-messages-toml.md"
+log = ".agents/logs/2026-06-P-003-messages-toml-execution.log"
+
+[invariants]
+iips = "messages.toml clean. 1 on page, rest loaded. Openable nice (expand or modal, Pretext preserved, haptic). Parser robust."
+scope = "messages page, MessageList, config.ts, types, new messages.toml. Keep 1 message visible by default."
+pipeline = "task -> programme -> review -> log"
+
+[[phase]]
+id = "P-003-1"
+title = "Review gate + toml creation + parser prep"
+status = "pending"
+[[phase]]
+id = "P-003-2"
+title = "Implement openable + updates"
+status = "pending"
+tasks = ["Create messages.toml with [[message]] (from old, minus 1).", "Update types + config parser to load messages (add to WebConfig or export).", "After gate: update messages page to load 1 + others from config.", "Enhance MessageList for openable (e.g. selected state, onClick opens expanded div or simple modal with full text larger font, close, anim).", "Verify load, open works, build."]
+verification = ["toml present", "parser works", "page shows 1 + loads, clicking opens detail nicely", "build 0"]
+
+[progress]
+current_phase = "P-003-1"
+notes = "See main. Update config like gifts."

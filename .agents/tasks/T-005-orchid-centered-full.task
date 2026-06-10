@@ -1,0 +1,27 @@
+---
+id: T-005
+status: open
+priority: high
+created: 2026-06
+authorized_by: .agents/jobs/fix-ux-styling-particles-orchid-messages.job
+scope: "web/src/components/SentientOrchid/OrchidViewer.tsx (the Three.js viewer inside FrutigerScenes end scene). Ensure centered and full size on load, not floating halfway but full centered. Adjust camera, model scale/position, lookAt, initial controls based on bounds for perfect full view fit on load."
+---
+## Objective
+Ensure the orchid is centered and full size on load:
+- Not floating halfway in view.
+- Full centered (tip to base filling the canvas nicely, centered in container).
+- Probably compute bounds after load, set camera distance/position/lookAt so model fills most of view height/width, centered (model at 0,0 with y offset if needed for visual center, camera at ideal dist for fov to fit full model tightly).
+
+Keep existing orbit (yaw), zoom, etc. But initial pose perfect full centered.
+
+Also in the scene container if needed (but focus on viewer).
+
+## Constraints / Invariants
+- Preserve all interactions (drag yaw, pinch zoom, tap sparkle, auto subtle, lights, loading).
+- Works in the h-screen / flex container of the gift scene.
+- No new deps.
+
+## Verification
+- On load (in gift end scene), orchid is full size, perfectly centered (no half float, bounds fill view centered).
+- Build clean, mental in mobile/desktop.
+---

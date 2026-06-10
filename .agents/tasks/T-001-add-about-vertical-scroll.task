@@ -1,0 +1,27 @@
+---
+id: T-001
+status: open
+priority: high
+created: 2026-06
+authorized_by: .agents/jobs/fix-ux-styling-particles-orchid-messages.job
+scope: "only edit about page and perhaps Container or global css for vertical scroll on about content. Make the main content area scrollable vertically inside the about page without affecting other pages."
+---
+## Objective
+Add vertical scroll to the content in the about page.
+
+Current about: main aero-glass div with lots of content (header, paras, sections, live reactions, ko-fi). Inside Container which has min-h-[100dvh] overflow-y-auto flex... justify-between. On some viewports or with content, it may not scroll the inner content nicely, or user wants the about content to have its own scroll (e.g. max-h and overflow-y-auto on the glass div or a wrapper).
+
+Fix: Wrap or style the main content div in about to support vertical scroll (e.g. max-h-[calc(100dvh-XXX)] overflow-y-auto), or make the inner sections scroll while header fixed. Ensure no layout break, preserve mt-16 etc for back button. Test on mobile/full.
+
+## Constraints / Invariants
+- Preserve aero-glass, fonts, animations, haptics on interactive parts (sparks).
+- Do not introduce horizontal scroll.
+- Minimal change, IIPS.
+- After review gate.
+
+## Verification
+- Build succeeds.
+- About page content scrolls vertically when tall (e.g. simulate long content or check on small height).
+- Other pages unaffected.
+- No h-scroll anywhere.
+---

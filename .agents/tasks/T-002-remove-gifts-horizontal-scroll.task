@@ -1,0 +1,26 @@
+---
+id: T-002
+status: open
+priority: high
+created: 2026-06
+authorized_by: .agents/jobs/fix-ux-styling-particles-orchid-messages.job
+scope: "Gifts list page (web/src/pages/gifts/index.astro and perhaps global css or Container). Remove any horizontal scroll. Likely body/html overflow-x or card widths or padding causing >100vw on mobile."
+---
+## Objective
+Remove horizontal scroll from the gifts list page.
+
+Current: Has scroll wrapper from previous fix (flex-1 overflow-hidden + inner overflow-y), but perhaps outer Container or html has overflow-x visible, or the gift cards with borders/shadows or the zoom overlay or script causes layout shift/width. Or the header + list in max-w-lg but with body margins/paddings or safe areas causing h-scroll on certain devices.
+
+Fix: Ensure no element exceeds viewport width. Add overflow-x-hidden to html/body or specific containers if needed. Check card styles, the .gift-btn etc. Make sure the shelf doesn't cause h-scroll. Preserve vertical scroll for list.
+
+## Constraints / Invariants
+- Keep the new top-first reverse and vertical list scroll.
+- IIPS, preserve animations (pulse-border, zoom).
+- No impact on other pages.
+- Verify with build + mental mobile.
+
+## Verification
+- No horizontal scrollbar on gifts page (desktop/mobile sim).
+- List still scrolls vertically, cards stack nicely.
+- Build clean, no layout breakage.
+---

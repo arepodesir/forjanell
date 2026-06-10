@@ -13,6 +13,9 @@ import Container from '@/layouts/Container.astro';
 
     <BackButton client:load to="/" label="Back Home" emoji="🏠" />
 
+    {/* Wrapper to kill any horizontal scroll on the gifts page (T-002): max-w + overflow-x-hidden on the content area. Preserves the v-scroll list and top-first. */}
+    <div class="w-full max-w-lg mx-auto overflow-x-hidden">
+
     <div class="relative z-10 w-full max-w-lg text-center mt-16 mb-6 select-none">
       <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md" style="font-family: 'Caveat', cursive;">
         Janell's Gift Vault 🎁
@@ -68,6 +71,7 @@ import Container from '@/layouts/Container.astro';
       ))}
       </div>
     </div>
+    </div> {/* close no-h-scroll wrapper for gifts content (T-002) */}
 
     {/* Fullscreen Zoom Transition Overlay */}
     <div id="zoom-overlay" class="fixed inset-0 z-50 pointer-events-none opacity-0 scale-0 origin-center"></div>

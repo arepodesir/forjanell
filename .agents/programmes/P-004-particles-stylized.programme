@@ -1,0 +1,27 @@
+# P-004-particles-stylized.programme (sub for T-004)
+name = "P-004-particles-stylized"
+kind = "ENHANCE"
+status = "pending"
+authorized_by = ".agents/tasks/T-004-particles-stylized.task"
+review = ".agents/reviews/R-004-particles-stylized.md"
+log = ".agents/logs/2026-06-P-004-particles-stylized-execution.log"
+
+[invariants]
+iips = "Stylized sea of Perlin noise: gradients, SVG-inspired noisiness (canvas multi-octave noise for jitter/flow), well distributed (grid + offset). Perf ok, fits girly/aero theme or evolves to immersive sea."
+scope = "Main bg particles (FrutigerScenes canvas primary for gift 'sea'). Enhance draw/animate."
+pipeline = "task -> programme -> review -> log"
+
+[[phase]]
+id = "P-004-1"
+title = "Review + inspect particles"
+status = "pending"
+[[phase]]
+id = "P-004-2"
+title = "Stylize + verify"
+status = "pending"
+tasks = ["After gate: in FrutigerScenes particle system, add gradients for fills (radial for depth), noise func (layered Math.sin + random for Perlin-like), distribute with noise offsets for 'sea' organic flow not grid. Animate with noise-varying vx/vy/alpha/size. Multiple layers if fits. Use SVG paths? or canvas for noise viz if enhances. Keep mouse attract, connect if enhances sea feel.", "Build, mental: particles now stylized noisy sea (grads, jittery organic motion, distributed).", "Update log."]
+verification = ["review gate", "particles stylized as requested (log desc + mental)", "build 0, scene works (audio, orchid etc intact)", "no perf hit"]
+
+[progress]
+current_phase = "P-004-1"
+notes = "See main programme. Target FrutigerScenes canvas for the TS particles bg."

@@ -1,0 +1,27 @@
+# P-002-gifts-no-hscroll.programme (sub for T-002)
+name = "P-002-gifts-no-hscroll"
+kind = "FIX"
+status = "pending"
+authorized_by = ".agents/tasks/T-002-remove-gifts-horizontal-scroll.task"
+review = ".agents/reviews/R-002-gifts-no-hscroll.md"
+log = ".agents/logs/2026-06-P-002-gifts-no-hscroll-execution.log"
+
+[invariants]
+iips = "Remove h-scroll on gifts. Preserve existing v-scroll list, top-first reverse, card styles, zoom nav."
+scope = "gifts page + any global/css causing h-overflow. Keep the scroll shelf working."
+pipeline = "task -> programme -> review -> log -> edit"
+
+[[phase]]
+id = "P-002-1"
+title = "Review + log"
+status = "pending"
+[[phase]]
+id = "P-002-2"
+title = "Fix + verify"
+status = "pending"
+tasks = ["After gate: add overflow-x-hidden where needed (body/html or .Container or the max-w wrapper). Audit cards/ribbons/buttons/absolute for width. Test mobile.", "Build, confirm no h-scrollbar on gifts (while v-list works), update VFS."]
+verification = ["build 0", "no h-scroll on gifts page", "list v-scroll + top-first intact"]
+
+[progress]
+current_phase = "P-002-1"
+notes = "See main programme."

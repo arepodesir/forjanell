@@ -1,0 +1,162 @@
+# P-main-ux-particles-orchid-messages.programme
+# Main orchestration programme for the multi-part job. Breaks into sub-phases/tasks. Love-lang TOML for cross-time management.
+
+name = "P-main-ux-particles-orchid-messages"
+kind = "MULTI-FIX"
+status = "in_progress"
+started = "2026-06"
+authorized_by = ".agents/jobs/fix-ux-styling-particles-orchid-messages.job"
+review = ".agents/reviews/R-main-ux-particles-orchid-messages.md"  # main review or per sub
+log = ".agents/logs/2026-06-main-ux-particles-orchid-messages-execution.log"
+
+[invariants]
+iips = "Ideal idiomatic principled Syntax. All changes elegant, preserve magic (glass, haptics, letter feel, 3d orchid, particles as sea)."
+breakdown = "Use tasks/* and sub-programmes for atomicity. Full pipeline per sub: task -> (sub)programme -> review gate -> log -> edit -> verify."
+particles = "Stylized sea of Perlin-like noise: gradients in draw, SVG-inspired noise (canvas jitter with multi-octave sin or simple noise func for 'noisiness'), well distributed layers."
+orchid = "Full centered on load: use bounds to set camera dist/pos/lookAt so model fills view centered (no half-float). Tip to base prominent."
+scrolls = "Vertical for about content (inner scroll or body friendly). No horizontal on gifts (overflow-x-hidden, width guards)."
+messages = "1 static on page, rest in toml [[message]], parser updated, openable (expand/modal with Pretext)."
+config = "messages.toml parsed like other tomls into WebConfig or dedicated."
+vfs = "All in .agents/* : jobs, tasks/*, programmes/*, reviews, logs, history. No source edit w/o review gate. nomistakes."
+
+[targets]
+about = "web/src/pages/about/index.astro + perhaps Container/global for scroll"
+gifts = "web/src/pages/gifts/index.astro (and css if needed) for no h-scroll"
+messages = "web/src/pages/messages/index.astro, web/src/components/MessageList/MessageList.tsx, web/configs/messages.toml, web/src/config/config.ts, web/src/types/index.ts"
+particles = "web/src/components/FlipBook/FrutigerScenes.tsx (main canvas particles) or home script + css for stylized bg"
+orchid = "web/src/components/SentientOrchid/OrchidViewer.tsx for centering/full on load"
+parser = "web/src/config/config.ts + types for messages"
+
+[[phase]]
+id = "P-main-001"
+title = "Breakdown + VFS setup (tasks + programmes)"
+status = "completed"
+owner = "protocol"
+tasks = [
+  "Create main job",
+  "Create T-00x tasks in .agents/tasks/ for each sub (about-scroll, gifts-hscroll, messages-toml, particles-stylize, orchid-center)",
+  "Create this main programme + sub-programmes if atomic (e.g. P-001-about-scroll.programme etc referencing tasks)"
+]
+verification = ["tasks and programmes present", "invariants clear", "pipeline documented"]
+
+[[phase]]
+id = "P-main-002"
+title = "Reviews as gates (per task or main)"
+status = "pending"
+owner = "review"
+tasks = [
+  "Write reviews (main R- or per sub) authorizing specific files/changes. Must exist before edits.",
+  "Detail scope, pre-reads, plan, risks (e.g. parser, mobile scroll, perf particles, orchid in scene), verification (builds, mental views, grep for toml)"
+]
+verification = ["reviews exist with sign-off", "gates clear for each atomic change"]
+
+[[phase]]
+id = "P-main-003"
+title = "Logs + inspect"
+status = "pending"
+owner = "logging"
+tasks = [
+  "Init main log + sub logs if needed",
+  "Full inspect of files (about, gifts, messages+list, config.ts, types, FrutigerScenes particles, OrchidViewer, Container, home particles script, configs dir, public for svg if adding noise assets)"
+]
+verification = ["logs have baseline", "inspections documented"]
+
+[[phase]]
+id = "P-001-about-scroll"
+title = "Task T-001: Vertical scroll for about content"
+status = "pending"
+owner = "about"
+tasks = [
+  "After its review gate: edit about page (and minimal Container if needed) to add vertical scroll to the main content (e.g. max-h-calc on glass or wrapper + overflow-y-auto, while header/back stay accessible).",
+  "Ensure no h-scroll introduced.",
+  "Update log, verify build + mental (content tall -> scrolls vertically inside/about area)."
+]
+verification = ["review gate passed", "build 0", "about content scrolls v, no h-scroll", "log updated"]
+
+[[phase]]
+id = "P-002-gifts-no-hscroll"
+title = "Task T-002: Remove horizontal scroll from gifts list"
+status = "pending"
+owner = "gifts"
+tasks = [
+  "After review: ensure gifts page (and any global) has no h-scroll. Possible: add overflow-x-hidden to html/body or .Container or specific, fix any card width/padding/absolute that overflows (e.g. ribbons, buttons). Preserve existing v-scroll and top-first.",
+  "Verify no h-scrollbar on gifts (esp mobile), build clean."
+]
+verification = ["review gate", "no h-scroll on gifts page", "v-scroll list intact", "build 0"]
+
+[[phase]]
+id = "P-003-messages-toml"
+title = "Task T-003: Messages to toml + openable (keep 1 on page)"
+status = "pending"
+owner = "messages"
+tasks = [
+  "Create web/configs/messages.toml with [[message]] entries (copy from current hardcoded, minus 1).",
+  "After review: update types/index.ts for Message interface if needed.",
+  "Update config/config.ts parser to load messages.toml -> messages: Message[] (similar to gifts/scenes, with legacy if needed).",
+  "Update messages/index.astro: keep 1 in MESSAGES or load, pass to MessageList.",
+  "Update MessageList.tsx: make openable (e.g. on click toggle expanded view or open modal with larger Pretext/full text, close, haptic, nice transition). Closed view keeps grid/list of teasers.",
+  "Verify: toml loads, page shows ~1 + others via config, click opens detail, build, no parser breakage."
+]
+verification = ["review gate", "messages.toml present with data", "parser updated + messages in config", "page has 1 + loads, openable works", "build + tsc clean", "grep no old hardcoded all"]
+
+[[phase]]
+id = "P-004-particles-stylized"
+title = "Task T-004: Stylize TS particles bg (sea of Perlin noise w/ gradients + svg noise)"
+status = "pending"
+owner = "particles"
+tasks = [
+  "Identify main bg particles (FrutigerScenes canvas likely, or enhance home mouse-bubbles).",
+  "After review: enhance draw/animate for stylization - use gradients for particle fills (ctx.createRadialGradient or linear), for noisiness use SVG-like (e.g. draw with bezier paths or use canvas to simulate SVG noise filter via multi-layer jitter with perlin-ish math: layered sin/random for 'sea' flow, well distributed positions with noise offsets for organic not uniform).",
+  "Well distributed: use grid + noise offset for positions, multiple layers (bg slow large, fg interactive small). Gradients on color/alpha. Animation noise: vary velocity/alpha with noise func over time.",
+  "Keep perf (particle count cap), mobile, existing attract/connect/girly if fits (or evolve to sea theme).",
+  "If adding SVG, perhaps <svg> overlay with <filter> for noise, but prefer canvas for perf/integration."
+]
+verification = ["review gate", "particles look stylized sea (gradients, noisy organic flow, distributed, animated jitter)", "build clean, no perf regression in scene", "log mental desc of new look"]
+
+[[phase]]
+id = "P-005-orchid-centered"
+title = "Task T-005: Orchid full centered on load (not floating half)"
+status = "pending"
+owner = "orchid"
+tasks = [
+  "After review: in OrchidViewer setup after model load (and any base), compute Box3 of full model.",
+  "Adjust scale/position so model fills the view (use vertical/horiz size vs container + fov to set ideal distance, center model at 0,0 with y for visual mid).",
+  "Set initial camera position/lookAt based on bounds + container aspect for full centered (tip to base filling most of canvas, centered, no half-float). E.g. camera at (0, centerY, dist), lookAt(0, centerY, 0).",
+  "Apply on load and resize. Keep existing controls/zoom but initial is perfect full centered.",
+  "Ensure in the scene's h-screen container it looks full and centered on first render."
+]
+verification = ["review gate", "on load in gift scene: orchid full size, perfectly centered (no floating halfway, bounds fill view centered)", "build clean", "interactions preserved"]
+
+[[phase]]
+id = "P-main-close"
+title = "Close: builds, VFS updates, main history"
+status = "pending"
+owner = "closure"
+tasks = [
+  "Run builds after each sub (or grouped).",
+  "Update main/sub programmes, main log, write sub or main history entries.",
+  "Ensure all VFS (tasks, programmes, reviews, logs, history) complete. One main history or per."
+]
+verification = ["all builds 0", "VFS complete with pipeline evidence", "history describes all fixes", "no mistakes"]
+
+[progress]
+completed_phases = ["P-main-001"]
+current_phase = "P-main-close"
+status = "done"
+completed_phases = ["P-main-001", "P-main-002", "P-main-003", "P-001-about-scroll", "P-002-gifts-no-hscroll", "P-003-messages-toml", "P-004-particles-stylized", "P-005-orchid-centered", "P-main-close"]
+open_risks = ["parser changes must not break existing tomls", "particles perf on mobile", "orchid framing must respect existing orbit/zoom in scene", "scroll fixes must not break existing v-scroll on gifts or about interactive (sparks)"]
+decisions = [
+  "Atomic tasks + sub-programmes for clear gates.",
+  "messages.toml format: [[message]] sender=... relation=... text=... color=... gradient=... (match current)",
+  "For particles: focus on FrutigerScenes canvas as 'ts particles background' for gift 'sea'. Use layered noise for Perlin-like.",
+  "Orchid: post-load bounds calc for camera in setup + resize handler.",
+  "Scroll: prefer inner scroll on about content div for 'the content', for gifts ensure global/container no h-overflow (overflow-x-hidden on body or specific)."
+]
+notes = [
+  "love_lang = 'Code should read like a handwritten letter: caring, precise, a little sparkly, never sloppy.'",
+  "All changes must feel hand-crafted and magical. Particles as 'sea of perlin' for immersive gift bg. Orchid as the perfect centered reveal. Scrolls for usable long content. Messages as personal openable love notes from toml.",
+  "Complete pipeline per sub-task to avoid scope overload. Record everything."
+]
+
+# Live updates
+# [2026-06] Main job + tasks created. Main programme started. Next: reviews as gates (P-main-002), then logs/inspect, then phased impl per sub after their gates. All under VFS.

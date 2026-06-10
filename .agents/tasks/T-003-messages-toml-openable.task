@@ -1,0 +1,28 @@
+---
+id: T-003
+status: open
+priority: high
+created: 2026-06
+authorized_by: .agents/jobs/fix-ux-styling-particles-orchid-messages.job
+scope: "Messages page (web/src/pages/messages/index.astro), MessageList component, web/config/config.ts, web/src/types/index.ts, create web/configs/messages.toml. Remove all but 1 from hardcoded, load rest from toml, make openable (e.g. click to expand or modal with full text/anim)."
+---
+## Objective
+- Remove all but 1 message from the messages page (keep one static or first).
+- Add the (other) messages as config in /configs/messages.toml (probably [[message]] with sender, relation, text, color, gradient).
+- Update config parser (config.ts) and types to include messages.
+- Make them openable: in MessageList or page, clicking a message opens it (e.g. full screen overlay, or expand in place with Pretext or larger view, haptic, close button). Keep the grid or list for closed view.
+
+## Constraints / Invariants
+- Update parser to handle messages.toml similar to gifts/scenes (parse to array).
+- One message remains in page (hardcoded or from config), others loaded.
+- Openable: nice interaction, preserves PretextShift for text, aero styles.
+- IIPS, no breakage to other tomls.
+- Config must drive the data.
+
+## Verification
+- messages.toml exists with data.
+- Page shows 1 + loads others.
+- Click opens (e.g. modal or detail view).
+- Build, no parser errors.
+- Grep for removed hardcoded.
+---

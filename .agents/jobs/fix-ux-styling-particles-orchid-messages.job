@@ -1,0 +1,32 @@
+---
+name: fix-ux-styling-particles-orchid-messages
+mach: 1
+invariants:
+ - IIPS: clean, elegant, minimal changes. Preserve love-letter aesthetic, haptics, glass, animations.
+ - VFS pipeline strict: main job -> tasks/* -> sub-programmes -> reviews (gates) -> logs -> edits -> history. No source edits without review gate.
+ - Break into atomic tasks for about-scroll, gifts-no-hscroll, messages-config, particles-stylize, orchid-center.
+ - Use programmes for orchestration per task or grouped.
+ - Focus on requested: vertical scroll about, no h-scroll gifts, messages to toml + openable (keep 1 hardcoded?), particles sea of perlin-like with svg/gradients/noise, orchid full centered on load.
+ - No mistakes. Test builds. Record all in .agents/*
+target: multiple (about, gifts, messages, FrutigerScenes or particles, OrchidViewer)
+kind: MULTI-FIX / ENHANCE
+message: |
+  Complex job to:
+  1. Add vertical scroll to content in about page (probably make inner content scrollable or fix container to allow body scroll without issues).
+  2. Remove horizontal scroll from gifts list page (likely body or card overflow on small screens or flex issues).
+  3. Messages page: remove all but 1 message (keep one hardcoded or static), move the others to web/configs/messages.toml as [[message]], update parser/types/config to load them, update MessageList to make them "openable" (e.g. click to expand/modal with full view or animation).
+  4. TS particles background (likely canvas in home or FrutigerScenes or global bubbles): make way more stylized - gradients, animation noisiness using SVG stuff (e.g. SVG filters for noise, or canvas with perlin-like), like a sea of Perlin noise well distributed.
+  5. Orchid (OrchidViewer): ensure centered and full size on load, not floating halfway in view but full centered (adjust camera, model position, scale, lookAt based on bounds for full view fit on load, perhaps in the scene container).
+
+  Break down:
+  - Create tasks in .agents/tasks/ for each sub-item (T-001-about-scroll.task etc.).
+  - Create programmes in .agents/programmes/ (e.g. main or per task P-xxx-*.programme) to orchestrate pipeline.
+  - For each: job ref, review gate, log.
+  - Implement changes only after gates.
+  - Update config parser for messages.toml.
+  - Ensure no h/v scroll issues, proper mobile.
+  - Particles: enhance the canvas particle system in FrutigerScenes.tsx or wherever the main bg particles are (from history it's in FrutigerScenes with girly particles).
+  - Orchid: in OrchidViewer setup/animate, after load use bounds to center camera perfectly full size (tip to base filling view, no half float).
+
+  This is a multi-part UX + visual polish job. Complete the full VFS pipeline with breakdown.
+---

@@ -1,0 +1,29 @@
+# P-001-about-scroll.programme (sub for T-001)
+name = "P-001-about-scroll"
+kind = "FIX"
+status = "pending"
+authorized_by = ".agents/tasks/T-001-add-about-vertical-scroll.task"
+review = ".agents/reviews/R-001-about-scroll.md"
+log = ".agents/logs/2026-06-P-001-about-scroll-execution.log"
+
+[invariants]
+iips = "Add vertical scroll to about content elegantly. Preserve glass, fonts, live sparks interaction."
+scope = "only about page (+ minimal global/Container if needed for scroll). No h-scroll introduced."
+pipeline = "task -> this programme -> review gate -> log -> edit -> verify"
+
+[[phase]]
+id = "P-001-1"
+title = "Review gate + log"
+status = "pending"
+tasks = ["Write review", "Init log with pre-reads"]
+[[phase]]
+id = "P-001-2"
+title = "Implement + verify"
+status = "pending"
+tasks = ["After gate: add v-scroll (e.g. on the main aero-glass or content wrapper: max-h-[calc(100dvh-12rem)] or flex-1 overflow-y-auto in context of Container). Adjust for back button/header.", "Build, mental test (tall content scrolls v), update log/history."]
+verification = ["build 0", "about content has v-scroll", "no h-scroll", "sparks etc work"]
+
+[progress]
+completed_phases = []
+current_phase = "P-001-1"
+notes = "Part of main multi-fix. See main programme for overview."

@@ -11,7 +11,8 @@ import BackButton from '@/components/Navigator/BackButton'
     {/* Floating Back to Home button (solid, type-safe) */}
     <BackButton client:load to="/" label="Back Home" emoji="🏠" />
 
-    <div class="relative z-10 w-full  max-w-lg aero-glass rounded-3xl p-6 text-white mt-16 animate-reveal-up border-white/20 shadow-2xl">
+    {/* Vertical scroll for the about content (T-001): the main glass/content area scrolls internally on tall content or small viewports, while header/back stay accessible. Calc accounts for mt-16 + back + safe. */}
+    <div class="relative z-10 w-full max-w-lg aero-glass rounded-3xl p-6 text-white mt-16 animate-reveal-up border-white/20 shadow-2xl max-h-[calc(100dvh-7rem)] overflow-y-auto">
       {/* App-focused header */}
       <div class="text-center mb-6">
         <h1 class="text-3xl font-extrabold mb-2 tracking-wide" style="font-family: 'Caveat', cursive;">

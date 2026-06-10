@@ -24,6 +24,15 @@ export interface CardMeta {
   artist: string;
 }
 
+// Messages (from messages.toml for the vault; openable on the messages page)
+export interface Message {
+  sender: string;
+  relation: string;
+  text: string;
+  color: string;
+  gradient: string;
+}
+
 // NOTE: Egift intentionally removed per job directive (no more e-voucher / golden ticket)
 
 export interface Gift {
@@ -83,6 +92,9 @@ export interface WebConfig {
   sceneMessages: Record<number, string[]>;
   sceneActions: Record<number, { emoji: string; label: string }>;
   audio: Record<string, string>;
+
+  // Messages vault (from messages.toml; page keeps 1, loads rest for openable)
+  messages?: Message[];
 }
 
 // Re-export for convenience in config consumers

@@ -98,7 +98,7 @@ export default function FrutigerScenes(props: EnvProps) {
         };
         window.addEventListener('resize', handleResize);
 
-        // More exciting particle field for gift (no mistakes): higher count, richer types (hearts, sparks, orbs, trails), stronger interaction, bigger bursts on gift open/transition, vibrant colors, subtle connect for magic.
+        // Stylized "sea of Perlin noise" particles bg (T-004): gradients for depth, animation noisiness via layered sin (SVG-like noise func for jitter/flow), well distributed (grid + noise offsets for organic sea, not uniform/clumpy). Multiple layers implicit in noise freq. Fits gift "sea" while keeping interactive/girly elements.
         const particleCount = 140;
         const particles: Array<{
           x: number;
@@ -109,7 +109,7 @@ export default function FrutigerScenes(props: EnvProps) {
           baseRadius: number;
           color: string;
           alpha: number;
-          kind: 'dot' | 'heart' | 'spark';
+          kind: 'dot' | 'heart' | 'spark' | 'orb';
         }> = [];
 
         const colors = [
@@ -121,13 +121,28 @@ export default function FrutigerScenes(props: EnvProps) {
           'rgba(188, 19, 254, ',  // accent purple
         ];
 
+        // Simple Perlin-ish noise for distribution + animation noisiness (layered sin, cheap, SVG-filter like jitter)
+        const noise = (x: number, y: number, t: number, oct = 3) => {
+          let n = 0; let amp = 1; let f = 1;
+          for (let o = 0; o < oct; o++) {
+            n += Math.sin(x * f * 0.008 + t) * amp + Math.sin(y * f * 0.005 - t * 0.7) * amp * 0.6;
+            amp *= 0.5; f *= 1.9;
+          }
+          return n;
+        };
+
         for (let i = 0; i < particleCount; i++) {
           const radius = Math.random() * 3.2 + 0.7;
           const r = Math.random();
           const kind: 'dot' | 'heart' | 'spark' | 'orb' = r < 0.12 ? 'orb' : (r < 0.28 ? 'heart' : (r < 0.45 ? 'spark' : 'dot'));
+          // Well distributed sea: base grid + noise offset for organic Perlin flow (not random clump)
+          const gx = (i % 12) * (width / 12) + 8;
+          const gy = Math.floor(i / 12) * (height / 12) + 8;
+          const nx = noise(gx * 0.9, gy * 0.7, 0, 2) * 14;
+          const ny = noise(gy * 0.8, gx * 0.6, 1.2, 2) * 12;
           particles.push({
-            x: Math.random() * width,
-            y: Math.random() * height,
+            x: gx + nx,
+            y: gy + ny,
             vx: (Math.random() - 0.5) * 0.42,
             vy: (Math.random() - 0.5) * 0.36 - 0.04,
             radius,
@@ -189,6 +204,11 @@ export default function FrutigerScenes(props: EnvProps) {
 
           // Render and update particles (girly: hearts, sparks, stronger attract + twinkle + bursts)
           particles.forEach((p, idx) => {
+            // noisiness in vel/alpha (Perlin-like via noise func for sea surface animation)
+            p.vx += noise(p.x * 0.004, p.y * 0.003, now * 0.001) * 0.12;
+            p.vy += noise(p.y * 0.003, p.x * 0.004, now * 0.0009 + 2) * 0.09;
+            p.alpha = Math.max(0.15, Math.min(0.9, p.alpha + noise(p.x * 0.01, now * 0.002, p.y * 0.005) * 0.04));
+
             p.x += p.vx;
             p.y += p.vy;
 
@@ -224,11 +244,19 @@ export default function FrutigerScenes(props: EnvProps) {
             }
 
             // draw - more exciting particle field (orbs glow, hearts bigger, sparks with extra rays, dots with soft halo for gift magic)
+            // draw with gradient (for stylized depth/sea feel)
             ctx.save();
-            ctx.globalAlpha = Math.max(0.07, p.alpha);
+            ctx.globalAlpha = Math.max(0.08, p.alpha);
+            const g = ctx.createRadialGradient(
+              p.x - p.radius * 0.3, p.y - p.radius * 0.3, p.radius * 0.15,
+              p.x, p.y, p.radius * 1.7
+            );
+            g.addColorStop(0, p.color + (p.alpha * 0.95) + ')');
+            g.addColorStop(0.55, p.color + (p.alpha * 0.55) + ')');
+            g.addColorStop(1, p.color + '0)');
+            ctx.fillStyle = g;
             if (p.kind === 'heart') {
               const s = p.radius * 1.45;
-              ctx.fillStyle = p.color + p.alpha + ')';
               ctx.beginPath();
               ctx.moveTo(p.x, p.y + s * 0.3);
               ctx.arc(p.x - s * 0.28, p.y - s * 0.1, s * 0.34, 0, Math.PI * 2);
@@ -237,7 +265,7 @@ export default function FrutigerScenes(props: EnvProps) {
               ctx.closePath();
               ctx.fill();
             } else if (p.kind === 'spark') {
-              ctx.fillStyle = p.color + (p.alpha * 0.95) + ')';
+              // gradient already set above for sea depth
               ctx.beginPath();
               ctx.arc(p.x, p.y, p.radius * 0.55, 0, Math.PI * 2);
               ctx.fill();

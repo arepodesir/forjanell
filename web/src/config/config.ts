@@ -7,6 +7,7 @@ import cardsRaw from '@@/web/configs/cards.toml?raw';
 import giftsRaw from '@@/web/configs/gifts.toml?raw';
 import scenesRaw from '@@/web/configs/scenes.toml?raw';
 import baseRaw from '@@/web/configs/base.toml?raw';
+import messagesRaw from '@@/web/configs/messages.toml?raw';
 
 // All types centralized in src/types/ (per job + IIPS). Re-export here for back-compat during transition.
 import type {
@@ -16,6 +17,7 @@ import type {
   Assets,
   Gift,
   WebConfig,
+  Message,
 } from '@/types';
 
 // NOTE: Egift fully removed (no e-voucher / golden ticket per job directive "remove the gift e voucher completely").
@@ -37,6 +39,9 @@ function parseAll(): WebConfig {
     image?: Array<{ name?: string; path: string }>;
   };
   const giftsParsed = toml(giftsRaw) as { gift?: Gift[] } | Gift[];
+  const messagesParsed = toml(messagesRaw) as { message?: Message[] } | Message[];
+
+  const messages: Message[] = (messagesParsed as any)?.message || (Array.isArray(messagesParsed) ? messagesParsed : []);
 
   // ─── Recipient + CardMeta (cards.toml is prescriptive source) ─────────────
   const recipient: Recipient = {
@@ -169,6 +174,7 @@ function parseAll(): WebConfig {
     sceneMessages,
     sceneActions,
     audio: legacyAudio,
+    messages, // from messages.toml (page uses 1 + config for openable list)
   };
 
   return full;

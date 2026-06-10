@@ -3,6 +3,7 @@ import Application from '../../layouts/Application.astro'
 import MessageList from '../../components/MessageList/MessageList'
 import BackButton from '@/components/Navigator/BackButton'
 
+// Keep only 1 message hardcoded on the page (per T-003); the rest come from config (messages.toml) and are openable in the list.
 const MESSAGES = [
   {
     sender: "Alice 💖",
@@ -10,29 +11,12 @@ const MESSAGES = [
     text: "Happy birthday Jell! Hope you have an amazing day filled with love, laughter, and endless sparkles. You deserve the absolute world! ✨",
     color: "border-aero-pink shadow-aero-pink/20",
     gradient: "from-pink-500/20 to-purple-500/20"
-  },
-  {
-    sender: "Bob 🎨",
-    relation: "Partner in Crime",
-    text: "To the coolest Taurus I know: have a total blast! Keep shining bright and never stop being your fabulous, glittery self. Cheers to more adventures! 🥂",
-    color: "border-aero-cyan shadow-aero-cyan/20",
-    gradient: "from-cyan-500/20 to-blue-500/20"
-  },
-  {
-    sender: "Clara 🦄",
-    relation: "Soul Sister",
-    text: "Janell, another year older, another year wiser, and another year of being completely iconic! Happy Birthday, gorgeous soul! 🎂🌸",
-    color: "border-aero-magenta shadow-aero-magenta/20",
-    gradient: "from-purple-500/20 to-pink-500/20"
-  },
-  {
-    sender: "Dave 🚀",
-    relation: "Tech Bro",
-    text: "Sending you the biggest quantum holographic hug! May your day be filled with magic, code, coffee, and good vibes only. 💫",
-    color: "border-aero-green shadow-aero-green/20",
-    gradient: "from-green-500/20 to-teal-500/20"
   }
-]
+];
+
+// Load additional messages from config (toml) for the openable list.
+const configMessages = (config as any).messages || [];  // from messages.toml via parser
+const displayMessages = [...MESSAGES, ...configMessages];
 
 import Container from '../../layouts/Container.astro'
 ---
@@ -52,8 +36,8 @@ import Container from '../../layouts/Container.astro'
       </p>
     </div>
 
-    {/* Message list component (Client-side with Pretext line measurement and tactile/haptic features) */}
-    <MessageList client:load messages={MESSAGES} />
+    {/* Message list component (Client-side with Pretext line measurement and tactile/haptic features). displayMessages = 1 hardcoded + config from toml; openable via the list. */}
+    <MessageList client:load messages={displayMessages} />
   </div>
 
   <script>

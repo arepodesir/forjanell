@@ -1,0 +1,27 @@
+# P-005-orchid-centered.programme (sub for T-005)
+name = "P-005-orchid-centered"
+kind = "FIX"
+status = "pending"
+authorized_by = ".agents/tasks/T-005-orchid-centered-full.task"
+review = ".agents/reviews/R-005-orchid-centered.md"
+log = ".agents/logs/2026-06-P-005-orchid-centered-execution.log"
+
+[invariants]
+iips = "Orchid full size + perfectly centered on load (tip to base filling view, centered, no floating halfway). Preserve all interactions, lights, loading, auto subtle."
+scope = "OrchidViewer.tsx (setup after load, camera, controls init, resize, initial pose). In context of scene container."
+pipeline = "task -> programme -> review -> log"
+
+[[phase]]
+id = "P-005-1"
+title = "Review + inspect"
+status = "pending"
+[[phase]]
+id = "P-005-2"
+title = "Center + verify"
+status = "pending"
+tasks = ["After gate: in load success (after model + any base), compute Box3. Set scale/pos for full presence. Compute ideal camera dist from model size + fov + container aspect for full centered fit (e.g. dist so vertical fills ~80-90% height, camera at (0, centerY, dist), lookAt center). Apply on load + resize. Fix initial yaw/pitch for nice full view. Clamps if needed to keep centered feel.", "Build, mental in gift scene: on load orchid full, centered (no half in view), tip/base visible, fills nicely.", "Update log."]
+verification = ["review", "on load full centered (log mental + code)", "build 0", "orbit/zoom/tap still work, no breakage to scene"]
+
+[progress]
+current_phase = "P-005-1"
+notes = "See main. Ensure 'full centetd' - use bounds for camera framing."
