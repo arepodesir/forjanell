@@ -62,18 +62,20 @@ import Container from "../layouts/Container.astro";
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling).
-          Added top margin/padding for proper vertical centering on the index page. */}
-      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] mt-3 md:mt-4 animate-reveal-up" style="animation-delay: 0.1s;">
-        <Hadacard 
-          client:load 
-          name={config.name}
-          nickname={config.nickname}
-          picUrl={config.picUrl}
-          hbdMessage={config.hbdMessage}
-          isFinalCard={false}
-          centerImage="/assets/img/janell.png"
-          confettiImage="/assets/img/Confetti.png"
-        />
+          The stage div now uses flex centering. Invisible gutter wrapper provides padding around the Hadacard so the visible card is properly centered inside its viewport with good fit and breathing room. */}
+      <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] mt-3 md:mt-4 animate-reveal-up flex items-center justify-center" style="animation-delay: 0.1s;">
+        <div class="w-full h-full max-w-[460px] p-4 md:p-5 lg:p-6"> {/* invisible gutter element - padding creates the centered fit/gutter */}
+          <Hadacard 
+            client:load 
+            name={config.name}
+            nickname={config.nickname}
+            picUrl={config.picUrl}
+            hbdMessage={config.hbdMessage}
+            isFinalCard={false}
+            centerImage="/assets/img/janell.png"
+            confettiImage="/assets/img/Confetti.png"
+          />
+        </div>
       </div>
 
       {/* Globular menu options (Refactored to 3 columns) */}
