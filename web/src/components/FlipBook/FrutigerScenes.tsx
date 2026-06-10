@@ -204,7 +204,7 @@ export default function FrutigerScenes(props: EnvProps) {
           }
 
           // Render and update particles (girly: hearts, sparks, stronger attract + twinkle + bursts)
-          particles.forEach((p, idx) => {
+          particles.forEach((p, now) => {
             // noisiness in vel/alpha (Perlin-like via noise func for sea surface animation)
             p.vx += noise(p.x * 0.004, p.y * 0.003, now * 0.001) * 0.12;
             p.vy += noise(p.y * 0.003, p.x * 0.004, now * 0.0009 + 2) * 0.09;

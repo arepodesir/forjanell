@@ -42,13 +42,13 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let lastAnimTime = 0;
   // Controls tuned for framing.
   // Slightly closer initial distance in the gift reveal so the orchid feels more zoomed/filling the (larger) window.
-  let controls = { yaw: 0.35, pitch: 0.18, distance: 1.75, auto: false, lastMove: 0 };
+  let controls = { yaw: 0.35, pitch: 0.18, distance: 1.05, auto: false, lastMove: 0 };
 
   // Framing offsets for "center the orchid + move it down".
   // MODEL_Y and LOOKAT_Y position the bloom/pot so the flower head is near vertical center of the canvas
   // (not pinned to top or extreme bottom). VIEW_BIAS smaller + offset raises camera slightly so the
   // subject sits lower in the rendered frame. Tune these + container mt/pt for the desired romantic placement.
-  const ORCHID_MODEL_Y = -0.25;
+  const ORCHID_MODEL_Y = -1.25;
   const ORCHID_LOOKAT_Y = -0.10;
   const VIEW_BIAS = 0.42;
   const VIEW_BIAS_OFFSET = 0.15;
