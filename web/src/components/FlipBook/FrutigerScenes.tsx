@@ -439,7 +439,9 @@ export default function FrutigerScenes(props: EnvProps) {
               hbdMessage={props.hbdMessage}
               cardMeta={props.cardMeta}
               mode="open-letter"
-              // Gift video bg from converted horsey (config connected), janell center, confetti overlay anim
+              // Gift video bg from converted horsey (config connected via HadacardProps).
+              // Converted using CLI tool: bun run convert:horsey (or direct ffmpeg single-line pipeline in package.json scripts).
+              // See "convert:horsey" script: uses ffmpeg CLI to produce short, optimized, loopable webm from horesey.MOV.
               videoBg="/assets/video/horsey.optimized.webm"
               centerImage="/assets/img/janell.png"
               confettiImage="/assets/img/Confetti.png"
