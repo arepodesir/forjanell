@@ -487,7 +487,7 @@ export default function FrutigerScenes(props: EnvProps) {
         {/* Stage 2: Orchid Reveal (end scene — 3D interactive orchid, mobile friendly, no egift/voucher).
             Positioned + sized to fill much more of the window with a nice zoom feel (larger canvas + less chrome around it). */}
         <Show when={scene() === 2}>
-          <div class="z-20 w-full flex flex-col items-center justify-center p-3 pt-5 pb-6 gap-2 min-h-[82vh]">
+          <div class="z-20 w-full flex flex-col items-center justify-center p-3 pt-4 pb-6 gap-2 min-h-[82vh]">
             {/* Soft message above the 3D bloom (kept small so the orchid can dominate) */}
             <div class="aero-glass rounded-3xl px-4 py-2.5 max-w-xs text-center border border-white/15 mb-1">
               <p class="text-aero-cyan text-[10px] tracking-wider uppercase mb-0.5" style={{ "font-family": "'Comfortaa', sans-serif" }}>Your gift has opened</p>
@@ -500,10 +500,10 @@ export default function FrutigerScenes(props: EnvProps) {
               </div>
             </div>
 
-            {/* The orchid "player" — now much larger to fill the view + feel zoomed/immersive. */}
+            {/* The orchid "player" — centered + moved down in frame via 3D coords + slight extra mt for overall page position. */}
             <OrchidViewer
               client:load
-              class="w-full max-w-[min(96vw,980px)] h-[64vh] md:h-[70vh] lg:h-[74vh]"
+              class="w-full max-w-[min(96vw,980px)] h-[64vh] md:h-[70vh] lg:h-[74vh] mt-1"
               externalAudio={endAudio()}
             />
 

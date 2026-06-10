@@ -40,9 +40,16 @@ export default function OrchidViewer(props: OrchidViewerProps) {
   let model: THREE.Group | null = null;
   let frameId: number | null = null;
   let lastAnimTime = 0;
-  // Controls tuned for perfect framing of tip to base at all times.
+  // Controls tuned for framing.
   // Slightly closer initial distance in the gift reveal so the orchid feels more zoomed/filling the (larger) window.
   let controls = { yaw: 0.35, pitch: 0.18, distance: 1.75, auto: false, lastMove: 0 };
+
+  // Framing offsets: center the orchid vertically in the canvas + a slight downward bias ("move it down").
+  // Previously extreme negative to pin base at bottom edge; now closer to 0 for centering while keeping elegant low-ish composition.
+  const ORCHID_MODEL_Y = -0.12;
+  const ORCHID_LOOKAT_Y = -0.08;
+  const VIEW_BIAS = 0.55;  // was 0.65 -- less downward camera bias for better centering
+  const VIEW_BIAS_OFFSET = 0.08;
 
   let pointerDown = false;
   let lastX = 0;
@@ -93,7 +100,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
     lastX = ev.clientX;
     lastY = ev.clientY;
 
-    // ONLY single axis rotation (yaw / horizontal spin). No pitch from drag. Fixed pitch (0.18) used in camera for tight centered mobile full view of flower + pot.
+    // ONLY single axis rotation (yaw / horizontal spin). No pitch from drag. Fixed pitch (0.18) used in camera for centered view of flower + pot.
     controls.yaw += dx * 0.0075;
     controls.lastMove = Date.now();
   };
@@ -188,13 +195,12 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const center2 = box2.getCenter(new THREE.Vector3());
       model.position.sub(center2);
 
-      // === LOAD POSITION COORDINATES (found/fixed for perfect initial framing) ===
-      // Force exact origin in X/Z (prevents any residual offset from GLB export or scale math).
-      // Y lowered so the pot *base* sits at/near the bottom of the viewport (as requested),
-      // while keeping flower tip high in the large gift container (64-74vh). This centers the orchid vertically with base grounded at bottom.
+      // === LOAD POSITION COORDINATES ===
+      // X/Z forced to 0 for horizontal center. Y offset centers the orchid (bloom + pot) in the view
+      // and moves it slightly down for the desired composition (no longer extreme base-pin at bottom).
       model.position.x = 0;
       model.position.z = 0;
-      model.position.y = -0.32;   // base-at-bottom coordinate for the viewport
+      model.position.y = ORCHID_MODEL_Y;
 
       // === LOAD ROTATION COORDINATES (fixed for upright + facing viewer) ===
       // Correct any baked-in GLB orientation issues so the orchid loads upright (pot base down, stem vertical).
@@ -213,20 +219,19 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const verticalSize = size.y * scale;
       const fitDistance = (verticalSize / 2) / Math.tan(fov / 2) * 1.08;  // 1.08 = tight, minimal empty space, full centered view on mobile
 
-      // Initial controls: single axis (yaw only), fixed pitch for good pot visibility, tight distance.
+      // Initial controls: single axis (yaw only), fixed pitch for good pot visibility, centered distance.
       // (The actual upright + facing rotation is set explicitly via coordinates on the model at load time, below.)
       controls.distance = fitDistance;
       controls.yaw = 0.4;
-      controls.pitch = 0.18;  // FIXED single value — shows the pot base nicely while keeping flower upright and full height tight in frame
+      controls.pitch = 0.18;  // FIXED single value — balanced view of upright flower + pot, centered in frame
       controls.auto = false;
 
-      // Apply the tight, centered, mobile-full-view framing immediately.
-      // lookAt y is set near the base so the pot base sits on the bottom of the viewport (with model y lowered).
+      // Apply the centered framing immediately (with slight down bias per ORCHID_* constants).
       const ix = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const iy = Math.sin(controls.pitch) * controls.distance * 0.65 + 0.05;
+      const iy = Math.sin(controls.pitch) * controls.distance * VIEW_BIAS + VIEW_BIAS_OFFSET;
       const iz = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
       camera.position.set(ix, iy, iz);
-      camera.lookAt(0, -0.22, 0);  // look near base level → base aligned to bottom of viewport
+      camera.lookAt(0, ORCHID_LOOKAT_Y, 0);  // look near centered model for vertical centering + slight down bias
 
       setIsLoading(false);
     } catch (e: any) {
@@ -303,13 +308,13 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       controls.distance = Math.max(minDist, Math.min(maxDist, controls.distance));
 
       // position camera from spherical — fixed pitch (0.18), yaw only.
-      // lookAt y tuned so pot base sits on the bottom of the viewport (model y lowered for base-at-bottom centering).
+      // lookAt + bias use the centering + "move down" offsets (less extreme than previous base-pin).
       const x = Math.sin(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
-      const y = Math.sin(controls.pitch) * controls.distance * 0.65 + 0.05;
+      const y = Math.sin(controls.pitch) * controls.distance * VIEW_BIAS + VIEW_BIAS_OFFSET;
       const z = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
 
       camera.position.set(x, y, z);
-      camera.lookAt(0, -0.22, 0);  // base aligned to bottom of viewport
+      camera.lookAt(0, ORCHID_LOOKAT_Y, 0);
 
       // Model orientation: base load rotation (upright + facing coordinates set above) + small dynamic yaw.
       // This keeps the orchid correctly oriented on initial load (before any interaction) while allowing
