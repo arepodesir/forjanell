@@ -1,0 +1,59 @@
+---
+name: fix-orchid-component-totally
+mach: 4
+invariants:
+ - IIPS: Ideal idiomatic principled Syntax
+ - Real source ONLY: edit files under /home/arepo/LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE/web/src/components/SentientOrchid/OrchidViewer.tsx (and callers if needed)
+ - No mistakes: read full current code, understand 3D setup (bounding box, camera spherical, model centering), compute/choose correct coordinates for load position and rotation.
+ - Preserve all prior fixes: large immersive video-backed card, confetti, auto-play, heart button, particles, gift flow, build success.
+ - Test thoroughly: after edits, run build on real web/, verify no breakage, mentally simulate load position/rotation.
+ - Use VFS fully: this job, then history on completion. Use todo_write for tracking.
+ - "find coordinates": analyze the GLB load (box center/size), set precise model.position and model.rotation on load for perfect initial framing. Fix rotation so orchid is upright, flower facing viewer nicely, pot base down.
+ - "fix its load position and fix its rotation": ensure on initial render (before any user interaction), the model is centered at good world coords, rotated correctly (likely small Y rotation + possible X to upright it), and camera positioned for ideal view that "fills the window" with the now-larger container.
+ - "be sure to make no mistake and make sure it works well": step-by-step, multiple reads, conservative numeric values based on code (current controls.distance ~1.75, yaw 0.35, pitch 0.18), add comments explaining the coordinates. Rebuild + inspect.
+target: web/src/components/SentientOrchid/OrchidViewer.tsx (primary); FrutigerScenes.tsx only if usage needs tiny tweak for the fixed component
+kind: FIX / REFACTOR (deep 3D component fix)
+message: |
+  new job { fix the orchid component totoally find coordinates to fix its load position and fix its rotation be sure to make no mistake and make sure it works well }
+
+  Detailed requirements from user + context:
+  - The OrchidViewer (Three.js GLTF of Orchid.glb) needs total fix.
+  - On load (initial setup after model loads), the position is wrong (off-center, not filling nicely in the large gift reveal container).
+  - Rotation is wrong (model may be tilted, sideways, or not facing the viewer with flower up).
+  - Find exact coordinates: use the existing bounding box code to compute ideal center, then apply precise model.position.set(x, y, z) and model.rotation.set(rx, ry, rz) or .rotateY etc.
+  - Fix rotation: make the orchid upright (pot down, flower top), with good facing angle for the romantic view.
+  - Must work well with current usage: large h-[~70vh] container in gift scene 2, interactive (drag yaw, wheel zoom, auto-orbit), soft lighting, tap sparkle.
+  - Preserve framing intent from code comments ("perfect framing of tip to base", "tight centered mobile full view of flower + pot").
+  - Since container is now much larger (from prior job), the initial load must look great zoomed/filling without user input.
+  - No mistakes: do not break dispose, controls, camera setup, lighting, animation loop, or any prior behavior. Use exact values derived from inspecting current code (e.g. current controls.yaw/pitch/distance, box logic).
+  - After fix: build succeeds, the orchid loads in correct position/rotation every time in the gift flow.
+
+  Technical plan (IIPS):
+  1. Read the full current OrchidViewer.tsx (real path).
+  2. Read usage in FrutigerScenes.tsx (real) + any related (e.g. previous history for context on distance=1.75).
+  3. Analyze load sequence: after GLTF load, box = new Box3().setFromObject(model), size/center computed.
+     - Currently likely does model.position.sub(center) or similar + scale?
+     - Then camera is set using spherical from controls.
+  4. Find good coordinates:
+     - After centering, apply additional model.position adjustments if needed (e.g. slight Y offset for pot base).
+     - Compute/choose rotation: model.rotation.set(0, Math.PI * 0.1 or specific, 0) or .rotateY( value ) so flower faces camera nicely, upright.
+     - Likely the GLB is imported with Y-up but needs a Y rotation for "front", and perhaps X rotation if tilted.
+  5. Tweak initial controls if needed for the fixed model (but prefer fixing on model itself).
+  6. Add clear comments with the chosen numbers and why (e.g. "chosen after box analysis: center at (0, 0.1, 0), rotation Y=0.35 to face viewer").
+  7. Ensure the render loop (camera.position calc using sin/cos for yaw/pitch around target) still works perfectly.
+  8. VFS + todo: log this job, track steps, build after edit, write history.
+  9. Make it "totally" fixed: also consider minor polish like better initial auto or scale if model is tiny, but focus on position + rotation as requested.
+
+  Expected outcome: Orchid loads perfectly centered, upright, flower facing the user at a beautiful angle, filling the large gift window area immediately. Drag/zoom still feel natural. No visual glitches on load or during gift transition.
+
+---
+# Execution notes for the agent
+- ALWAYS use absolute real paths for reads/edits: /home/arepo/LOGOS/SOFTWARE/DOGMA/FORJANELL/CODE/...
+- Start with todo_write + this job file (VFS first).
+- Read full files before any edit.
+- Use search_replace with unique strings, small safe chunks.
+- After edit: cd to real web/ && bun run build, check for errors.
+- If needed, use run_terminal_command for other inspection (but no external GLB viewers assumed).
+- Be extremely careful with Three.js math: preserve existing camera update logic.
+- End with history entry that documents the exact coordinates chosen and verification.
+- "make sure it works well": the gift flow (letter open -> orchid) should look polished.

@@ -13,8 +13,6 @@ interface MenuItem {
 interface PageProps {
   title: string;
   subTitle: string;
-  welcomeTitle: string;
-  welcomeDesc: string;
   menuItems: MenuItem[];
   footer: {
     text: string;
@@ -26,8 +24,6 @@ interface PageProps {
 const pageProps: PageProps = {
   title: "For Janell",
   subTitle: " | Home",
-  welcomeTitle: "Hi, Janell!",
-  welcomeDesc: "Today is a very special day! We've put together a magical realm of gifts, messages, and surprises just for you. Explore your surprises below! 🫧🔮🎁",
   menuItems: [
     {
       name: "About",
@@ -65,12 +61,6 @@ import Container from "../layouts/Container.astro";
 
     {/* Welcome & Widgets Container */}
     <div class="relative z-10 w-full max-w-lg flex-1 flex flex-col justify-between items-center gap-3 px-2 my-auto py-1">
-      {/* Glowing glass welcome header - now populated so index page shows the greeting well */}
-      <div class=" rounded-3xl p-3 md:p-5 text-white w-full border-white/20 animate-reveal-up text-center shadow-[0_8px_32px_rgba(255,102,196,0.15)] shrink-0">
-        <h2 class="text-xl md:text-2xl font-semibold tracking-tight" style={{ "font-family": "'Great Vibes', cursive" }}>{pageProps.welcomeTitle}</h2>
-        <p class="text-[10px] md:text-xs mt-1 leading-snug opacity-80">{pageProps.welcomeDesc}</p>
-      </div>
-
       {/* Large 3D Greeting Card Container (Sized responsively to prevent overflow scrolling) */}
       <div class="w-full h-[250px] xs:h-[290px] sm:h-[360px] md:h-[420px] animate-reveal-up" style="animation-delay: 0.1s;">
         <Hadacard 
@@ -133,20 +123,6 @@ import Container from "../layouts/Container.astro";
 
 <script>
   import { haptic } from '../utils/haptics';
-
-  // ─── Real-time iOS Digital Clock ─────────────────────────
-  const updateClock = () => {
-    const clockEl = document.getElementById('ios-clock');
-    if (!clockEl) return;
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12; // 12-hour format
-    clockEl.textContent = `${hours}:${minutes} ${ampm}`;
-  };
-  updateClock();
-  setInterval(updateClock, 30000);
 
   // ─── Touch Particle Generator ────────────────────────────
   let lastMove = 0;

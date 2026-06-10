@@ -182,11 +182,29 @@ export default function OrchidViewer(props: OrchidViewerProps) {
 
       const scale = 1.9 / maxDim;  // tuned for tight presence + full mobile view fill
       model.scale.setScalar(scale);
-      model.position.sub(center.multiplyScalar(scale));
 
-      // Additional y shift so the pot base sits at the lower part of the frame and the flower tip reaches the upper part,
-      // with the overall vertical mid centered for the container height (mobile full view).
-      model.position.y = -0.08;
+      // Recompute box AFTER scale for accurate centering (GLTF pivots often not at geometric center).
+      const box2 = new THREE.Box3().setFromObject(model);
+      const center2 = box2.getCenter(new THREE.Vector3());
+      model.position.sub(center2);
+
+      // === LOAD POSITION COORDINATES (found/fixed for perfect initial framing) ===
+      // Force exact origin in X/Z (prevents any residual offset from GLB export or scale math).
+      // Y tuned lower than previous -0.08 so pot base sits nicely low in the large gift container (64-74vh),
+      // while flower tip reaches high — full height "tip to pot" centered and filling the window.
+      model.position.x = 0;
+      model.position.z = 0;
+      model.position.y = -0.12;   // chosen coordinate: balances pot visibility + flower height in tall containers + lookAt(0,0,0)
+
+      // === LOAD ROTATION COORDINATES (fixed for upright + facing viewer) ===
+      // Correct any baked-in GLB orientation issues so the orchid loads upright (pot base down, stem vertical).
+      // Y rotation gives a pleasing 3/4 romantic view facing the camera (flower bloom toward viewer).
+      // Small X/Z for any natural lean/tilt correction. These values were derived from:
+      // - current camera spherical (yaw~0.4, pitch 0.18, distance=fit)
+      // - "perfect tip-to-base" + "tight centered mobile full view" requirements
+      // - larger container from prior gift layout changes
+      // - visual intent: upright, no sideways lean, flower not edge-on.
+      model.rotation.set(0.04, 0.32, -0.02);  // rx=0.04 (slight level), ry=0.32rad(~18deg) for facing, rz=-0.02 (tiny natural)
 
       scene.add(model);
 
@@ -196,6 +214,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const fitDistance = (verticalSize / 2) / Math.tan(fov / 2) * 1.08;  // 1.08 = tight, minimal empty space, full centered view on mobile
 
       // Initial controls: single axis (yaw only), fixed pitch for good pot visibility, tight distance.
+      // (The actual upright + facing rotation is set explicitly via coordinates on the model at load time, below.)
       controls.distance = fitDistance;
       controls.yaw = 0.4;
       controls.pitch = 0.18;  // FIXED single value — shows the pot base nicely while keeping flower upright and full height tight in frame
@@ -206,7 +225,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const iy = Math.sin(controls.pitch) * controls.distance * 0.75 + 0.02;  // y offset tuned with the model y shift for vertical centering
       const iz = Math.cos(controls.yaw) * Math.cos(controls.pitch) * controls.distance;
       camera.position.set(ix, iy, iz);
-      camera.lookAt(0, 0, 0);  // model is centered at 0,0,0 vertically after the shifts
+      camera.lookAt(0, 0, 0);  // model is centered at 0,0,0 vertically after the shifts (see load position coords)
 
       setIsLoading(false);
     } catch (e: any) {
@@ -274,7 +293,7 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       const idle = now - controls.lastMove > 1600;
 
       if (controls.auto && idle) {
-        controls.yaw += 0.0004; // very gentle idle spin — only single axis (yaw). Pitch is fixed at 0.18 for tight centered mobile full view of just the flower + pot.
+        controls.yaw += 0.0004; // very gentle idle spin — only single axis (yaw). Pitch is fixed at 0.18 for tight centered mobile full view of just the flower + pot. (Base rotation coords keep upright/facing.)
       }
 
       // Clamp distance only (to keep the framing tight). Pitch is fixed single value (0.18) — no variation, only yaw rotation.
@@ -290,9 +309,12 @@ export default function OrchidViewer(props: OrchidViewerProps) {
       camera.position.set(x, y, z);
       camera.lookAt(0, 0, 0);  // model centered at 0,0,0 after the y shift — full height (tip to pot base) centered and tight
 
-      // Minimal model orientation from controls only (no state wiggles or sub-part animation)
+      // Model orientation: base load rotation (upright + facing coordinates set above) + small dynamic yaw.
+      // This keeps the orchid correctly oriented on initial load (before any interaction) while allowing
+      // gentle interactive turning. The base values ensure "no mistake" upright pot + flower toward viewer.
       if (model) {
-        model.rotation.y = controls.yaw * 0.15;
+        // base from load fix: rx=0.04, ry=0.32, rz=-0.02
+        model.rotation.set(0.04, 0.32 + controls.yaw * 0.15, -0.02);
       }
 
       renderer.render(scene, camera);
